@@ -5,6 +5,8 @@ import PageFooter from './footer';
 import '../App.css';
 import '../styles/styles.css';
 import '../styles/login.css';
+import { link } from 'fs';
+const axios = require('axios');
 
 class LoginScreen extends Component {
 
@@ -30,12 +32,49 @@ class LoginScreen extends Component {
   submituserRegistrationForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
-      let fields = {};
-      console.log('Fields Message', fields);
-      fields["UserName"] = "";
-      fields["password"] = "";
-      this.setState({ fields: fields });
-      this.props.history.push('/dashboard');
+      // let fields = {};
+      // console.log('Fields Message', fields);
+      // fields["UserName"] = "";
+      // fields["password"] = "";
+      // this.setState({ fields: fields });
+
+      var jsonData = {
+        "ApiAuthentication":
+        {
+          "LoginName": "chalkapi",
+          "Password": "5PhHK339B76k2eM8",
+          "Company": "chalkcouture"
+        },
+        "AuthenticateCustomerRequest":
+        {
+          "LoginName": this.state.fields.UserName,
+          "Password": this.state.fields.password
+        }
+      }
+     debugger;
+      // Optionally the request above could also be done as
+      axios.post('http://localhost:3000/authenticate', {
+          data: jsonData
+      })
+        .then(function (response) {
+          if(response.data.Message.Result !==undefined && response.data.Message.Result[0].Status==="Success")
+          {
+            //this.props.history.push('/dashboard');
+            window.location='/dashboard';
+          }
+          else{
+            console.log(response.data.Message);
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .then(function () {
+          // always executed
+        });  
+
+      //this.props.history.push('/dashboard');
       // alert("Form submitted");
     }
 
@@ -52,7 +91,7 @@ class LoginScreen extends Component {
     }
 
     if (typeof fields["UserName"] !== "undefined") {
-      if (!fields["UserName"].match(/^[a-zA-Z ]*$/)) {
+      if (!fields["UserName"].match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
         formIsValid = false;
         errors["UserName"] = "*Please enter alphabet characters only.";
       }

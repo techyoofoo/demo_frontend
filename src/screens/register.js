@@ -4,6 +4,7 @@ import HomeHeaderscreen from './homeheader';
 import PageFooter from './footer';
 import '../styles/styles.css';
 import '../styles/login.css';
+const axios = require('axios');
 
 class RegisterScreen extends Component {
 
@@ -28,14 +29,59 @@ class RegisterScreen extends Component {
   }
   submituserRegistrationForm(e) {
     e.preventDefault();
-    if (this.validateForm()) {
-      let fields = {};
-      fields["FirstName"] = "";
-      fields["LastName"] = "";
-      fields["emailid"] = "";
-      fields["password"] = "";
-      this.setState({ fields: fields });
-      alert("Form submitted");
+    if (!this.validateForm()) {
+      // let fields = {};
+      // fields["FirstName"] = "";
+      // fields["LastName"] = "";
+      // fields["emailid"] = "";
+      // fields["password"] = "";
+      // this.setState({ fields: fields });
+      // alert("Form submitted");
+      var jsonData = {
+        "ApiAuthentication":
+        {
+          "LoginName": "chalkapi",
+          "Password": "5PhHK339B76k2eM8",
+          "Company": "chalkcouture"
+        },
+        "User":{ 
+          "FirstName":this.state.fields.FirstName,
+          "LastName":this.state.fields.LastName,
+          "CustomerType":1,
+          "CustomerStatus":1,
+          "Email":this.state.fields.emailid,
+          "CanLogin":1,
+          "LoginName":this.state.fields.emailid,
+          "LoginPassword":this.state.fields.password,
+          "CurrencyCode":"USD",
+          "LanguageID":1
+       }
+      }
+     debugger;
+      // Optionally the request above could also be done as
+      axios.post('http://localhost:3000/register', {
+          data: jsonData
+      })
+        .then(function (response) {
+          if(response.data.Message.Result !==undefined && response.data.Message.Result[0].Status==="Success")
+          {
+            //this.props.history.push('/dashboard');
+            window.location='/dashboard';
+          }
+          else{
+            console.log(response.data.Message);
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .then(function () {
+          // always executed
+        });  
+
+      //this.props.history.push('/dashboard');
+      // alert("Form submitted");
     }
 
   }
@@ -162,7 +208,7 @@ class RegisterScreen extends Component {
 
                   <div className="wrap-input100 validate-input m-t-20">
                     <span className="label-input100">Confirm Password</span>
-                    <input className="input100" type="password" name="password" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword} onChange={this.handleChange} />
+                    <input className="input100" type="password" name="confirmpassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword} onChange={this.handleChange} />
                     <span className="focus-input100" data-symbol="&#xf190;"></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.ConfirmPassword}</div>
