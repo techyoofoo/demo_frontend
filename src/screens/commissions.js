@@ -7,7 +7,7 @@ import Sidebarmenu from './sidebar';
 import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import axios from 'axios';
 
 class CommissionsScreen extends Component {
   constructor() {
@@ -19,6 +19,8 @@ class CommissionsScreen extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
 
+    this.handleSelectedChange = this.handleSelectedChange.bind(this);
+
     this.state = {
       popupVisible: false,
       show: false, background: '#296091',
@@ -26,13 +28,19 @@ class CommissionsScreen extends Component {
       sidebarClose: true,
       values: [],
       fields: {},
-      errors: {}
+      errors: {},
+      dropDownCommissionsData: [],
+      isLoadingDropDown: true,
+      selectedPeriod: "",
+      historicalbonusdetails: [],
+      isLoadingHistoricalBonusDetails: true
     };
   }
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    this.bindCommissionDropdown();
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -139,6 +147,62 @@ class CommissionsScreen extends Component {
 
   }
 
+  bindCommissionDropdown() {
+    axios
+      .get("http://localhost:6002/commissionsperiod/")
+      .then(response =>
+        response.data.map(data => ({
+          CommissionRunID: `${data.CommissionRunID}`,
+          StartDate: `${data.StartDate}`,
+          EndDate: `${data.EndDate}`,
+          PeriodID: `${data.PeriodID}`,
+          PeriodTypeID: `${data.PeriodTypeID}`,
+          PeriodDescription: `${data.PeriodDescription}`
+        }))
+      )
+      .then(dropDownCommissionsData => {
+        this.setState({
+          dropDownCommissionsData,
+          isLoadingDropDown: false
+        });
+      })
+      .catch(error => this.setState({ error, isLoadingDropDown: false }));
+  }
+
+  handleSelectedChange(e) {
+    const val = e.target.value;
+    if (!val) {
+      return
+    }
+    const periodId = val.split('-')[0];
+    const runId = val.split('-')[1];
+    this.setState({ selectedPeriod: val });
+    axios
+      .get("http://localhost:6002/historicalbonusdetails/967/" + runId)
+      .then(response =>
+        response.data.map(data => ({
+          BonusID: `${data.BonusID}`,
+          BonusDescription: `${data.BonusDescription}`,
+          FromCustomerID: `${data.FromCustomerID}`,
+          FromCustomerName: `${data.FromCustomerName}`,
+          Level: `${data.Level}`,
+          PaidLevel: `${data.PaidLevel}`,
+          Percentage: `${data.Percentage}`,
+          OrderID: `${data.OrderID}`,
+          SourceAmount: `${data.SourceAmount}`,
+          CommissionAmount: `${data.CommissionAmount}`,
+        }))
+      )
+      .then(historicalbonusdetails => {
+        this.setState({
+          historicalbonusdetails,
+          isLoadingHistoricalBonusDetails: false
+        });
+      })
+      .catch(error => this.setState({ error, isLoadingHistoricalBonusDetails: false }));
+
+  }
+
   render() {
     const BASE_URL = '#'
     const { open } = this.state;
@@ -186,6 +250,8 @@ class CommissionsScreen extends Component {
       "CommissionAmount": 18.582
     }
     ]
+    const { isLoadingDropDown, dropDownCommissionsData } = this.state
+    const { historicalbonusdetails } = this.state
     return (
       <div>
         <div className="container-fluid">
@@ -254,8 +320,18 @@ class CommissionsScreen extends Component {
                             <button id="gotopreviousperiod" className="btn btn-default" type="button">
                               <i className="fa fa-chevron-left"></i></button>
                           </span>
-                          <select id="periodchoice" className="form-control">
-                            <option value="/commissions/0/34">Current Commissions - Monthly 34 October 2019 (10/1/2019 - 10/31/2019)</option>
+                          <select value={this.state.selectedPeriod} onChange={this.handleSelectedChange} id="periodchoice" className="form-control">
+                            {!isLoadingDropDown ? (
+                              dropDownCommissionsData.map((data, index) => {
+                                const { StartDate, EndDate, PeriodID, PeriodTypeID, PeriodDescription, CommissionRunID } = data;
+                                return (
+                                  <option key={index} value={PeriodID + "-" + CommissionRunID}> {"Current Commissions - " + PeriodDescription} {"(" + StartDate.split('T')[0] + " - " + EndDate.split('T')[0] + ")"}</option>
+                                );
+                              })
+                            ) : (
+                                <option value=""></option>
+                              )}
+                            {/* <option value="/commissions/0/34">Current Commissions - Monthly 34 October 2019 (10/1/2019 - 10/31/2019)</option>
                             <option value="/commissions/0/33">Current Commissions - Monthly 33 September 2019 (9/1/2019 - 9/30/2019)</option>
                             <option value="/commissions/0/32">Current Commissions - Monthly 32 August 2019 (8/1/2019 - 8/31/2019)</option>
                             <option value="/commissions/427">Current Commissions - Monthly 31 July 2019 (7/1/2019 - 7/31/2019)</option>
@@ -281,7 +357,7 @@ class CommissionsScreen extends Component {
                             <option value="/commissions/0/11">Current Commissions - Monthly 11 November 2017 (11/1/2017 - 11/30/2017)</option>
                             <option value="/commissions/0/10">Current Commissions - Monthly 10 October 2017 (10/1/2017 - 10/31/2017)</option>
                             <option value="/commissions/0/9">Current Commissions - Monthly 9 September 2017 (9/1/2017 - 9/30/2017)</option>
-                            <option value="/commissions/0/8">Current Commissions - Monthly 8 August 2017 (8/1/2017 - 8/31/2017)</option>
+                            <option value="/commissions/0/8">Current Commissions - Monthly 8 August 2017 (8/1/2017 - 8/31/2017)</option> */}
                           </select>
                           <span className="input-group-btn">
                             <button id="gotonextperiod" className="btn btn-default" type="button">
@@ -369,26 +445,26 @@ class CommissionsScreen extends Component {
                       gridData.map(x => {
 
                       })
-                    }                    
-                      {
-                        gridData.map(dt => {
-                          return (
-                            <div className="row gridwtbg">
-                              <div className="gridbr gridno"></div>
-                              {/* <div className="col gridbr">{dt.BonusID}</div>
+                    }
+                    {
+                      historicalbonusdetails.map(dt => {
+                        return (
+                          <div className="row gridwtbg">
+                            <div className="gridbr gridno"></div>
+                            {/* <div className="col gridbr">{dt.BonusID}</div>
                               <div className="col gridbr">{dt.BonusDescription}</div> */}
-                              <div className="col gridbr">{dt.FromCustomerID}</div>
-                              <div className="col gridbr">{dt.FromCustomerName}</div>
-                              {/* <div className="col gridbr">{dt.Level}</div> */}
-                              <div className="col gridbr">{dt.PaidLevel}</div>
-                              {/* 
+                            <div className="col gridbr">{dt.FromCustomerID}</div>
+                            <div className="col gridbr">{dt.FromCustomerName}</div>
+                            {/* <div className="col gridbr">{dt.Level}</div> */}
+                            <div className="col gridbr">{dt.PaidLevel}</div>
+                            {/* 
                               <div className="col gridbr">{dt.OrderID}</div> */}
-                              <div className="col gridbr">{dt.SourceAmount}</div>
-                              <div className="col gridbr">{dt.Percentage}</div>
-                              <div className="col gridbr">{dt.CommissionAmount}</div>
-                            </div>)
-                        })
-                      }                   
+                            <div className="col gridbr">{dt.SourceAmount}</div>
+                            <div className="col gridbr">{dt.Percentage}</div>
+                            <div className="col gridbr">{dt.CommissionAmount}</div>
+                          </div>)
+                      })
+                    }
                     <div className="row gridgraybg">
                       <div className="gridbr gridno"></div>
                       <div className="col gridbr"></div>

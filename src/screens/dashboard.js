@@ -9,6 +9,7 @@ import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/login.css';
+import axios from 'axios';
 
 class DashboardScreen extends Component {
   constructor() {
@@ -22,12 +23,15 @@ class DashboardScreen extends Component {
       show: false, background: '#296091',
       open: false,
       sidebarClose: true,
+      commissions: [],
+      isLoading: true
     };
   }
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    this.getCommissions();
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -71,6 +75,30 @@ class DashboardScreen extends Component {
     this.handleClick();
   };
 
+
+  getCommissions() {
+    axios
+      .get("http://localhost:6002/currentcommission/967")
+      .then(response =>
+        response.data.map(commission => ({
+          CustomerID: `${commission.CustomerID}`,
+          Total: `${commission.Total}`,
+          RankID: `${commission.RankID}`,
+          RankDescription: `${commission.RankDescription}`,
+          PeriodID: `${commission.PeriodID}`,
+          PeriodDescription: `${commission.PeriodDescription}`
+        }))
+      )
+      .then(commissions => {
+        this.setState({
+          commissions,
+          isLoading: false
+        });
+      })
+      .catch(error => this.setState({ error, isLoading: false }));
+  }
+
+
   render() {
     const BASE_URL = '#'
     const { open } = this.state;
@@ -82,6 +110,7 @@ class DashboardScreen extends Component {
       backgroundColor: this.state.background
     }
     console.log('Background', this.state.background)
+    const { isLoading, commissions } = this.state
     return (
       <div>
         <div className="container-fluid">
@@ -214,31 +243,20 @@ class DashboardScreen extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="trhdr">
-                              <td>December 2018</td>
-                              <td>Master Couturier</td>
-                              <td className="trhdrblue">$31,979.20</td>
-                            </tr>
-                            <tr className="trhdr">
-                              <td>November 2018	</td>
-                              <td>Thornton</td>
-                              <td className="trhdrblue">$45,665.06</td>
-                            </tr>
-                            <tr className="trhdr">
-                              <td>October 2018</td>
-                              <td>Master Couturier</td>
-                              <td className="trhdrblue">$53,643.57</td>
-                            </tr>
-                            <tr className="trhdr">
-                              <td>September 2018</td>
-                              <td>Thornton</td>
-                              <td className="trhdrblue">$45,658.61</td>
-                            </tr>
-                            <tr className="trhdr">
-                              <td>August 2018</td>
-                              <td>Master Couturier</td>
-                              <td className="trhdrblue">$28,492.30</td>
-                            </tr>
+                            {!isLoading ? (
+                              commissions.map((commission, index) => {
+                                const { CustomerID, Total, RankID, RankDescription, PeriodID, PeriodDescription } = commission;
+                                return (
+                                  <tr className="trhdr" key={index}>
+                                    <td>{PeriodDescription}</td>
+                                    <td>{RankDescription}</td>
+                                    <td className="trhdrblue">{"$" + Number(Total).toFixed(2)}</td>
+                                  </tr>
+                                );
+                              })
+                            ) : (
+                                <p> <center>Loading... </center></p>
+                              )}
                           </tbody>
                         </table>
 
