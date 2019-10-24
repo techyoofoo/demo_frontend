@@ -9,6 +9,9 @@ import InstallScreen from '../screens/install';
 import UninstallScreen from '../screens/uninstall';
 import ForgotPassword from '../screens/forgotpassword';
 import ChangePassword from '../screens/changepassword';
+import CommissionsScreen from '../screens/commissions';
+import RankScreen from '../screens/rank';
+import VolumesScreen from '../screens/volumes';
 
 class Routes extends Component {
     render() {
@@ -24,6 +27,9 @@ class Routes extends Component {
             <Route exact path="/uninstall" component={UninstallScreen} /> 
             <Route exact path="/forgotpassword" component={ForgotPassword} /> 
             <Route exact path="/changepassword"  component={ChangePassword} /> 
+            <Route exact path="/commissions"  component={CommissionsScreen} /> 
+            <Route exact path="/rank"  component={RankScreen} /> 
+            <Route exact path="/volumes"  component={VolumesScreen} />
                              
           </div>
         </HashRouter>

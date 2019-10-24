@@ -45,14 +45,15 @@ export default class Sidebarmenu  extends Component{
                   </Card>
                   <Card>
                     <Accordion.Toggle as={Card.Header} eventKey="1">
-                      Column 1 <i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
+                    Commissions <i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey="1">
                       <Card.Body>
                         <div className="leftnavlinks">
                           <ul>
-                            <li><a href={BASE_URL}><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Column 1</a></li>
-                            <li><a href={BASE_URL}><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Column 2</a></li>
+                            <li><a href="/#/commissions/"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> COMMISSIONS</a></li>
+                            <li><a href="/#/rank/"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> RANK ADVANCEMENT</a></li>
+                            <li><a href="/#/volumes/"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> VOLUMES</a></li>
                           </ul>
                         </div>
                       </Card.Body>

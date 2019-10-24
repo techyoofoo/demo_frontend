@@ -66,15 +66,15 @@ class LoginScreen extends Component {
             console.log(response.data.Message);
           }
           
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
-        .then(function () {
-          // always executed
-        });  
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     })
+    //     .then(function () {
+    //       // always executed
+    //     });  
 
-      //this.props.history.push('/dashboard');
+      this.props.history.push('/dashboard');
       // alert("Form submitted");
     }
 
