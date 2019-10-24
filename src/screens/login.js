@@ -53,7 +53,7 @@ class LoginScreen extends Component {
       }
      debugger;
       // Optionally the request above could also be done as
-      axios.post('http://localhost:3000/authenticate', {
+      axios.post('http://localhost:3000/rogue/yoofoo/usermodeule/authenticate', {
           data: jsonData
       })
         .then(function (response) {

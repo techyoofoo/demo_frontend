@@ -59,7 +59,7 @@ class RegisterScreen extends Component {
       }
      debugger;
       // Optionally the request above could also be done as
-      axios.post('http://localhost:3000/register', {
+      axios.post('http://localhost:3000/rogue/yoofoo/usermodeule/register', {
           data: jsonData
       })
         .then(function (response) {
