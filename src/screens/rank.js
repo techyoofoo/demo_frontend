@@ -153,29 +153,38 @@ class RankScreen extends Component {
       <div>
         <div className="container-fluid">
           {/* <PageHeader headerColor={this.state.background}/> */}
-          <div className="row Header" style={styleBack1}>
-            <div className="col-md-2">
+          <div className="row fixed-header" style={styleBack1}>
+            <div className="col col-sm-6 col-md-2">
               <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
             </div>
-            <div className="col-md-8"></div>
-            <div className="col-md-1">
-              <div className="popover-container"
-                ref={node => {
-                  this.node = node;
-                }}
-              >
-                <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
-                {this.state.popupVisible && (
-                  <div className="popover">
-                    <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
-                  </div>
-                )}
+            <div className="col col-sm-6 col-md-10 textalign changepassword">
+              <div className="innerlinks">
+                <ul>
+                  <li>
+                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                      <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                  </li>
+                  <li>
+                    <div className="popover-container"
+                      ref={node => {
+                        this.node = node;
+                      }}
+                    >
+                      <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                      {this.state.popupVisible && (
+                        <div className="popover">
+                          <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                  <li>
+                    <a href={BASE_URL}>
+                      <span className="glyphicon glyphicon-log-out logouticon"></span>
+                    </a>
+                  </li>
+                </ul>
               </div>
-            </div>
-            <div className="col-md-1 logouticon">
-              <a href={BASE_URL}>
-                <span className="glyphicon glyphicon-log-out"></span>
-              </a>
             </div>
           </div>
           <div>
@@ -302,7 +311,7 @@ class RankScreen extends Component {
                               <div class="media-object pull-left text-danger"><i class="fa fa-times" aria-hidden="true"></i></div>
                               <div class="media-body">
                                 You need at least 100 Personal Volume (PV).
-                
+
                     <div class="space-10"></div>
                                 <div class="progress progress-sm no-margin">
                                   <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
@@ -323,7 +332,9 @@ class RankScreen extends Component {
               </div>
             </div>
           </div>
-          <PageFooter footerColor={this.state.background} />
+          <div className="fixed-footer">
+            <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div >

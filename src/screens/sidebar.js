@@ -35,8 +35,8 @@ export default class Sidebarmenu  extends Component{
                       <Card.Body>
                         <div className="leftnavlinks">
                           <ul>
-                            <li><a><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/install">Install</Link></a></li>
-                            <li><a><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/uninstall"> Uninstall </Link></a></li>
+                            <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/install">Install</Link></li>
+                            <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/uninstall"> Uninstall </Link></li>
                           </ul>
                         </div>
                       </Card.Body>
@@ -51,9 +51,9 @@ export default class Sidebarmenu  extends Component{
                       <Card.Body>
                         <div className="leftnavlinks">
                           <ul>
-                            <li><a href="/#/commissions/"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> COMMISSIONS</a></li>
-                            <li><a href="/#/rank/"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> RANK ADVANCEMENT</a></li>
-                            <li><a href="/#/volumes/"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> VOLUMES</a></li>
+                            <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/commissions">COMMISSIONS</Link></li>
+                            <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/rank">RANK ADVANCEMENT</Link> </li>
+                            <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/volumes">VOLUMES</Link></li>
                           </ul>
                         </div>
                       </Card.Body>

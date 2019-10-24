@@ -153,29 +153,38 @@ class VolumesScreen extends Component {
       <div>
         <div className="container-fluid">
           {/* <PageHeader headerColor={this.state.background}/> */}
-          <div className="row Header" style={styleBack1}>
-            <div className="col-md-2">
+          <div className="row fixed-header" style={styleBack1}>
+            <div className="col col-sm-6 col-md-2">
               <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
             </div>
-            <div className="col-md-8"></div>
-            <div className="col-md-1">
-              <div className="popover-container"
-                ref={node => {
-                  this.node = node;
-                }}
-              >
-                <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
-                {this.state.popupVisible && (
-                  <div className="popover">
-                    <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
-                  </div>
-                )}
+            <div className="col col-sm-6 col-md-10 textalign changepassword">
+              <div className="innerlinks">
+                <ul>
+                  <li>
+                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                      <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                  </li>
+                  <li>
+                    <div className="popover-container"
+                      ref={node => {
+                        this.node = node;
+                      }}
+                    >
+                      <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                      {this.state.popupVisible && (
+                        <div className="popover">
+                          <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                  <li>
+                    <a href={BASE_URL}>
+                      <span className="glyphicon glyphicon-log-out logouticon"></span>
+                    </a>
+                  </li>
+                </ul>
               </div>
-            </div>
-            <div className="col-md-1 logouticon">
-              <a href={BASE_URL}>
-                <span className="glyphicon glyphicon-log-out"></span>
-              </a>
             </div>
           </div>
           <div>
@@ -197,13 +206,46 @@ class VolumesScreen extends Component {
                 <div className="col-md-1"></div>
                 <div className="col-md-10 innercontent">
 
+                  <div class="condensed-grid">
+                    <button type="button" class="btn btn-primary hidden-print">
+                      <i class="fa fa-download"></i> Excel
+                        </button>
+                  </div>
+                  <div className="container gridcontent">
+                    <div className="row gridgraybg">
+                      <div className="col-sm-3 gridbr">Period</div>
+                      <div className="col gridbr">Paid as Title</div>
+                      <div className="col gridbr">PV</div>
+                      <div className="col gridbr">TV</div>
+                      <div className="col gridbr">Level 1 Mentor</div>
+                      <div className="col gridbr">PSQ</div>
+                    </div>
+                    <div className="row gridwtbg">
+                      <div className="col-sm-3 gridbr">October 2019</div>
+                      <div className="col gridbr">Designer</div>
+                      <div className="col gridbr">0.00</div>
+                      <div className="col gridbr">0.00</div>
+                      <div className="col gridbr">0</div>
+                      <div className="col gridbr">0</div>
+                    </div>
+                    <div className="row gridgraybg">
+                      <div className="col-sm-3 gridbr">September 2019</div>
+                      <div className="col gridbr">Designer</div>
+                      <div className="col gridbr">58.74</div>
+                      <div className="col gridbr">2,974.41	</div>
+                      <div className="col gridbr">0</div>
+                      <div className="col gridbr">1</div>
+                    </div>
+                  </div>
 
 
                 </div>
               </div>
             </div>
           </div>
-          <PageFooter footerColor={this.state.background} />
+          <div className="fixed-footer">
+            <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div >

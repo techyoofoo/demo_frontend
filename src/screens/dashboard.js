@@ -85,36 +85,41 @@ class DashboardScreen extends Component {
     return (
       <div>
         <div className="container-fluid">
-          {/* <PageHeader headerColor={this.state.background}/> */}
-          <div className="row Header" style={styleBack1}>
-            <div className="col-md-2">
+          <PageHeader headerColor={this.state.background}/>
+          {/* <div className="row fixed-header" style={styleBack1}>
+            <div className="col col-sm-6 col-md-2">
               <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
             </div>
-            <div className="col-md-6"></div>
-            <div className="col-md-2 changepassword">
-              <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}><Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
-              {/* <Link to="/changepassword" className="btn btn-link"> Change Password  </Link> */}
-            </div>
-            <div className="col-md-1">
-              <div className="popover-container"
-                ref={node => {
-                  this.node = node;
-                }}
-              >
-                <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
-                {this.state.popupVisible && (
-                  <div className="popover">
-                    <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
-                  </div>
-                )}
+            <div className="col col-sm-6 col-md-10 textalign changepassword">
+              <div className="innerlinks">
+                <ul>
+                  <li>
+                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                      <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                  </li>
+                  <li>
+                    <div className="popover-container"
+                      ref={node => {
+                        this.node = node;
+                      }}
+                    >
+                      <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                      {this.state.popupVisible && (
+                        <div className="popover">
+                          <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                  <li>
+                    <a href={BASE_URL}>
+                      <span className="glyphicon glyphicon-log-out logouticon"></span>
+                    </a>
+                  </li>
+                </ul>
               </div>
             </div>
-            <div className="col-md-1 logouticon">
-              <a href={BASE_URL}>
-                <span className="glyphicon glyphicon-log-out"></span>
-              </a>
-            </div>
-          </div>
+          </div> */}
           <Sidebarmenu sidebarCloseProp={this.state.sidebarClose} />
           <div className="row">
             <div id="main">
@@ -383,7 +388,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <a href={BASE_URL}><img src="../../assets/223.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" /></a>
+                                    <a href={BASE_URL}><img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" /></a>
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Kenneth Hess</h4>
@@ -396,7 +401,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <a href={BASE_URL}><img src="../../assets/390.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" /></a>
+                                    <a href={BASE_URL}><img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" /></a>
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Cheryl McCartney</h4>
@@ -409,7 +414,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <a href={BASE_URL}><img src="../../assets/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" /></a>
+                                    <a href={BASE_URL}><img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" /></a>
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Jessica Carpenter</h4>
@@ -422,7 +427,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/392.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Jessica Wilson</h4>
@@ -435,7 +440,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Linda Sadler</h4>
@@ -448,7 +453,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Sharon Fox</h4>
@@ -461,7 +466,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/475.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Sarah Paige-Gruber</h4>
@@ -474,7 +479,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/463.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Carol McLane</h4>
@@ -487,7 +492,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/523.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Regina Andari </h4>
@@ -500,7 +505,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Kimberly Maresch- Roberts</h4>
@@ -513,7 +518,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Narda Hirn</h4>
@@ -526,7 +531,7 @@ class DashboardScreen extends Component {
                               <div className="well well-sm">
                                 <div className="row">
                                   <div className="col-sm-6 col-md-4">
-                                    <img src="../../assets/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
+                                    <img src="../images/441.png" alt="" className="img-rounded img-responsive rounded-circle profileimg" />
                                   </div>
                                   <div className="col-sm-6 col-md-8">
                                     <h4 className="profilehdr">Gail Hopkins</h4>
@@ -548,7 +553,11 @@ class DashboardScreen extends Component {
               </div>
             </div>
           </div>
-          <PageFooter footerColor={this.state.background} />
+          <div className="fixed-footer" style={styleBack1}>
+            <div style={styleBack}>
+            <PageFooter footerColor={this.state.background} />
+            </div>
+          </div>
         </div>
 
       </div>

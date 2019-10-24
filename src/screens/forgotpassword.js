@@ -104,8 +104,9 @@ class ForgotPassword extends Component {
             </div>
             <div className="col-sm-2"></div>
           </div>
-
-          <PageFooter />
+          <div className="fixed-footer">
+            <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div>

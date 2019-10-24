@@ -190,29 +190,38 @@ class CommissionsScreen extends Component {
       <div>
         <div className="container-fluid">
           {/* <PageHeader headerColor={this.state.background}/> */}
-          <div className="row Header" style={styleBack1}>
-            <div className="col-md-2">
+          <div className="row fixed-header" style={styleBack1}>
+            <div className="col col-sm-6 col-md-2">
               <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
             </div>
-            <div className="col-md-8"></div>
-            <div className="col-md-1">
-              <div className="popover-container"
-                ref={node => {
-                  this.node = node;
-                }}
-              >
-                <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
-                {this.state.popupVisible && (
-                  <div className="popover">
-                    <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
-                  </div>
-                )}
+            <div className="col col-sm-6 col-md-10 textalign changepassword">
+              <div className="innerlinks">
+                <ul>
+                  <li>
+                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                      <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                  </li>
+                  <li>
+                    <div className="popover-container"
+                      ref={node => {
+                        this.node = node;
+                      }}
+                    >
+                      <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                      {this.state.popupVisible && (
+                        <div className="popover">
+                          <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                  <li>
+                    <a href={BASE_URL}>
+                      <span className="glyphicon glyphicon-log-out logouticon"></span>
+                    </a>
+                  </li>
+                </ul>
               </div>
-            </div>
-            <div className="col-md-1 logouticon">
-              <a href={BASE_URL}>
-                <span className="glyphicon glyphicon-log-out"></span>
-              </a>
             </div>
           </div>
           <div>
@@ -231,21 +240,7 @@ class CommissionsScreen extends Component {
               </div>
 
               <div className="col-md-12">
-                <div className="col-md-1"></div>
-                <div className="col-md-10 innercontent">
-
-                  {/* <div className="input-group searchbox">
-                    <select className="custom-select" id="inputGroupSelect02">
-                      <option selected>Choose...</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select>
-                    <div className="input-group-append">
-                      <label className="input-group-text" for="inputGroupSelect02">Options</label>
-                    </div>
-                  </div> */}
-
+                <div className="col-md-11 innercontent">
                   <div className="well well-sm searchbox">
                     <div className="row">
                       <div className="col-sm-12">
@@ -259,29 +254,6 @@ class CommissionsScreen extends Component {
                             <option value="/commissions/0/33">Current Commissions - Monthly 33 September 2019 (9/1/2019 - 9/30/2019)</option>
                             <option value="/commissions/0/32">Current Commissions - Monthly 32 August 2019 (8/1/2019 - 8/31/2019)</option>
                             <option value="/commissions/427">Current Commissions - Monthly 31 July 2019 (7/1/2019 - 7/31/2019)</option>
-                            <option value="/commissions/408">Current Commissions - Monthly 30 June 2019 (6/1/2019 - 6/30/2019)</option>
-                            <option value="/commissions/378">Current Commissions - Monthly 29 May 2019 (5/1/2019 - 5/31/2019)</option>
-                            <option value="/commissions/339">Current Commissions - Monthly 28 April 2019 (4/1/2019 - 4/30/2019)</option>
-                            <option value="/commissions/318">Current Commissions - Monthly 27 March 2019 (3/1/2019 - 3/31/2019)</option>
-                            <option value="/commissions/296">Current Commissions - Monthly 26 February 2019 (2/1/2019 - 2/28/2019)</option>
-                            <option value="/commissions/279">Current Commissions - Monthly 25 January 2019 (1/1/2019 - 1/31/2019)</option>
-                            <option value="/commissions/258">Current Commissions - Monthly 24 December 2018 (12/1/2018 - 12/31/2018)</option>
-                            <option value="/commissions/232">Current Commissions - Monthly 23 November 2018 (11/1/2018 - 11/30/2018)</option>
-                            <option value="/commissions/218">Current Commissions - Monthly 22 October 2018 (10/1/2018 - 10/31/2018)</option>
-                            <option value="/commissions/199">Current Commissions - Monthly 21 September 2018 (9/1/2018 - 9/30/2018)</option>
-                            <option value="/commissions/176">Current Commissions - Monthly 20 August 2018 (8/1/2018 - 8/31/2018)</option>
-                            <option value="/commissions/156">Current Commissions - Monthly 19 July 2018 (7/1/2018 - 7/31/2018)</option>
-                            <option value="/commissions/0/18">Current Commissions - Monthly 18 June 2018 (6/1/2018 - 6/30/2018)</option>
-                            <option value="/commissions/0/17">Current Commissions - Monthly 17 May 2018 (5/1/2018 - 5/31/2018)</option>
-                            <option value="/commissions/0/16">Current Commissions - Monthly 16 April 2018 (4/1/2018 - 4/30/2018)</option>
-                            <option value="/commissions/0/15">Current Commissions - Monthly 15 March 2018 (3/1/2018 - 3/31/2018)</option>
-                            <option value="/commissions/0/14">Current Commissions - Monthly 14 February 2018 (2/1/2018 - 2/28/2018)</option>
-                            <option value="/commissions/0/13">Current Commissions - Monthly 13 January 2018 (1/1/2018 - 1/31/2018)</option>
-                            <option value="/commissions/0/12">Current Commissions - Monthly 12 December 2017 (12/1/2017 - 12/31/2017)</option>
-                            <option value="/commissions/0/11">Current Commissions - Monthly 11 November 2017 (11/1/2017 - 11/30/2017)</option>
-                            <option value="/commissions/0/10">Current Commissions - Monthly 10 October 2017 (10/1/2017 - 10/31/2017)</option>
-                            <option value="/commissions/0/9">Current Commissions - Monthly 9 September 2017 (9/1/2017 - 9/30/2017)</option>
-                            <option value="/commissions/0/8">Current Commissions - Monthly 8 August 2017 (8/1/2017 - 8/31/2017)</option>
                           </select>
                           <span className="input-group-btn">
                             <button id="gotonextperiod" className="btn btn-default" type="button">
@@ -356,7 +328,7 @@ class CommissionsScreen extends Component {
                     <div className="row gridgraybg">
                       <div className="gridbr gridno"></div>
                       <div className="col gridbr">From ID#</div>
-                      <div className="col gridbr">From</div>
+                      <div className="col-sm-3 gridbr">From</div>
                       <div className="col gridbr">Paid Level</div>
                       <div className="col gridbr">Source</div>
                       <div className="col gridbr">%</div>
@@ -369,30 +341,30 @@ class CommissionsScreen extends Component {
                       gridData.map(x => {
 
                       })
-                    }                    
-                      {
-                        gridData.map(dt => {
-                          return (
-                            <div className="row gridwtbg">
-                              <div className="gridbr gridno"></div>
-                              {/* <div className="col gridbr">{dt.BonusID}</div>
+                    }
+                    {
+                      gridData.map(dt => {
+                        return (
+                          <div className="row gridwtbg">
+                            <div className="gridbr gridno"></div>
+                            {/* <div className="col gridbr">{dt.BonusID}</div>
                               <div className="col gridbr">{dt.BonusDescription}</div> */}
-                              <div className="col gridbr">{dt.FromCustomerID}</div>
-                              <div className="col gridbr">{dt.FromCustomerName}</div>
-                              {/* <div className="col gridbr">{dt.Level}</div> */}
-                              <div className="col gridbr">{dt.PaidLevel}</div>
-                              {/* 
+                            <div className="col gridbr">{dt.FromCustomerID}</div>
+                            <div className="col-sm-3 gridbr">{dt.FromCustomerName}</div>
+                            {/* <div className="col gridbr">{dt.Level}</div> */}
+                            <div className="col gridbr">{dt.PaidLevel}</div>
+                            {/* 
                               <div className="col gridbr">{dt.OrderID}</div> */}
-                              <div className="col gridbr">{dt.SourceAmount}</div>
-                              <div className="col gridbr">{dt.Percentage}</div>
-                              <div className="col gridbr">{dt.CommissionAmount}</div>
-                            </div>)
-                        })
-                      }                   
+                            <div className="col gridbr">{dt.SourceAmount}</div>
+                            <div className="col gridbr">{dt.Percentage}</div>
+                            <div className="col gridbr">{dt.CommissionAmount}</div>
+                          </div>)
+                      })
+                    }
                     <div className="row gridgraybg">
                       <div className="gridbr gridno"></div>
                       <div className="col gridbr"></div>
-                      <div className="col gridbr"></div>
+                      <div className="col-sm-3 gridbr"></div>
                       <div className="col gridbr"></div>
                       <div className="col gridbr"></div>
                       <div className="col gridbr"></div>
@@ -406,7 +378,9 @@ class CommissionsScreen extends Component {
               </div>
             </div>
           </div>
-          <PageFooter footerColor={this.state.background} />
+          <div className="fixed-footer">
+            <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div >

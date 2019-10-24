@@ -176,57 +176,13 @@ class LoginScreen extends Component {
                 </form>
               </div>
 
-              {/* <div>
-                <div className="formgroup">
-                  <div className="input-group">
-                    <span className="input-group-addon">
-                      <span className="fa fa-user facolor" aria-hidden="true" />
-                    </span>
-                    <input type="text" name="UserName" className="form-control" placeholder="User Name" value={this.state.fields.UserName} onChange={this.handleChange} />
-                    <div className="errorMsg">{this.state.errors.UserName}</div>
-                  </div>
-                </div>
-                <div className="wrap-input100 validate-input m-b-23">
-                    <span className="label-input100">Username</span>
-                    <input className="input100" type="text" name="username" placeholder="Type your username" value={this.state.fields.UserName} onChange={this.handleChange} />
-                    <span className="focus-input100" data-symbol="&#xf206;"></span>
-
-                  </div>
-                  <div className="errorMsg">{this.state.errors.UserName}</div>
-                <div className="formgroup">
-                  <div className="input-group">
-                    <span className="input-group-addon">
-                      <span className="fa fa-key facolor" aria-hidden="true" />
-                    </span>
-                    <input type="Password" name="password" className="form-control" placeholder="Password" value={this.state.fields.password} onChange={this.handleChange} />
-                    <div className="errorMsg">{this.state.errors.password}</div>
-                  </div>
-                  <div className="form-group text-center">
-                    <div className="floatcheck">
-                      <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                    </div>
-                    <div className="floatl cpadding1"> Remember me</div>
-                    <div className="floatr">
-                      <a href="#top" className="btn btn-link"> Forgot Password</a>
-                    </div>
-                  </div>
-                </div>
-                <div className="form-group text-center btnmrgn">
-                  <button type="submit" className="btn btn-lg btn-primary btn-block mb-1 btnshadow" onClick={this.submituserRegistrationForm}>
-                    LOG IN
-                        </button>
-                  <div className="floatl cpadding1"> Don't have an account? <Link to="/register" className="btn btn-link">Register Here</Link></div>
-
-                </div>
-              </div> */}
-
-
-
             </div>
             <div className="col-sm-2"></div>
 
           </div>
-          <PageFooter />
+          <div className="fixed-footer">
+          <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div>

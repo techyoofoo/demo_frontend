@@ -1,12 +1,41 @@
 
+    .container{
+        width: 80%;
+        margin: 0 auto; /* Center the DIV horizontally */
+    }
+    .fixed-header, .fixed-footer{
+        width: 100%;
+        position: fixed;        
+        background: #296091;
+        padding: 0px 0;
+        color: #fff;
+        z-index: 2;
+    }
+    .fixed-header{
+        top: 0;
+    }
+    .fixed-footer{
+        bottom: 0;
+    } 
 body{
     font-size: 1.4rem !important;
+    padding-top: 65px;
+    padding-bottom: 40px;
 }
 .btn {
     font-size: 1.4rem !important;
 }
+p{
+    text-align: justify;
+    line-height: 23px;
+    padding-top: 15px;
+}
 h3{
-    padding-top: 4px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+}
+.h3header{
+    padding-top: 35px;
 }
 .form-control {   
     height: auto !important;
@@ -138,13 +167,14 @@ h3{
 }
 .content{
     background-color: #fff;
-    min-height: 659px;
+    min-height: 653px;
     padding-top: 0px;
 }
 .innercontent{
     background-color: #fff;
-    min-height: 600px;
+    min-height: 500px;
     padding-top: 0px;
+    z-index: 00;
 }
 .sidebarhdr{
     padding-top: 13px;
@@ -166,6 +196,7 @@ h3{
 .navlinks{
     padding: 0;
     margin: 0;
+    float: right;
 }
 .navlinks ul{
     padding: 25px 0 0 0;
@@ -186,6 +217,34 @@ h3{
     text-decoration: none;
     list-style-type: none;
 }
+/*-------------------*/
+
+.innerlinks{
+    padding: 0;
+    margin: 0;
+    float: right;
+}
+.innerlinks ul{
+    padding: 0px 0 0 0;
+    margin: 0;
+}
+.innerlinks ul li{
+    padding: 0 0px 0 0px;
+    margin: 0;
+    float: left;
+    font-size: 15px;
+    text-decoration: none;
+    list-style-type: none;
+}
+.innerlinks ul li a{
+    padding: 0 10px 0 10px;
+    margin: 0;
+    color: #fff;
+    text-decoration: none;
+    list-style-type: none;
+}
+
+/*------------------------*/
 .modal-content{
     background-color: #fff;
     -webkit-box-shadow: 0 10px 6px -6px #777;
@@ -373,8 +432,8 @@ h3{
 }
 .logouticon{
     font-size: 23px;
-    padding-top: 15px;
-    padding-right: 25px;
+    padding-top: 0px;
+    padding-right: 0px;
     text-align: right;
 }
 .logouticon a{
@@ -404,8 +463,8 @@ h3{
   }
   
   .popover-container {
-    width: 200px;
-    margin: 18px auto;
+    width: 180px;
+    margin: 0px auto;
     position: relative;
   }
   .sketch-picker {
@@ -414,12 +473,12 @@ h3{
 .sidenav {
     position: fixed;
     z-index: 1;
-    top: 79px;
+    top: 60px;
     left: 0;
     transition: 0.5s;    
     padding-top: 0px;
     background-color: #f1f1f1;
-    min-height: 650px;
+    min-height: 675px;
     border-right: solid 1px #ccc;
   }
 
@@ -462,7 +521,7 @@ h3{
     color: #4d4d4d;
     text-align: left;
     background-color: #fff;
-    margin-top: 19px;
+    margin-top: 0px;
     font-size: 12px !important;
     min-width: 120px;
 }
@@ -470,8 +529,9 @@ h3{
     font-size: 14px !important;
     padding-top: 4px !important;
 }
-.texyalign{
+.textalign{
     text-align: right;
+    float: right;
 }
 /* .input {
     position: relative;
@@ -795,7 +855,7 @@ h3{
 .profileimg{
     width: 50px;
     height: 50px;;
-   margin: 10px 0 0 15px;
+   margin: 5px 0 5px 15px;
 }
 .profilehdr{
     font-size: 12px;
@@ -854,12 +914,12 @@ h3{
     margin-bottom: 0px;
 }
 .gridcontent{
-    min-height: 500px;
+    /* min-height: 700px; */
     border:solid 1px #ccc;
     padding-left: 0;
 }
 .searchbox{
-    margin-top: 50px;
+    margin-top: 20px;
     padding: 10px 10px 10px 0px;
 }
 dl {
@@ -910,6 +970,14 @@ dd {
     width: 2% !important;
 } */
 
+.condensed-grid{
+    width: 100%;
+    background-color: rgb(235, 235, 235);
+    text-align: right;
+    margin-top: 10px;
+    padding: 10px;   
+    border: solid 1px #ccc;
+}
 
 /*-------------------*/
 
@@ -920,9 +988,37 @@ dd {
   
   @media screen  and (max-width: 979px) /* Tablet */ {
     .flag-select {         
-        margin-top: 0px;
-        
+        margin-top: 0px;        
     }
+    .popover-container {      
+        margin: 0px;
+        text-align: left;       
+      }
+      .changepassword{
+        padding-top: 5px;
+        text-align: left;
+    }
+    .navlinks ul{
+        padding: 5px 0 0 0;
+        line-height: 30px;
+    }
+    .flag-select .selected--flag--option{
+        font-size: 14px !important;
+        padding-top: 0px !important;
+    }
+    .currentbg{
+        margin: 2px 2px 0 1px;       
+        padding-bottom: 15px;       
+    }
+    .sidebarhdr{
+        padding-top: 45px;
+        padding-bottom: 13px;
+        padding-left: 10px;      
+    }
+    .sidenav {      
+        top: 97px;       
+        min-height: 667px;       
+      }
   }
   
   @media screen and (max-width: 500px) /* Mobile */ {

@@ -168,13 +168,14 @@ class RegisterScreen extends Component {
       <div>
         <div className="container-fluid">
           <HomeHeaderscreen />
+          <div className="">
           <div className="row Loginvbg container-login100">
 
             <div className="col-sm-4">
 
               <div className="wrap-login100 p-l-55 p-r-55 p-t-25 p-b-25">
                 <form className="login100-form validate-form">
-                  <span className="login100-form-title p-b-35">
+                  <span className="login100-form-title p-b-17">
                     Register
 			        		</span>
 
@@ -230,7 +231,10 @@ class RegisterScreen extends Component {
               </div>
             </div>
           </div>
-          <PageFooter />
+          </div>
+          <div className="fixed-footer">
+          <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div>

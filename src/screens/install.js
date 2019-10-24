@@ -47,11 +47,11 @@ class InstallScreen extends Component {
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
-    this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
+    this.submitinstallForm = this.submitinstallForm.bind(this);
 
     this.state = {
       popupVisible: false,
-      show: false, background: '#296091',     
+      show: false, background: '#296091',
       open: false,
       sidebarClose: true,
       values: [],
@@ -60,34 +60,34 @@ class InstallScreen extends Component {
       // colorCode:''
     };
   }
-//----------------------Side Bar --------------//
+  //----------------------Side Bar --------------//
 
-componentDidMount() {
-  document.getElementById("mySidenav").style.width = "200px";
-  document.getElementById("main").style.marginLeft = "200px";
-}
-SideNavBarcloseClick = () => {
-  document.getElementById("mySidenav").style.width = "0";
-  document.getElementById("main").style.marginLeft = "0";
-}
-SideNvaBaropenClick = () => {
-  if (!this.state.sidebarClose) {
-    this.setState({ sidebarClose: true });
+  componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
   }
-  else {
-    this.setState({ sidebarClose: false })
+  SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
     document.getElementById("main").style.marginLeft = "0";
   }
-}
+  SideNvaBaropenClick = () => {
+    if (!this.state.sidebarClose) {
+      this.setState({ sidebarClose: true });
+      document.getElementById("mySidenav").style.width = "200px";
+      document.getElementById("main").style.marginLeft = "200px";
+    }
+    else {
+      this.setState({ sidebarClose: false })
+      document.getElementById("mySidenav").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+    }
+  }
 
-handleChangeComplete = (color) => {
-  this.setState({ background: color.hex });
-};
+  handleChangeComplete = (color) => {
+    this.setState({ background: color.hex });
+  };
 
-//-----------------Form validate------------//
+  //-----------------Form validate------------//
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
@@ -95,14 +95,13 @@ handleChangeComplete = (color) => {
       fields
     });
   }
-  submituserRegistrationForm(e) {
+  submitinstallForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
       let fields = {};
       fields["FirstName"] = "";
-      fields["UserName"] = "";
-      fields["password"] = "";
-      fields["address"] = "";
+      fields["SearchData"] = "";
+      fields["Description"] = "";
       this.setState({ fields: fields });
       alert("Form submitted");
     }
@@ -136,27 +135,16 @@ handleChangeComplete = (color) => {
       }
     }
 
-    if (!fields["password"]) {
+    if (!fields["Description"]) {
       formIsValid = false;
-      errors["password"] = "*Please enter your password.";
+      errors["Description"] = "*Please enter your Description.";
     }
 
-    if (typeof fields["password"] !== "undefined") {
-      if (!fields["password"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
-        formIsValid = false;
-        errors["password"] = "*Please enter secure and strong password.";
-      }
-    }
-    if (!fields["address"]) {
-      formIsValid = false;
-      errors["address"] = "*Please enter your address.";
-    }
-
-    if (typeof fields["address"] !== "undefined") {
+    if (typeof fields["Description"] !== "undefined") {
       var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-      if (!pattern.test(fields["address"])) {
+      if (!pattern.test(fields["Description"])) {
         formIsValid = false;
-        errors["address"] = "*Please enter valid address.";
+        errors["Description"] = "*Please enter Description.";
       }
     }
     this.setState({
@@ -164,30 +152,30 @@ handleChangeComplete = (color) => {
     });
     return formIsValid;
   }
-//-----------------End Form validate------------//
+  //-----------------End Form validate------------//
 
 
-handleClick = () => {
-  if (!this.state.popupVisible) {
-    // attach/remove event handler
-    document.addEventListener("click", this.handleOutsideClick, false);
-  } else {
-    document.removeEventListener("click", this.handleOutsideClick, false);
-  }
+  handleClick = () => {
+    if (!this.state.popupVisible) {
+      // attach/remove event handler
+      document.addEventListener("click", this.handleOutsideClick, false);
+    } else {
+      document.removeEventListener("click", this.handleOutsideClick, false);
+    }
 
-  this.setState(prevState => ({
-    popupVisible: !prevState.popupVisible
-  }));
-};
+    this.setState(prevState => ({
+      popupVisible: !prevState.popupVisible
+    }));
+  };
 
-handleOutsideClick = e => {
-  // ignore clicks on the component itself
-  if (this.node.contains(e.target)) {
-    return;
-  }
+  handleOutsideClick = e => {
+    // ignore clicks on the component itself
+    if (this.node.contains(e.target)) {
+      return;
+    }
 
-  this.handleClick();
-};
+    this.handleClick();
+  };
   render() {
     const BASE_URL = '#'
     const { open } = this.state;
@@ -203,29 +191,42 @@ handleOutsideClick = e => {
       <div>
         <div className="container-fluid">
           {/* <PageHeader />          */}
-          <div className="row Header" style={styleBack1}>
-            <div className="col-md-2">
-              <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
-            </div>
-            <div className="col-md-8"></div>
-            <div className="col-md-1">
-              <div className="popover-container"
-                ref={node => {
-                  this.node = node;
-                }}
-              >
-                <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
-                {this.state.popupVisible && (
-                  <div className="popover">
-                    <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
-                  </div>
-                )}
+          <div className="row fixed-header" style={styleBack1}>
+            <div className="col col-sm-6 col-md-2">
+              <div className="logo" style={styleBack}> 
+              <Link to="/dashboard">
+                <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
+              </Link>
               </div>
             </div>
-            <div className="col-md-1 logouticon">
-              <a href={BASE_URL}>
-                <span className="glyphicon glyphicon-log-out"></span>
-              </a>
+            <div className="col col-sm-6 col-md-10 textalign changepassword">
+              <div className="innerlinks">
+                <ul>
+                  <li>
+                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                      <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                  </li>
+                  <li>
+                    <div className="popover-container"
+                      ref={node => {
+                        this.node = node;
+                      }}
+                    >
+                      <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                      {this.state.popupVisible && (
+                        <div className="popover">
+                          <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                  <li>
+                    <a href={BASE_URL}>
+                      <span className="glyphicon glyphicon-log-out logouticon"></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <div>
@@ -244,56 +245,58 @@ handleOutsideClick = e => {
               </div>
 
               <div className="col-md-12">
-              <div className="col-md-2"></div>
-                <div className="col-md-4 innercontent">                 
-                    <div className="form-group formrgn1">
-                      <div className="input-group">
-                        <span className="input-group-addon">
-                          <span className="fa fa-user facolor" aria-hidden="true" />
-                        </span>
-                        <input type="text" name="FirstName" className="form-control" placeholder="First Name" value={this.state.fields.FirstName} onChange={this.handleChange} />
-                      </div>
-                      <div className="errorMsg">{this.state.errors.FirstName}</div>
+                <div className="col-md-2"></div>
+                <div className="col-md-4 innercontent">
+                  <div className="form-group formrgn1">
+                    <div className="input-group">
+                      <span className="input-group-addon">
+                        <span className="fa fa-user facolor" aria-hidden="true" />
+                      </span>
+                      <input type="text" name="FirstName" className="form-control" placeholder="First Name" value={this.state.fields.FirstName} onChange={this.handleChange} />
                     </div>
-                    <div className="form-group formrgn1">
-                      <div className="input-group">
-                        <div class="custom-file overflow-hidden rounded-pill mb-1">
-                          <input id="customFile" type="file" class="custom-file-input rounded-pill" />
-                          <label for="customFile" class="custom-file-label rounded-pill">Choose file</label>
-                        </div>
+                    <div className="errorMsg">{this.state.errors.FirstName}</div>
+                  </div>
+                  <div className="form-group formrgn1">
+                    <div className="input-group">
+                      <div class="custom-file overflow-hidden rounded-pill mb-1">
+                        <input id="customFile" type="file" class="custom-file-input rounded-pill" />
+                        <label for="customFile" class="custom-file-label rounded-pill">Choose file</label>
                       </div>
                     </div>
-                    <div className="form-group formrgn1">
-                      <div className="input-group">
-                        <div className="select_left App">
-                          <Multiselect options={data} onSelectOptions={this.result} class="form-control" value={this.state.fields.SearchData} onChange={this.handleChange} />
+                  </div>
+                  <div className="form-group formrgn1">
+                    <div className="input-group">
+                      <div className="select_left App">
+                        <Multiselect options={data} onSelectOptions={this.result} class="form-control" value={this.state.fields.SearchData} onChange={this.handleChange} />
 
-                        </div>
-                        <div className="select_right"><i className="fa fa-caret-down drparw" aria-hidden="true"></i></div>
-                        <div className="errorMsg">{this.state.errors.SearchData}</div>
                       </div>
+                      <div className="select_right"><i className="fa fa-caret-down drparw" aria-hidden="true"></i></div>
+                      <div className="errorMsg">{this.state.errors.SearchData}</div>
                     </div>
-                    <div className="form-group formrgn1">
-                      <div className="input-group">
-                        <span className="input-group-addon">
-                          <span className="fa fa-address-card facolor" aria-hidden="true" />
-                        </span>
-                        <textarea className="form-control" placeholder="Address" rows="4" cols="50" value={this.state.fields.address} onChange={this.handleChange}>
-                        </textarea>
-                        <div className="errorMsg">{this.state.errors.address}</div>
-                      </div>
+                  </div>
+                  <div className="form-group formrgn1">
+                    <div className="input-group">
+                      <span className="input-group-addon">
+                        <span className="fa fa-address-card facolor" aria-hidden="true" />
+                      </span>
+                      <textarea className="form-control" placeholder="Description" rows="4" cols="50" value={this.state.fields.Description} onChange={this.handleChange}>
+                      </textarea>
+                      <div className="errorMsg">{this.state.errors.Description}</div>
                     </div>
+                  </div>
 
-                    <div className="form-group text-center">
-                      <button type="submit" className="btn btn-lg btn-primary btn-block mb-1 btnshadow" onClick={this.submituserRegistrationForm}>
-                        SUBMIT</button>
-                    </div>
-                 
+                  <div className="form-group text-center">
+                    <button type="submit" className="btn btn-lg btn-primary btn-block mb-1 btnshadow" onClick={this.submitinstallForm}>
+                      SUBMIT</button>
+                  </div>
+
                 </div>
               </div>
             </div>
           </div>
-          <PageFooter footerColor={this.state.background}/>
+          <div className="fixed-footer">
+            <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div>

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import '../styles/styles.css';
+import { Link } from "react-router-dom";
 import { SketchPicker } from 'react-color';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
+import '../styles/styles.css';
 
 const gbHeaderColor = localStorage.getItem("headerColor");
 export class PageHeader extends Component {
@@ -50,7 +51,49 @@ export class PageHeader extends Component {
     // gbHeaderColor = this.state.background;
     return (
       <div>
-        <div className="row Header" style={styleBack1}>
+
+        <div className="row fixed-header" style={styleBack1}>
+          <div className="col col-sm-6 col-md-2">
+            <div className="logo" style={styleBack}>
+              <Link to="/dashboard">
+                <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
+              </Link>
+            </div>
+          </div>
+          <div className="col col-sm-6 col-md-10 textalign changepassword">
+            <div className="innerlinks">
+              <ul>
+                <li>
+                  <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                    <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                </li>
+                <li>
+                  <div className="popover-container"
+                    ref={node => {
+                      this.node = node;
+                    }}
+                  >
+                    <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                    {this.state.popupVisible && (
+                      <div className="popover">
+                        <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                      </div>
+                    )}
+                  </div>
+                </li>
+                <li>
+                  <a href={BASE_URL}>
+                    <span className="glyphicon glyphicon-log-out logouticon"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+
+        {/* <div className="row fixed-header" style={styleBack1}>
+        <div className="innerdv">
           <div className="col-md-2">
             <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
           </div>
@@ -74,14 +117,14 @@ export class PageHeader extends Component {
                 </div>
               )}
             </div>
-          </div>
-          {/* <PageFooter footerColor={this.state.background}/> */}
+          </div>         
           <div className="col-md-1 logouticon">
             <a href={BASE_URL}>
               <span className="glyphicon glyphicon-log-out"></span>
             </a>
           </div>
         </div>
+        </div> */}
       </div>
     )
   }
@@ -97,9 +140,9 @@ export class PageFooter extends Component {
     }
     return (
       <div>
-        <div className="row">
-          <div className="col-md-12 Footer" style={footerBackgroundColor}>Copyright © 2019 YooFoo All Rights Reserved</div>
-        </div>
+       <div className="row fixed-footer">
+            <div className="col-md-12 Footer" onClick = {this.props.handler}>Copyright © 2019 Rogue All Rights Reserved</div>
+          </div>
       </div>
     )
   }

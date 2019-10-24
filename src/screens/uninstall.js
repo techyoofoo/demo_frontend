@@ -92,9 +92,7 @@ class UninstallScreen extends Component {
       let fields = {};
 
       fields["FirstName"] = "";
-      fields["UserName"] = "";
-      fields["password"] = "";
-      fields["address"] = "";
+      fields["Description"] = "";
       this.setState({ fields: fields });
       alert("Form submitted");
     }
@@ -118,17 +116,17 @@ class UninstallScreen extends Component {
       }
     }
 
-    if (!fields["address"]) {
+    if (!fields["Description"]) {
       formIsValid = false;
-      errors["address"] = "*Please enter your address.";
+      errors["Description"] = "*Please enter your Description.";
     }
 
-    if (typeof fields["address"] !== "undefined") {
-      //regular expression for address validation
+    if (typeof fields["Description"] !== "undefined") {
+      //regular expression for Description validation
       var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-      if (!pattern.test(fields["address"])) {
+      if (!pattern.test(fields["Description"])) {
         formIsValid = false;
-        errors["address"] = "*Please enter valid address.";
+        errors["Description"] = "*Please enter Description.";
       }
     }
 
@@ -153,29 +151,38 @@ class UninstallScreen extends Component {
       <div>
         <div className="container-fluid">
           {/* <PageHeader headerColor={this.state.background}/> */}
-          <div className="row Header" style={styleBack1}>
-            <div className="col-md-2">
+          <div className="row fixed-header" style={styleBack1}>
+            <div className="col col-sm-6 col-md-2">
               <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
             </div>
-            <div className="col-md-8"></div>
-            <div className="col-md-1">
-              <div className="popover-container"
-                ref={node => {
-                  this.node = node;
-                }}
-              >
-                <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
-                {this.state.popupVisible && (
-                  <div className="popover">
-                    <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
-                  </div>
-                )}
+            <div className="col col-sm-6 col-md-10 textalign changepassword">
+              <div className="innerlinks">
+                <ul>
+                  <li>
+                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                      <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                  </li>
+                  <li>
+                    <div className="popover-container"
+                      ref={node => {
+                        this.node = node;
+                      }}
+                    >
+                      <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                      {this.state.popupVisible && (
+                        <div className="popover">
+                          <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                  <li>
+                    <a href={BASE_URL}>
+                      <span className="glyphicon glyphicon-log-out logouticon"></span>
+                    </a>
+                  </li>
+                </ul>
               </div>
-            </div>
-            <div className="col-md-1 logouticon">
-              <a href={BASE_URL}>
-                <span className="glyphicon glyphicon-log-out"></span>
-              </a>
             </div>
           </div>
           <div>
@@ -195,37 +202,39 @@ class UninstallScreen extends Component {
 
               <div className="col-md-12">
                 <div className="col-md-2"></div>
-                <div className="col-md-4 innercontent">                                      
-                        <div className="form-group formrgn1">
-                          <div className="input-group">
-                            <span className="input-group-addon">
-                              <span className="fa fa-user facolor" aria-hidden="true" />
-                            </span>
-                            <input type="text" name="FirstName" className="form-control" placeholder="First Name" value={this.state.fields.FirstName} onChange={this.handleChange} />
-                          </div>
-                          <div className="errorMsg">{this.state.errors.FirstName}</div>
-                          <div>
-                          </div>
-                        </div>
-                        <div className="form-group formrgn1">
-                          <div className="input-group">
-                            <span className="input-group-addon">
-                              <span className="fa fa-address-card facolor" aria-hidden="true" />
-                            </span>
-                            <textarea className="form-control" placeholder="Address" rows="4" cols="50" value={this.state.fields.address} onChange={this.handleChange}>
-                            </textarea>
-                            <div className="errorMsg">{this.state.errors.address}</div>
-                          </div>
-                        </div>
-                        <div className="form-group text-center">
-                          <button type="submit" className="btn btn-lg btn-primary btn-block mb-1 btnshadow" onClick={this.submituserRegistrationForm}>
-                            SUBMIT</button>
-                        </div>                    
-                    </div>                                               
+                <div className="col-md-4 innercontent">
+                  <div className="form-group formrgn1">
+                    <div className="input-group">
+                      <span className="input-group-addon">
+                        <span className="fa fa-user facolor" aria-hidden="true" />
+                      </span>
+                      <input type="text" name="FirstName" className="form-control" placeholder="First Name" value={this.state.fields.FirstName} onChange={this.handleChange} />
+                    </div>
+                    <div className="errorMsg">{this.state.errors.FirstName}</div>
+                    <div>
+                    </div>
+                  </div>
+                  <div className="form-group formrgn1">
+                    <div className="input-group">
+                      <span className="input-group-addon">
+                        <span className="fa fa-address-card facolor" aria-hidden="true" />
+                      </span>
+                      <textarea className="form-control" placeholder="Description" rows="4" cols="50" value={this.state.fields.Description} onChange={this.handleChange}>
+                      </textarea>
+                      <div className="errorMsg">{this.state.errors.Description}</div>
+                    </div>
+                  </div>
+                  <div className="form-group text-center">
+                    <button type="submit" className="btn btn-lg btn-primary btn-block mb-1 btnshadow" onClick={this.submituserRegistrationForm}>
+                      SUBMIT</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <PageFooter footerColor={this.state.background}/>
+          <div className="fixed-footer">
+            <PageFooter footerColor={this.state.background} />
+          </div>
         </div>
 
       </div >
