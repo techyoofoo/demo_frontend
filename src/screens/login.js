@@ -51,34 +51,25 @@ class LoginScreen extends Component {
           "Password": this.state.fields.password
         }
       }
-     debugger;
-      // Optionally the request above could also be done as
       axios.post('http://localhost:3000/rogue/yoofoo/usermodeule/authenticate', {
-          data: jsonData
+        data: jsonData
       })
         .then(function (response) {
-          if(response.data.Message.Result !==undefined && response.data.Message.Result[0].Status==="Success")
-          {
+          if (response.data.Message.Result !== undefined && response.data.Message.Result[0].Status === "Success") {
             //this.props.history.push('/dashboard');
-            window.location='/dashboard';
+            window.location = '/dashboard';
           }
-          else{
+          else {
             console.log(response.data.Message);
           }
-          
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //     })
-    //     .then(function () {
-    //       // always executed
-    //     });  
-
-      this.props.history.push('/dashboard');
-      // alert("Form submitted");
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        this.props.history.push('/dashboard');
     }
-
   }
+
   validateForm() {
 
     let fields = this.state.fields;
@@ -153,7 +144,7 @@ class LoginScreen extends Component {
                   <div className="errorMsg">{this.state.errors.password}</div>
 
                   <div className="text-right p-t-8 p-b-31">
-                  <Link to="/forgotpassword" className="btn btn-link">  Forgot password? </Link>                   
+                    <Link to="/forgotpassword" className="btn btn-link">  Forgot password? </Link>
                   </div>
 
                   <div className="container-login100-form-btn">
@@ -170,8 +161,8 @@ class LoginScreen extends Component {
 				        		</span>
 
                     <a href="#" className="txt2">
-                    <Link to="/register" className="btn btn-link"> Sign Up </Link>
-				        		</a>
+                      <Link to="/register" className="btn btn-link"> Sign Up </Link>
+                    </a>
                   </div>
                 </form>
               </div>
@@ -181,7 +172,7 @@ class LoginScreen extends Component {
 
           </div>
           <div className="fixed-footer">
-          <PageFooter footerColor={this.state.background} />
+            <PageFooter footerColor={this.state.background} />
           </div>
         </div>
 
