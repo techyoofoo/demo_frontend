@@ -38,12 +38,14 @@ class CommissionsScreen extends Component {
       SummaryCommissions: {},
       RealTimeCommissions: {},
       HistoricalBonusDetails: {},
-      BonusTotal: '',
+      Total: '',
       CadSum: '',
       UsdSum: '',
       TeamSum: '',
       SavvySum: '',
-      Volumes: {}
+      Volumes: {},
+      RealTimeCommissionDetails: {},
+      RealTimeCommissions: []
     };
   }
 
@@ -183,25 +185,42 @@ class CommissionsScreen extends Component {
       .get(url)
       .then((response) => {
         var amount = 0, usdSum = 0, cadSum = 0, teamSum = 0, savvySum = 0;
-        var bonusTotalVal = '', cadSumVal = '', usdSumVal = '', teamSumVal = '', savvySumVal = '';
-        const historicalBonusDetails = response.data.HistoricalBonusDetails;
-        const allHistoricalBonusDetails = historicalBonusDetails.DeferredCommission.concat(historicalBonusDetails.SponsorBonus, historicalBonusDetails.CoachingBonus, historicalBonusDetails.CuturierBonus)
+        var totalVal = '', cadSumVal = '', usdSumVal = '', teamSumVal = '', savvySumVal = '';
+        var historicalBonusDetails = response.data.HistoricalBonusDetails;
+        var allHistoricalBonusDetails = [];
+        if (JSON.stringify(historicalBonusDetails) !== '{}') {
+          allHistoricalBonusDetails = historicalBonusDetails.DeferredCommission.concat(historicalBonusDetails.SponsorBonus, historicalBonusDetails.CoachingBonus, historicalBonusDetails.CuturierBonus)
+        }
+        var realTimeCommissionDetails = response.data.RealTimeCommissionDetails;
+        var allRealTimeCommissionDetails = [];
+        if (JSON.stringify(realTimeCommissionDetails) !== '{}') {
+          var rtGrid = {
+            DeferredCommission: realTimeCommissionDetails.DeferredCommission.filter((data, idx) => idx < 2),
+            SponsorBonus: realTimeCommissionDetails.SponsorBonus.filter((data, idx) => idx < 2),
+            CoachingBonus: realTimeCommissionDetails.CoachingBonus.filter((data, idx) => idx < 2),
+            CuturierBonus: realTimeCommissionDetails.CuturierBonus.filter((data, idx) => idx < 2),
+          }
+          realTimeCommissionDetails = rtGrid;
+          allRealTimeCommissionDetails = realTimeCommissionDetails.DeferredCommission.concat(realTimeCommissionDetails.SponsorBonus, realTimeCommissionDetails.CoachingBonus, realTimeCommissionDetails.CuturierBonus)
+        }
+
         if (allHistoricalBonusDetails.length > 0) {
-          amount += allHistoricalBonusDetails.map(item => item.CommissionAmount).reduce((prev, next) => prev + next);
+
           allHistoricalBonusDetails.forEach(function (bonus) {
+            amount += Number(bonus.CommissionAmount);
             if (bonus.BonusID == 1) {
               if (true) {
-                cadSum += bonus.CommissionAmount;
+                cadSum += Number(bonus.CommissionAmount);
               }
               else {
-                usdSum += bonus.CommissionAmount;
+                usdSum += Number(bonus.CommissionAmount);
               }
             }
             else if (bonus.BonusID == 4) {
-              savvySum += bonus.CommissionAmount;
+              savvySum += Number(bonus.CommissionAmount);
             }
             else {
-              teamSum += bonus.CommissionAmount;
+              teamSum += Number(bonus.CommissionAmount);
             }
           });
 
@@ -215,36 +234,90 @@ class CommissionsScreen extends Component {
             if (cadSum > 0 && usdSum > 0) {
               cadSumVal = "$" + cadSum + " CAD";
               usdSumVal = "$" + usdSum + " USD";
-              bonusTotalVal = "$" + cadSum + " CAD $" + usdSum + " USD";
+              totalVal = "$" + cadSum + " CAD $" + usdSum + " USD";
             }
             else if (cadSum > 0) {
               cadSumVal = `$` + cadSum + ` CAD`;
-              bonusTotalVal = `$` + cadSum + ` CAD`;
+              totalVal = `$` + cadSum + ` CAD`;
             }
             else {
               cadSumVal = "$" + cadSum + " CAD";
               usdSumVal = "$" + usdSum + " USD";
-              bonusTotalVal = "$" + usdSum + " USD";
+              totalVal = "$" + usdSum + " USD";
             }
           }
           else {
-            bonusTotalVal = "$" + amount + " USD";
+            totalVal = "$" + amount + " USD";
           }
           teamSumVal = "$" + teamSum + " USD";
           if (savvySum > 0) {
             savvySumVal = "$" + savvySum + " USD";
           }
         }
+        else if (allRealTimeCommissionDetails.length > 0) {
+
+          allRealTimeCommissionDetails.forEach(function (bonus) {
+            amount += Number(bonus.CommissionAmount);
+            if (bonus.BonusID == 1) {
+              if (true) {
+                cadSum += Number(bonus.CommissionAmount);
+              }
+              else {
+                usdSum += Number(bonus.CommissionAmount);
+              }
+            }
+            else if (bonus.BonusID == 4) {
+              savvySum += Number(bonus.CommissionAmount);
+            }
+            else {
+              teamSum += Number(bonus.CommissionAmount);
+            }
+          });
+
+          amount = amount.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          usdSum = usdSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          cadSum = cadSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          teamSum = teamSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          savvySum = savvySum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+          if (amount + .01 >= (cadSum + usdSum) && amount - .01 <= (cadSum + usdSum)) {
+            if (cadSum > 0 && usdSum > 0) {
+              cadSumVal = "$" + cadSum + " CAD";
+              usdSumVal = "$" + usdSum + " USD";
+              totalVal = "$" + cadSum + " CAD $" + usdSum + " USD";
+            }
+            else if (cadSum > 0) {
+              cadSumVal = `$` + cadSum + ` CAD`;
+              totalVal = `$` + cadSum + ` CAD`;
+            }
+            else {
+              cadSumVal = "$" + cadSum + " CAD";
+              usdSumVal = "$" + usdSum + " USD";
+              totalVal = "$" + usdSum + " USD";
+            }
+          }
+          else {
+            totalVal = "$" + amount + " USD";
+          }
+          teamSumVal = "$" + teamSum + " USD";
+          if (savvySum > 0) {
+            savvySumVal = "$" + savvySum + " USD";
+          }
+        }
+
+
         this.setState({
           HistoricalCommission: response.data.HistoricalCommission,
           SummaryCommissions: response.data.SummaryCommissions,
           HistoricalBonusDetails: historicalBonusDetails,
-          BonusTotal: bonusTotalVal,
+          RealTimeCommissionDetails: realTimeCommissionDetails,
+          Total: totalVal,
           CadSum: cadSumVal,
           UsdSum: usdSumVal,
           TeamSum: teamSumVal,
           SavvySum: savvySumVal,
           Volumes: response.data.Volumes,
+          RealTimeCommissions: response.data.RealTimeCommissions
         });
       })
       .catch(error => this.setState({ error }));
@@ -265,7 +338,7 @@ class CommissionsScreen extends Component {
     }
 
     const { isLoadingPeriodList, periodList } = this.state
-    const { HistoricalBonusDetails, Volumes, SummaryCommissions, HistoricalCommission, BonusTotal,
+    const { HistoricalBonusDetails, Volumes, SummaryCommissions, RealTimeCommissions, RealTimeCommissionDetails, HistoricalCommission, Total,
       SavvySum, CadSum, UsdSum, TeamSum } = this.state
 
     return (
@@ -422,6 +495,73 @@ class CommissionsScreen extends Component {
                           <div></div>
                         )}
 
+
+                      {(RealTimeCommissions.length > 0) ? (
+                        <div>
+                          <h4 className="header_m">{RealTimeCommissions[0].Commission.PeriodDescription} Commissions</h4>
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <div className="metric metric-sm">
+                                <dl className="dl-metric">
+                                  {TeamSum !== '' ? <div><dt id="teamLabel"><strong>Team Commissions</strong></dt>
+                                    <dd id="teamID" >{TeamSum}</dd></div> : null}
+                                  {UsdSum !== '' ? <div>   <dt id="usdLabel" ><strong>USD Deferred Commissions</strong></dt>
+                                    <dd id="usdID" >{UsdSum}</dd></div> : null}
+                                  {CadSum !== '' ? <div><dt id="cadLabel" ><strong>CAD Deferred Commissions</strong></dt>
+                                    <dd id="cadID" >{CadSum}</dd></div> : null}
+                                  {SavvySum !== '' ? <div> <dt id="savvyLabel" ><strong>Savvy Seller Bonus Total</strong></dt>
+                                    <dd id="savvyID" >{SavvySum}</dd></div> : null}
+                                </dl>
+                              </div>
+                            </div>
+                            <div className="col-sm-8">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PV</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume2.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>TV</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume5.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>EV</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume6.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                  </dl>
+                                </div>
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PSQ</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume7}</dd>
+                                    <dt>Level 1 Mentors</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume8}</dd>
+                                    <dt>Master Mentor Legs</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume9}</dd>
+                                  </dl>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <div className="metric metric-sm">
+                                <div className="metric-title">
+                                  Qualifying as: <strong>{RealTimeCommissions[0].Volume.RankDescription[0]}</strong>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-sm-8">
+                              <div style={{ height: "20px", float: "right", paddingRight: "15px" }}>
+                                <div className="metric metric-sm">
+                                  <div className="metric-title">*Team Commissions are displayed in USD</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                          <div></div>
+                        )}
+
+
+
                       {!(JSON.stringify(SummaryCommissions) === JSON.stringify({})) ? (
                         <div>
                           <h4 className="header_m">{SummaryCommissions.PeriodDescription} Commissions</h4>
@@ -467,6 +607,7 @@ class CommissionsScreen extends Component {
                         )}
                     </div>
                   </div>
+
                   {(JSON.stringify(HistoricalBonusDetails) !== '{}') ?
                     <div className="container gridcontent">
                       <div className="row gridgraybg">
@@ -590,10 +731,140 @@ class CommissionsScreen extends Component {
                         <div className="col gridbr"></div>
                         <div className="col gridbr"></div>
                         <div className="col gridbr"></div>
-                        <div className="col gridbr"><strong style={{ fontSize: "12px" }}>Total: ${BonusTotal} USD</strong></div>
+                        <div className="col gridbr"><strong style={{ fontSize: "12px" }}>Total: {Total}</strong></div>
                       </div>
                     </div>
                     : null}
+
+
+                  {(JSON.stringify(RealTimeCommissionDetails) !== '{}') ?
+                    <div className="container gridcontent">
+                      <div className="row gridgraybg">
+                        <div className="gridbr gridno"></div>
+                        <div className="col gridbr">From ID#</div>
+                        <div className="col gridbr">From</div>
+                        <div className="col gridbr">Paid Level</div>
+                        <div className="col gridbr">Source</div>
+                        <div className="col gridbr">%</div>
+                        <div className="col gridbr">Earned</div>
+                      </div>
+                      {(RealTimeCommissionDetails.DeferredCommission.length > 0) ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Deferred Commission</strong></div>
+                          </div>
+                          {
+                            RealTimeCommissionDetails.DeferredCommission.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div>
+                        : null}
+
+                      {RealTimeCommissionDetails.SponsorBonus.length > 0 ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Sponsor Bonus</strong></div>
+                          </div>
+                          {
+                            RealTimeCommissionDetails.SponsorBonus.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div> : null}
+
+                      {RealTimeCommissionDetails.CoachingBonus.length > 0 ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Coaching Bonus</strong></div>
+                          </div>
+                          {
+                            RealTimeCommissionDetails.CoachingBonus.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div> : null}
+
+
+                      {RealTimeCommissionDetails.CuturierBonus.length > 0 ? <div>
+                        <div className="row gridgraybg">
+                          <div className="col-12 gridmdlhdr"><strong>Bonus: Cuturier Bonus</strong></div>
+                        </div>
+                        {
+                          RealTimeCommissionDetails.CuturierBonus.map(dt => {
+                            return (
+                              <div className="row gridwtbg">
+                                <div className="gridbr gridno"></div>
+                                {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                <div className="col gridbr">{dt.FromCustomerID}</div>
+                                <div className="col gridbr">{dt.FromCustomerName}</div>
+                                {/* <div className="col gridbr">{dt.Level}</div> */}
+                                <div className="col gridbr">{dt.PaidLevel}</div>
+                                {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                <div className="col gridbr">{dt.SourceAmount}</div>
+                                <div className="col gridbr">{dt.Percentage}</div>
+                                <div className="col gridbr">{dt.CommissionAmount}</div>
+                              </div>)
+                          })
+                        }
+                      </div> : null}
+
+                      <div className="row gridgraybg">
+                        <div className="gridbr gridno"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"><strong style={{ fontSize: "12px" }}>Total: {Total}</strong></div>
+                      </div>
+                    </div>
+                    : null}
+
                 </div>
               </div>
             </div>
