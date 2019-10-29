@@ -8,6 +8,7 @@ import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+const BASE_URL = `http://localhost:6002/`;
 
 class CommissionsScreen extends Component {
   constructor() {
@@ -21,6 +22,7 @@ class CommissionsScreen extends Component {
 
     this.handleSelectedChange = this.handleSelectedChange.bind(this);
 
+
     this.state = {
       popupVisible: false,
       show: false, background: '#296091',
@@ -29,11 +31,21 @@ class CommissionsScreen extends Component {
       values: [],
       fields: {},
       errors: {},
-      dropDownCommissionsData: [],
-      isLoadingDropDown: true,
+      periodList: [],
+      isLoadingPeriodList: true,
       selectedPeriod: "",
-      historicalbonusdetails: [],
-      isLoadingHistoricalBonusDetails: true
+      HistoricalCommission: {},
+      SummaryCommissions: {},
+      RealTimeCommissions: {},
+      HistoricalBonusDetails: {},
+      Total: '',
+      CadSum: '',
+      UsdSum: '',
+      TeamSum: '',
+      SavvySum: '',
+      Volumes: {},
+      RealTimeCommissionDetails: {},
+      RealTimeCommissions: []
     };
   }
 
@@ -149,24 +161,14 @@ class CommissionsScreen extends Component {
 
   bindCommissionDropdown() {
     axios
-      .get("http://localhost:6002/commissionsperiod/")
-      .then(response =>
-        response.data.map(data => ({
-          CommissionRunID: `${data.CommissionRunID}`,
-          StartDate: `${data.StartDate}`,
-          EndDate: `${data.EndDate}`,
-          PeriodID: `${data.PeriodID}`,
-          PeriodTypeID: `${data.PeriodTypeID}`,
-          PeriodDescription: `${data.PeriodDescription}`
-        }))
-      )
-      .then(dropDownCommissionsData => {
+      .get(BASE_URL + "periodlist/967")
+      .then((response) => {
         this.setState({
-          dropDownCommissionsData,
-          isLoadingDropDown: false
+          periodList: response.data.DropDownData,
+          isLoadingPeriodList: false
         });
       })
-      .catch(error => this.setState({ error, isLoadingDropDown: false }));
+      .catch(error => this.setState({ error, isLoadingPeriodList: false }));
   }
 
   handleSelectedChange(e) {
@@ -176,32 +178,153 @@ class CommissionsScreen extends Component {
     }
     const periodId = val.split('-')[0];
     const runId = val.split('-')[1];
+    const url = Number(runId) > 0 ? BASE_URL + `commissiondetails/967/${runId}/0` : BASE_URL + `commissiondetails/967/0/${periodId}`
     this.setState({ selectedPeriod: val });
+
     axios
-      .get("http://localhost:6002/historicalbonusdetails/967/" + runId)
-      .then(response =>
-        response.data.map(data => ({
-          BonusID: `${data.BonusID}`,
-          BonusDescription: `${data.BonusDescription}`,
-          FromCustomerID: `${data.FromCustomerID}`,
-          FromCustomerName: `${data.FromCustomerName}`,
-          Level: `${data.Level}`,
-          PaidLevel: `${data.PaidLevel}`,
-          Percentage: `${data.Percentage}`,
-          OrderID: `${data.OrderID}`,
-          SourceAmount: `${data.SourceAmount}`,
-          CommissionAmount: `${data.CommissionAmount}`,
-        }))
-      )
-      .then(historicalbonusdetails => {
+      .get(url)
+      .then((response) => {
+        var amount = 0, usdSum = 0, cadSum = 0, teamSum = 0, savvySum = 0;
+        var totalVal = '', cadSumVal = '', usdSumVal = '', teamSumVal = '', savvySumVal = '';
+        var historicalBonusDetails = response.data.HistoricalBonusDetails;
+        var allHistoricalBonusDetails = [];
+        if (JSON.stringify(historicalBonusDetails) !== '{}') {
+          allHistoricalBonusDetails = historicalBonusDetails.DeferredCommission.concat(historicalBonusDetails.SponsorBonus, historicalBonusDetails.CoachingBonus, historicalBonusDetails.CuturierBonus)
+        }
+        var realTimeCommissionDetails = response.data.RealTimeCommissionDetails;
+        var allRealTimeCommissionDetails = [];
+        if (JSON.stringify(realTimeCommissionDetails) !== '{}') {
+          var rtGrid = {
+            DeferredCommission: realTimeCommissionDetails.DeferredCommission.filter((data, idx) => idx < 2),
+            SponsorBonus: realTimeCommissionDetails.SponsorBonus.filter((data, idx) => idx < 2),
+            CoachingBonus: realTimeCommissionDetails.CoachingBonus.filter((data, idx) => idx < 2),
+            CuturierBonus: realTimeCommissionDetails.CuturierBonus.filter((data, idx) => idx < 2),
+          }
+          realTimeCommissionDetails = rtGrid;
+          allRealTimeCommissionDetails = realTimeCommissionDetails.DeferredCommission.concat(realTimeCommissionDetails.SponsorBonus, realTimeCommissionDetails.CoachingBonus, realTimeCommissionDetails.CuturierBonus)
+        }
+
+        if (allHistoricalBonusDetails.length > 0) {
+
+          allHistoricalBonusDetails.forEach(function (bonus) {
+            amount += Number(bonus.CommissionAmount);
+            if (bonus.BonusID == 1) {
+              if (true) {
+                cadSum += Number(bonus.CommissionAmount);
+              }
+              else {
+                usdSum += Number(bonus.CommissionAmount);
+              }
+            }
+            else if (bonus.BonusID == 4) {
+              savvySum += Number(bonus.CommissionAmount);
+            }
+            else {
+              teamSum += Number(bonus.CommissionAmount);
+            }
+          });
+
+          amount = amount.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          usdSum = usdSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          cadSum = cadSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          teamSum = teamSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          savvySum = savvySum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+          if (amount + .01 >= (cadSum + usdSum) && amount - .01 <= (cadSum + usdSum)) {
+            if (cadSum > 0 && usdSum > 0) {
+              cadSumVal = "$" + cadSum + " CAD";
+              usdSumVal = "$" + usdSum + " USD";
+              totalVal = "$" + cadSum + " CAD $" + usdSum + " USD";
+            }
+            else if (cadSum > 0) {
+              cadSumVal = `$` + cadSum + ` CAD`;
+              totalVal = `$` + cadSum + ` CAD`;
+            }
+            else {
+              cadSumVal = "$" + cadSum + " CAD";
+              usdSumVal = "$" + usdSum + " USD";
+              totalVal = "$" + usdSum + " USD";
+            }
+          }
+          else {
+            totalVal = "$" + amount + " USD";
+          }
+          teamSumVal = "$" + teamSum + " USD";
+          if (savvySum > 0) {
+            savvySumVal = "$" + savvySum + " USD";
+          }
+        }
+        else if (allRealTimeCommissionDetails.length > 0) {
+
+          allRealTimeCommissionDetails.forEach(function (bonus) {
+            amount += Number(bonus.CommissionAmount);
+            if (bonus.BonusID == 1) {
+              if (true) {
+                cadSum += Number(bonus.CommissionAmount);
+              }
+              else {
+                usdSum += Number(bonus.CommissionAmount);
+              }
+            }
+            else if (bonus.BonusID == 4) {
+              savvySum += Number(bonus.CommissionAmount);
+            }
+            else {
+              teamSum += Number(bonus.CommissionAmount);
+            }
+          });
+
+          amount = amount.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          usdSum = usdSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          cadSum = cadSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          teamSum = teamSum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          savvySum = savvySum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+          if (amount + .01 >= (cadSum + usdSum) && amount - .01 <= (cadSum + usdSum)) {
+            if (cadSum > 0 && usdSum > 0) {
+              cadSumVal = "$" + cadSum + " CAD";
+              usdSumVal = "$" + usdSum + " USD";
+              totalVal = "$" + cadSum + " CAD $" + usdSum + " USD";
+            }
+            else if (cadSum > 0) {
+              cadSumVal = `$` + cadSum + ` CAD`;
+              totalVal = `$` + cadSum + ` CAD`;
+            }
+            else {
+              cadSumVal = "$" + cadSum + " CAD";
+              usdSumVal = "$" + usdSum + " USD";
+              totalVal = "$" + usdSum + " USD";
+            }
+          }
+          else {
+            totalVal = "$" + amount + " USD";
+          }
+          teamSumVal = "$" + teamSum + " USD";
+          if (savvySum > 0) {
+            savvySumVal = "$" + savvySum + " USD";
+          }
+        }
+
+
         this.setState({
-          historicalbonusdetails,
-          isLoadingHistoricalBonusDetails: false
+          HistoricalCommission: response.data.HistoricalCommission,
+          SummaryCommissions: response.data.SummaryCommissions,
+          HistoricalBonusDetails: historicalBonusDetails,
+          RealTimeCommissionDetails: realTimeCommissionDetails,
+          Total: totalVal,
+          CadSum: cadSumVal,
+          UsdSum: usdSumVal,
+          TeamSum: teamSumVal,
+          SavvySum: savvySumVal,
+          Volumes: response.data.Volumes,
+          RealTimeCommissions: response.data.RealTimeCommissions
         });
       })
-      .catch(error => this.setState({ error, isLoadingHistoricalBonusDetails: false }));
+      .catch(error => this.setState({ error }));
 
   }
+
+
 
   render() {
     const BASE_URL = '#'
@@ -213,81 +336,38 @@ class CommissionsScreen extends Component {
     const styleBack1 = {
       backgroundColor: this.state.background
     }
-    const gridData = [{
-      "BonusID": 6,
-      "BonusDescription": "Coaching Bonus",
-      "FromCustomerID": 58873,
-      "FromCustomerName": "Georgiana dambra",
-      "Level": 1,
-      "PaidLevel": 2,
-      "Percentage": 7,
-      "OrderID": null,
-      "SourceAmount": 126.45,
-      "CommissionAmount": 8.8515
-    },
-    {
-      "BonusID": 5,
-      "BonusDescription": "Sponsoring Bonus",
-      "FromCustomerID": 9151,
-      "FromCustomerName": "Deann Kroll",
-      "Level": 1,
-      "PaidLevel": 3,
-      "Percentage": 5,
-      "OrderID": null,
-      "SourceAmount": 185.82,
-      "CommissionAmount": 9.291
-    },
-    {
-      "BonusID": 6,
-      "BonusDescription": "Coaching Bonus",
-      "FromCustomerID": 9151,
-      "FromCustomerName": "Deann Kroll",
-      "Level": 1,
-      "PaidLevel": 1,
-      "Percentage": 10,
-      "OrderID": null,
-      "SourceAmount": 185.82,
-      "CommissionAmount": 18.582
-    }
-    ]
-    const { isLoadingDropDown, dropDownCommissionsData } = this.state
-    const { historicalbonusdetails } = this.state
+
+    const { isLoadingPeriodList, periodList } = this.state
+    const { HistoricalBonusDetails, Volumes, SummaryCommissions, RealTimeCommissions, RealTimeCommissionDetails, HistoricalCommission, Total,
+      SavvySum, CadSum, UsdSum, TeamSum } = this.state
+
     return (
       <div>
         <div className="container-fluid">
           {/* <PageHeader headerColor={this.state.background}/> */}
-          <div className="row fixed-header" style={styleBack1}>
-            <div className="col col-sm-6 col-md-2">
+          <div className="row Header" style={styleBack1}>
+            <div className="col-md-2">
               <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
             </div>
-            <div className="col col-sm-6 col-md-10 textalign changepassword">
-              <div className="innerlinks">
-                <ul>
-                  <li>
-                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
-                      <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
-                  </li>
-                  <li>
-                    <div className="popover-container"
-                      ref={node => {
-                        this.node = node;
-                      }}
-                    >
-                      <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
-                      {this.state.popupVisible && (
-                        <div className="popover">
-                          <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                  <li>
-                    <a href={BASE_URL}>
-                      <span className="glyphicon glyphicon-log-out logouticon"></span>
-                    </a>
-                  </li>
-                </ul>
+            <div className="col-md-8"></div>
+            <div className="col-md-1">
+              <div className="popover-container"
+                ref={node => {
+                  this.node = node;
+                }}
+              >
+                <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                {this.state.popupVisible && (
+                  <div className="popover">
+                    <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
+                  </div>
+                )}
               </div>
+            </div>
+            <div className="col-md-1 logouticon">
+              <a href={BASE_URL}>
+                <span className="glyphicon glyphicon-log-out"></span>
+              </a>
             </div>
           </div>
           <div>
@@ -306,7 +386,21 @@ class CommissionsScreen extends Component {
               </div>
 
               <div className="col-md-12">
-                <div className="col-md-11 innercontent">
+                <div className="col-md-1"></div>
+                <div className="col-md-10 innercontent">
+
+                  {/* <div className="input-group searchbox">
+                    <select className="custom-select" id="inputGroupSelect02">
+                      <option selected>Choose...</option>
+                      <option value="1">One</option>
+                      <option value="2">Two</option>
+                      <option value="3">Three</option>
+                    </select>
+                    <div className="input-group-append">
+                      <label className="input-group-text" for="inputGroupSelect02">Options</label>
+                    </div>
+                  </div> */}
+
                   <div className="well well-sm searchbox">
                     <div className="row">
                       <div className="col-sm-12">
@@ -316,43 +410,15 @@ class CommissionsScreen extends Component {
                               <i className="fa fa-chevron-left"></i></button>
                           </span>
                           <select value={this.state.selectedPeriod} onChange={this.handleSelectedChange} id="periodchoice" className="form-control">
-                            {!isLoadingDropDown ? (
-                              dropDownCommissionsData.map((data, index) => {
-                                const { StartDate, EndDate, PeriodID, PeriodTypeID, PeriodDescription, CommissionRunID } = data;
+                            {!isLoadingPeriodList ? (
+                              periodList.map((data, index) => {
                                 return (
-                                  <option key={index} value={PeriodID + "-" + CommissionRunID}> {"Current Commissions - " + PeriodDescription} {"(" + StartDate.split('T')[0] + " - " + EndDate.split('T')[0] + ")"}</option>
+                                  <option key={index} value={data.Period.PeriodID + "-" + data.RunID}> {"Current Commissions - " + data.Period.PeriodDescription} {"(" + data.Period.StartDate.split('T')[0] + " - " + data.Period.EndDate.split('T')[0] + ")"}</option>
                                 );
                               })
                             ) : (
                                 <option value=""></option>
                               )}
-                            {/* <option value="/commissions/0/34">Current Commissions - Monthly 34 October 2019 (10/1/2019 - 10/31/2019)</option>
-                            <option value="/commissions/0/33">Current Commissions - Monthly 33 September 2019 (9/1/2019 - 9/30/2019)</option>
-                            <option value="/commissions/0/32">Current Commissions - Monthly 32 August 2019 (8/1/2019 - 8/31/2019)</option>
-                            <option value="/commissions/427">Current Commissions - Monthly 31 July 2019 (7/1/2019 - 7/31/2019)</option>
-                            <option value="/commissions/408">Current Commissions - Monthly 30 June 2019 (6/1/2019 - 6/30/2019)</option>
-                            <option value="/commissions/378">Current Commissions - Monthly 29 May 2019 (5/1/2019 - 5/31/2019)</option>
-                            <option value="/commissions/339">Current Commissions - Monthly 28 April 2019 (4/1/2019 - 4/30/2019)</option>
-                            <option value="/commissions/318">Current Commissions - Monthly 27 March 2019 (3/1/2019 - 3/31/2019)</option>
-                            <option value="/commissions/296">Current Commissions - Monthly 26 February 2019 (2/1/2019 - 2/28/2019)</option>
-                            <option value="/commissions/279">Current Commissions - Monthly 25 January 2019 (1/1/2019 - 1/31/2019)</option>
-                            <option value="/commissions/258">Current Commissions - Monthly 24 December 2018 (12/1/2018 - 12/31/2018)</option>
-                            <option value="/commissions/232">Current Commissions - Monthly 23 November 2018 (11/1/2018 - 11/30/2018)</option>
-                            <option value="/commissions/218">Current Commissions - Monthly 22 October 2018 (10/1/2018 - 10/31/2018)</option>
-                            <option value="/commissions/199">Current Commissions - Monthly 21 September 2018 (9/1/2018 - 9/30/2018)</option>
-                            <option value="/commissions/176">Current Commissions - Monthly 20 August 2018 (8/1/2018 - 8/31/2018)</option>
-                            <option value="/commissions/156">Current Commissions - Monthly 19 July 2018 (7/1/2018 - 7/31/2018)</option>
-                            <option value="/commissions/0/18">Current Commissions - Monthly 18 June 2018 (6/1/2018 - 6/30/2018)</option>
-                            <option value="/commissions/0/17">Current Commissions - Monthly 17 May 2018 (5/1/2018 - 5/31/2018)</option>
-                            <option value="/commissions/0/16">Current Commissions - Monthly 16 April 2018 (4/1/2018 - 4/30/2018)</option>
-                            <option value="/commissions/0/15">Current Commissions - Monthly 15 March 2018 (3/1/2018 - 3/31/2018)</option>
-                            <option value="/commissions/0/14">Current Commissions - Monthly 14 February 2018 (2/1/2018 - 2/28/2018)</option>
-                            <option value="/commissions/0/13">Current Commissions - Monthly 13 January 2018 (1/1/2018 - 1/31/2018)</option>
-                            <option value="/commissions/0/12">Current Commissions - Monthly 12 December 2017 (12/1/2017 - 12/31/2017)</option>
-                            <option value="/commissions/0/11">Current Commissions - Monthly 11 November 2017 (11/1/2017 - 11/30/2017)</option>
-                            <option value="/commissions/0/10">Current Commissions - Monthly 10 October 2017 (10/1/2017 - 10/31/2017)</option>
-                            <option value="/commissions/0/9">Current Commissions - Monthly 9 September 2017 (9/1/2017 - 9/30/2017)</option>
-                            <option value="/commissions/0/8">Current Commissions - Monthly 8 August 2017 (8/1/2017 - 8/31/2017)</option> */}
                           </select>
                           <span className="input-group-btn">
                             <button id="gotonextperiod" className="btn btn-default" type="button">
@@ -365,121 +431,445 @@ class CommissionsScreen extends Component {
 
                   <div className="panel panel-default">
                     <div className="panel-body">
-                      <h4 className="header_m">Monthly 33 September 2019 Commissions</h4>
-                      <div className="row">
-                        <div className="col-sm-4">
-                          <div className="metric metric-sm">
-                            <dl className="dl-metric">
-                              <dt id="teamLabel" ><strong>Team Commissions</strong></dt>
-                              <dd id="teamID" >$0.00&nbsp;USD</dd>
-                              <dt id="usdLabel" ><strong>USD Deferred Commissions</strong></dt>
-                              <dd id="usdID" >$24.48&nbsp;USD</dd>
-                              <dt id="cadLabel"><strong>CAD Deferred Commissions</strong></dt>
-                              <dd id="cadID" >$0.00&nbsp;CAD</dd>
-                              <dt id="savvyLabel" s><strong>Savvy Seller Bonus Total</strong></dt>
-                              <dd id="savvyID" >&nbsp;</dd>
-                            </dl>
-                          </div>
-                        </div>
-                        <div className="col-sm-8">
-                          <div className="row">
-                            <div className="col-sm-6">
-                              <dl className="dl-metric">
-                                <dt>PV</dt>
-                                <dd>58.74</dd>
-                                <dt>TV</dt>
-                                <dd>2,974.41</dd>
-                                <dt>EV</dt>
-                                <dd>4,889.21</dd>
-                              </dl>
-                            </div>
-                            <div className="col-sm-6">
-                              <dl className="dl-metric">
-                                <dt>PSQ</dt>
-                                <dd>1</dd>
-                                <dt>Level 1 Mentors</dt>
-                                <dd>0</dd>
-                                <dt>Master Mentor Legs</dt>
-                                <dd>0</dd>
-                              </dl>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-4">
-                          <div className="metric metric-sm">
-                            <div className="metric-title">
-                              Qualifying as: <strong>Designer</strong>
-                            </div>
-                          </div>
-                        </div>
+                      {!(JSON.stringify(HistoricalCommission) === JSON.stringify({})) ? (
                         <div>
-                          <div className="metric metric-sm">
-                            <div className="metric-title">*Team Commissions are displayed in USD</div>
+                          <h4 className="header_m">{HistoricalCommission.PeriodDescription} Commissions</h4>
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <div className="metric metric-sm">
+                                <dl className="dl-metric">
+                                  {TeamSum !== '' ? <div><dt id="teamLabel"><strong>Team Commissions</strong></dt>
+                                    <dd id="teamID" >{TeamSum}</dd></div> : null}
+                                  {UsdSum !== '' ? <div>   <dt id="usdLabel" ><strong>USD Deferred Commissions</strong></dt>
+                                    <dd id="usdID" >{UsdSum}</dd></div> : null}
+                                  {CadSum !== '' ? <div><dt id="cadLabel" ><strong>CAD Deferred Commissions</strong></dt>
+                                    <dd id="cadID" >{CadSum}</dd></div> : null}
+                                  {SavvySum !== '' ? <div> <dt id="savvyLabel" ><strong>Savvy Seller Bonus Total</strong></dt>
+                                    <dd id="savvyID" >{SavvySum}</dd></div> : null}
+                                </dl>
+                              </div>
+                            </div>
+                            <div className="col-sm-8">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PV</dt>
+                                    <dd>{Volumes.Volume2.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>TV</dt>
+                                    <dd>{Volumes.Volume5.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>EV</dt>
+                                    <dd>{Volumes.Volume6.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                  </dl>
+                                </div>
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PSQ</dt>
+                                    <dd>{Volumes.Volume7}</dd>
+                                    <dt>Level 1 Mentors</dt>
+                                    <dd>{Volumes.Volume8}</dd>
+                                    <dt>Master Mentor Legs</dt>
+                                    <dd>{Volumes.Volume9}</dd>
+                                  </dl>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <div className="metric metric-sm">
+                                <div className="metric-title">
+                                  Qualifying as: <strong>{HistoricalCommission.RankDescription}</strong>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-sm-8">
+                              <div style={{ height: "20px", float: "right", paddingRight: "15px" }}>
+                                <div className="metric metric-sm">
+                                  <div className="metric-title">*Team Commissions are displayed in USD</div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
+                      ) : (
+                          <div></div>
+                        )}
+
+
+                      {(RealTimeCommissions.length > 0) ? (
+                        <div>
+                          <h4 className="header_m">{RealTimeCommissions[0].Commission.PeriodDescription} Commissions</h4>
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <div className="metric metric-sm">
+                                <dl className="dl-metric">
+                                  {TeamSum !== '' ? <div><dt id="teamLabel"><strong>Team Commissions</strong></dt>
+                                    <dd id="teamID" >{TeamSum}</dd></div> : null}
+                                  {UsdSum !== '' ? <div>   <dt id="usdLabel" ><strong>USD Deferred Commissions</strong></dt>
+                                    <dd id="usdID" >{UsdSum}</dd></div> : null}
+                                  {CadSum !== '' ? <div><dt id="cadLabel" ><strong>CAD Deferred Commissions</strong></dt>
+                                    <dd id="cadID" >{CadSum}</dd></div> : null}
+                                  {SavvySum !== '' ? <div> <dt id="savvyLabel" ><strong>Savvy Seller Bonus Total</strong></dt>
+                                    <dd id="savvyID" >{SavvySum}</dd></div> : null}
+                                </dl>
+                              </div>
+                            </div>
+                            <div className="col-sm-8">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PV</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume2.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>TV</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume5.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>EV</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume6.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                  </dl>
+                                </div>
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PSQ</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume7}</dd>
+                                    <dt>Level 1 Mentors</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume8}</dd>
+                                    <dt>Master Mentor Legs</dt>
+                                    <dd>{RealTimeCommissions[0].Volume.Volume9}</dd>
+                                  </dl>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <div className="metric metric-sm">
+                                <div className="metric-title">
+                                  Qualifying as: <strong>{RealTimeCommissions[0].Volume.RankDescription[0]}</strong>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-sm-8">
+                              <div style={{ height: "20px", float: "right", paddingRight: "15px" }}>
+                                <div className="metric metric-sm">
+                                  <div className="metric-title">*Team Commissions are displayed in USD</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                          <div></div>
+                        )}
+
+
+
+                      {!(JSON.stringify(SummaryCommissions) === JSON.stringify({})) ? (
+                        <div>
+                          <h4 className="header_m">{SummaryCommissions.PeriodDescription} Commissions</h4>
+                          <div className="row">
+                            <div className="col-sm-4">
+                              <div className="metric metric-sm">
+                                <div className="metric-body text-info">
+                                  ${SummaryCommissions.Commission.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span style={{ fontSize: "15px" }}>USD</span>
+                                </div>
+                                <div className="metric-title">
+                                  QualifiedAs: <strong>{SummaryCommissions.PaidAsTitle}</strong>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-sm-8">
+                              <div className="row">
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PV</dt>
+                                    <dd>{SummaryCommissions.PV.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>TV</dt>
+                                    <dd>{SummaryCommissions.TV.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                    <dt>EV</dt>
+                                    <dd>{SummaryCommissions.EV.toLocaleString(undefined, { maximumFractionDigits: 2 })}</dd>
+                                  </dl>
+                                </div>
+                                <div className="col-sm-6">
+                                  <dl className="dl-metric">
+                                    <dt>PSQ</dt>
+                                    <dd>{SummaryCommissions.PSQ}</dd>
+                                    <dt>Level 1 Mentors</dt>
+                                    <dd>{SummaryCommissions.L1M}</dd>
+                                    <dt>Master Mentor Legs</dt>
+                                    <dd>{SummaryCommissions.MML}</dd>
+                                  </dl>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                          <div></div>
+                        )}
+                    </div>
+                  </div>
+
+                  {(JSON.stringify(HistoricalBonusDetails) !== '{}') ?
+                    <div className="container gridcontent">
+                      <div className="row gridgraybg">
+                        <div className="gridbr gridno"></div>
+                        <div className="col gridbr">From ID#</div>
+                        <div className="col gridbr">From</div>
+                        <div className="col gridbr">Paid Level</div>
+                        <div className="col gridbr">Source</div>
+                        <div className="col gridbr">%</div>
+                        <div className="col gridbr">Earned</div>
+                      </div>
+                      {(HistoricalBonusDetails.DeferredCommission.length > 0) ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Deferred Commission</strong></div>
+                          </div>
+                          {
+                            HistoricalBonusDetails.DeferredCommission.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div>
+                        : null}
+
+                      {HistoricalBonusDetails.SponsorBonus.length > 0 ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Sponsor Bonus</strong></div>
+                          </div>
+                          {
+                            HistoricalBonusDetails.SponsorBonus.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div> : null}
+
+                      {HistoricalBonusDetails.CoachingBonus.length > 0 ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Coaching Bonus</strong></div>
+                          </div>
+                          {
+                            HistoricalBonusDetails.CoachingBonus.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div> : null}
+
+
+                      {HistoricalBonusDetails.CuturierBonus.length > 0 ? <div>
+                        <div className="row gridgraybg">
+                          <div className="col-12 gridmdlhdr"><strong>Bonus: Cuturier Bonus</strong></div>
+                        </div>
+                        {
+                          HistoricalBonusDetails.CuturierBonus.map(dt => {
+                            return (
+                              <div className="row gridwtbg">
+                                <div className="gridbr gridno"></div>
+                                {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                <div className="col gridbr">{dt.FromCustomerID}</div>
+                                <div className="col gridbr">{dt.FromCustomerName}</div>
+                                {/* <div className="col gridbr">{dt.Level}</div> */}
+                                <div className="col gridbr">{dt.PaidLevel}</div>
+                                {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                <div className="col gridbr">{dt.SourceAmount}</div>
+                                <div className="col gridbr">{dt.Percentage}</div>
+                                <div className="col gridbr">{dt.CommissionAmount}</div>
+                              </div>)
+                          })
+                        }
+                      </div> : null}
+
+                      <div className="row gridgraybg">
+                        <div className="gridbr gridno"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"><strong style={{ fontSize: "12px" }}>Total: {Total}</strong></div>
                       </div>
                     </div>
-                  </div>
+                    : null}
 
-                  <div className="container gridcontent">
-                    <div className="row gridgraybg">
-                      <div className="gridbr gridno"></div>
-                      <div className="col gridbr">From ID#</div>
-                      <div className="col-sm-3 gridbr">From</div>
-                      <div className="col gridbr">Paid Level</div>
-                      <div className="col gridbr">Source</div>
-                      <div className="col gridbr">%</div>
-                      <div className="col gridbr">Earned</div>
+
+                  {(JSON.stringify(RealTimeCommissionDetails) !== '{}') ?
+                    <div className="container gridcontent">
+                      <div className="row gridgraybg">
+                        <div className="gridbr gridno"></div>
+                        <div className="col gridbr">From ID#</div>
+                        <div className="col gridbr">From</div>
+                        <div className="col gridbr">Paid Level</div>
+                        <div className="col gridbr">Source</div>
+                        <div className="col gridbr">%</div>
+                        <div className="col gridbr">Earned</div>
+                      </div>
+                      {(RealTimeCommissionDetails.DeferredCommission.length > 0) ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Deferred Commission</strong></div>
+                          </div>
+                          {
+                            RealTimeCommissionDetails.DeferredCommission.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div>
+                        : null}
+
+                      {RealTimeCommissionDetails.SponsorBonus.length > 0 ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Sponsor Bonus</strong></div>
+                          </div>
+                          {
+                            RealTimeCommissionDetails.SponsorBonus.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div> : null}
+
+                      {RealTimeCommissionDetails.CoachingBonus.length > 0 ?
+                        <div>
+                          <div className="row gridgraybg">
+                            <div className="col-12 gridmdlhdr"><strong>Bonus: Coaching Bonus</strong></div>
+                          </div>
+                          {
+                            RealTimeCommissionDetails.CoachingBonus.map(dt => {
+                              return (
+                                <div className="row gridwtbg">
+                                  <div className="gridbr gridno"></div>
+                                  {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                  <div className="col gridbr">{dt.FromCustomerID}</div>
+                                  <div className="col gridbr">{dt.FromCustomerName}</div>
+                                  {/* <div className="col gridbr">{dt.Level}</div> */}
+                                  <div className="col gridbr">{dt.PaidLevel}</div>
+                                  {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                  <div className="col gridbr">{dt.SourceAmount}</div>
+                                  <div className="col gridbr">{dt.Percentage}</div>
+                                  <div className="col gridbr">{dt.CommissionAmount}</div>
+                                </div>)
+                            })
+                          }
+                        </div> : null}
+
+
+                      {RealTimeCommissionDetails.CuturierBonus.length > 0 ? <div>
+                        <div className="row gridgraybg">
+                          <div className="col-12 gridmdlhdr"><strong>Bonus: Cuturier Bonus</strong></div>
+                        </div>
+                        {
+                          RealTimeCommissionDetails.CuturierBonus.map(dt => {
+                            return (
+                              <div className="row gridwtbg">
+                                <div className="gridbr gridno"></div>
+                                {/* <div className="col gridbr">{dt.BonusID}</div>
+            <div className="col gridbr">{dt.BonusDescription}</div> */}
+                                <div className="col gridbr">{dt.FromCustomerID}</div>
+                                <div className="col gridbr">{dt.FromCustomerName}</div>
+                                {/* <div className="col gridbr">{dt.Level}</div> */}
+                                <div className="col gridbr">{dt.PaidLevel}</div>
+                                {/* 
+            <div className="col gridbr">{dt.OrderID}</div> */}
+                                <div className="col gridbr">{dt.SourceAmount}</div>
+                                <div className="col gridbr">{dt.Percentage}</div>
+                                <div className="col gridbr">{dt.CommissionAmount}</div>
+                              </div>)
+                          })
+                        }
+                      </div> : null}
+
+                      <div className="row gridgraybg">
+                        <div className="gridbr gridno"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"></div>
+                        <div className="col gridbr"><strong style={{ fontSize: "12px" }}>Total: {Total}</strong></div>
+                      </div>
                     </div>
-                    <div className="row gridgraybg">
-                      <div className="col-12 gridmdlhdr"><strong>Bonus: Deferred Commission</strong></div>
-                    </div>
-                    {
-                      gridData.map(x => {
-
-                      })
-                    }
-                    {
-                      historicalbonusdetails.map(dt => {
-                        return (
-                          <div className="row gridwtbg">
-                            <div className="gridbr gridno"></div>
-                            {/* <div className="col gridbr">{dt.BonusID}</div>
-                              <div className="col gridbr">{dt.BonusDescription}</div> */}
-                            <div className="col gridbr">{dt.FromCustomerID}</div>
-                            <div className="col gridbr">{dt.FromCustomerName}</div>
-                            {/* <div className="col gridbr">{dt.Level}</div> */}
-                            <div className="col gridbr">{dt.PaidLevel}</div>
-                            {/* 
-                              <div className="col gridbr">{dt.OrderID}</div> */}
-                            <div className="col gridbr">{dt.SourceAmount}</div>
-                            <div className="col gridbr">{dt.Percentage}</div>
-                            <div className="col gridbr">{dt.CommissionAmount}</div>
-                          </div>)
-                      })
-                    }
-                    <div className="row gridgraybg">
-                      <div className="gridbr gridno"></div>
-                      <div className="col gridbr"></div>
-                      <div className="col-sm-3 gridbr"></div>
-                      <div className="col gridbr"></div>
-                      <div className="col gridbr"></div>
-                      <div className="col gridbr"></div>
-                      <div className="col gridbr"><strong>Total: $24.48 USD</strong></div>
-                    </div>
-                  </div>
-
-
+                    : null}
 
                 </div>
               </div>
             </div>
           </div>
-          <div className="fixed-footer">
-            <PageFooter footerColor={this.state.background} />
-          </div>
+          <PageFooter footerColor={this.state.background} />
         </div>
 
       </div >
