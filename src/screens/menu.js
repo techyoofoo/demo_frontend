@@ -9,7 +9,8 @@ import Modal from "react-responsive-modal";
 import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import axios from 'axios';
+const BASE_URL = `http://localhost:6008/`;
 
 class MenuScreen extends Component {
   constructor() {
@@ -29,19 +30,32 @@ class MenuScreen extends Component {
       values: [],
       fields: {},
       errors: {},
+      menus: [],
+      openEdit: false
     };
   }
   onOpenModal = () => {
-    this.setState({ open: true });
+    let fields = this.state.fields;
+    fields["state"] = "enable";
+    this.setState({ open: true, fields: fields });
   };
 
   onCloseModal = () => {
     this.setState({ open: false });
   };
 
+  onOpenEditModal = () => {
+    this.setState({ openEdit: true });
+  };
+
+  onCloseEditModal = () => {
+    this.setState({ openEdit: false });
+  };
+
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    this.bindMenuGrid()
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -82,50 +96,87 @@ class MenuScreen extends Component {
     if (this.node.contains(e.target)) {
       return;
     }
-
     this.handleClick();
   };
 
+  bindMenuGrid() {
+    axios
+      .get(BASE_URL + "rouge/menu/get")
+      .then((response) => {
+        let menus = [];
+        response.data.forEach(function (d) {
+          if (d.type === 'menu') {
+            menus.push(d)
+          }
+        })
+        this.setState({
+          values: response.data,
+          menus: menus
+        });
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
 
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
-      fields
+      fields: fields
     });
-
   }
+
   MenuForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
-      let fields = {};
-
-      fields["Name"] = "";
-
-      this.setState({ fields: fields });
-      alert("Form submitted");
+      const { fields } = this.state
+      let formData = {
+        id: '',
+        clientid: '',
+        name: fields.name,
+        type: fields.type,
+        state: fields.state,
+        parentid: fields.type === 'menu' ? "0" : fields.menu
+      }
+      console.log(JSON.stringify(formData))
+      const config = {
+        headers: {
+          "content-type": "application/json"
+        }
+      };
+      axios.post(BASE_URL + `rouge/menu/create`, JSON.stringify(formData), config)
+        .then(response => {
+          alert(response.data.Message);
+          let fields = {};
+          // fields["Name"] = "";
+          this.setState({ fields: fields });
+          this.bindMenuGrid();
+          this.onCloseModal();
+        })
+        .catch(error => {
+          console.log(error)
+        });
     }
-
   }
+
   validateForm() {
 
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;
 
-    if (!fields["Name"]) {
+    if (!fields["name"]) {
       formIsValid = false;
-      errors["Name"] = "*Please enter your name.";
+      errors["name"] = "*Please enter name.";
     }
 
-    if (typeof fields["Name"] !== "undefined") {
-      if (!fields["Name"].match(/^[a-zA-Z ]*$/)) {
+    if (typeof fields["name"] !== "undefined") {
+      if (!fields["name"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
-        errors["Name"] = "*Please enter alphabet characters only.";
+        errors["name"] = "*Please enter alphabet characters only.";
       }
     }
-
-
 
     this.setState({
       errors: errors
@@ -136,7 +187,7 @@ class MenuScreen extends Component {
 
   render() {
     const BASE_URL = '#'
-    const { open } = this.state;
+    const { open, openEdit } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -144,6 +195,7 @@ class MenuScreen extends Component {
     const styleBack1 = {
       backgroundColor: this.state.background
     }
+    const { values, menus } = this.state
     return (
       <div>
 
@@ -202,52 +254,52 @@ class MenuScreen extends Component {
                 </div>
               </div>
 
-              <div className="col-md-12">
+              {/* <div className="col-md-12">
                 <div className="row">
                   <div className="col-sm-4">
                     <div className="p-l-55 p-r-55 p-t-25 p-b-25">
                       <form className="login100-form validate-form">
                         <div className="wrap-input100 validate-input">
                           <span className="label-input100"> Name</span>
-                          <input className="input100" type="text" name="Name" placeholder="name" value={this.state.fields.Name} onChange={this.handleChange} />
+                          <input className="input100" type="text" name="name" placeholder="name" value={this.state.fields.name || ''} onChange={this.handleChange} />
                           <span className="focus-input100" data-symbol="&#xf206;"></span>
                         </div>
-                        <div className="errorMsg">{this.state.errors.Name}</div>
+                        <div className="errorMsg">{this.state.errors.name}</div>
                         <div className="validate-input m-t-20">
                           <div className="label-input100">Type</div>
                           <div className="col-md-6 floatl">
                             <label className="radio menumrgn">
-                              <input type="radio" name="answer" />
+                              <input type="radio" name="type" value="menu" checked={this.state.fields.type === "menu"} onChange={this.handleChange} />
                               Menu
-                          </label>
+                            </label>
                           </div>
                           <div className="col-md-6 floatl">
                             <label className="radio menumrgn">
-                              <input type="radio" name="answer" checked />
+                              <input type="radio" name="type" value="submenu" checked={this.state.fields.type === "submenu"} onChange={this.handleChange} />
                               Sub Menu
                            </label>
                           </div>
                         </div>
-                        <div className="validate-input m-t-20">
+                        <div className="validate-input m-t-20" hidden={this.state.fields.type !== "submenu"}>
                           <div className="form-group">
                             <label for="" className="menumrgn">Menu</label>
-                            <select className="form-control" id="">
-                              <option>-- Select --</option>
-                              <option>Menu</option>
-                              <option>Sub Menu</option>
+                            <select className="form-control" name="menu" id="" onChange={this.handleChange}>
+                              <option selected={this.state.fields.menu === undefined} value="" >-- Select --</option>
+                              <option value="menu">Menu</option>
+                              <option value="submenu">Sub Menu</option>
                             </select>
                           </div>
                         </div>
                         <div className="validate-input m-t-20">
                           <div className="col-md-6 floatl">
                             <label className="radio menumrgn paddingl0">
-                              <input type="checkbox" name="Menu" value="Menu" checked />
+                              <input type="radio" name="state" value="enable" checked={this.state.fields.state === "enable"} onChange={this.handleChange} />
                               <span className="checkboxpd">Enabled</span>
                             </label>
                           </div>
                           <div className="col-md-6 floatl">
                             <label className="radio menumrgn">
-                              <input type="checkbox" name="Menu" value="Menu" />
+                              <input type="radio" name="state" value="disable" checked={this.state.fields.state === "disable"} onChange={this.handleChange} />
                               <span className="checkboxpd">Disabled</span>
                             </label>
                           </div>
@@ -265,57 +317,81 @@ class MenuScreen extends Component {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="col col-md-12">
                 <div className="col col-md-12 innercontent">
-                  <div class="condensed-grid">
+                  <div className="condensed-grid">
                     <div>
-                      <button type="button" class="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i class="fa fa-plus-circle"></i> Add New</button>
+                      <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                       <Modal open={open} onClose={this.onCloseModal}>
-                        <h2 className="modelhdr">Menu List Grid</h2>
+                        <h2 className="modelhdr">Add new</h2>
                         <div className="modelmenu">
-                        <div className="p-l-55 p-r-55 p-t-25 p-b-25">
-                        <div className="wrap-input100 validate-input">
-                          <span className="label-input100"> Name</span>
-                          <input className="input100" type="text" name="Name" placeholder="name" value={this.state.fields.Name} onChange={this.handleChange} />
-                          <span className="focus-input100" data-symbol="&#xf206;"></span>
-                        </div>
-                        <div className="validate-input m-t-20">
-                          <div className="form-group">
-                            <label for="" className="menumrgn">Menu</label>
-                            <select className="form-control" id="">
-                              <option>-- Select --</option>
-                              <option>Menu</option>
-                              <option>Sub Menu</option>
-                            </select>
+                          <div className="p-l-55 p-r-55 p-t-25 p-b-25">
+                            <div className="wrap-input100 validate-input">
+                              <span className="label-input100"> Name</span>
+                              <input className="input100" type="text" name="name" placeholder="name" value={this.state.fields.name || ''} onChange={this.handleChange} />
+                              <span className="focus-input100" data-symbol="&#xf206;"></span>
+                            </div>
+                            <div className="errorMsg">{this.state.errors.name}</div>
+                            <div className="validate-input m-t-20">
+                              <div className="label-input100">Type:</div>
+                              <div className="col col-md-6 floatl">
+                                <label className="radio menumrgn">
+                                  <input type="radio" name="type" value="menu" checked={this.state.fields.type === "menu"} onChange={this.handleChange} />
+                                  Menu
+                                 </label>
+                              </div>
+                              <div className="col col-md-6 floatl">
+                                <label className="radio menumrgn">
+                                  <input type="radio" name="type" value="submenu" checked={this.state.fields.type === "submenu"} onChange={this.handleChange} />
+                                  Sub Menu
+                                </label>
+                              </div>
+                            </div>
+                            <div className="validate-input m-t-20" hidden={this.state.fields.type !== "submenu"}>
+                              <div className="form-group">
+                                <label for="" className="menumrgn">Menu:</label>
+                                <select className="form-control" name="menu" id="" onChange={this.handleChange}>
+                                  <option selected={this.state.fields.menu === undefined} value="" >-- Select --</option>
+                                  {menus.length > 0 ? (
+                                    menus.map((data, index) => {
+                                      return (
+                                        <option key={index} value={data.id}> {data.name}</option>
+                                      );
+                                    })
+                                  ) : (
+                                      null
+                                    )}
+                                </select>
+                              </div>
+                            </div>
+                            <div className="validate-input m-t-20">
+                              <div className="label-input100">State:</div>
+                              <div className="col col-md-6 floatl">
+                                <label className="radio menumrgn">
+                                  <input type="radio" name="state" value="enable" checked={this.state.fields.state === "enable"} onChange={this.handleChange} />
+                                  Enabled
+                                 </label>
+                              </div>
+                              <div className="col col-md-6 floatl">
+                                <label className="radio menumrgn">
+                                  <input type="radio" name="state" value="disable" checked={this.state.fields.state === "disable"} onChange={this.handleChange} />
+                                  Disabled
+                                </label>
+                              </div>
+                            </div>
+
+                            <div className="clear"></div>
+                            <div className="container-login100-form-btn m-t-20">
+                              <div className="wrap-login100-form-btn">
+                                <div className="login100-form-bgbtn"></div>
+                                <button className="login100-form-btn" onClick={this.MenuForm}>
+                                  Submit
+                                </button>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="validate-input m-t-20">
-                          <div className="label-input100">Type</div>
-                          <div className="col col-md-6 floatl">
-                            <label className="radio menumrgn">
-                              <input type="radio" name="answer" />
-                              Menu
-                          </label>
-                          </div>
-                          <div className="col col-md-6 floatl">
-                            <label className="radio menumrgn">
-                              <input type="radio" name="answer" checked />
-                              Sub Menu
-                           </label>
-                          </div>
-                        </div>
-                        <div className="clear"></div>
-                        <div className="container-login100-form-btn m-t-20">
-                          <div className="wrap-login100-form-btn">
-                            <div className="login100-form-bgbtn"></div>
-                            <button className="login100-form-btn">
-                              Submit
-                           </button>
-                          </div>
-                        </div>
-                        </div>
                         </div>
                       </Modal>
                     </div>
@@ -324,34 +400,69 @@ class MenuScreen extends Component {
                       <i class="fa fa-plus-circle"></i> Add New
                         </button> */}
                   </div>
+                  <Modal open={openEdit} onClose={this.onCloseEditModal}>
+                    <h2 className="modelhdr">Edit</h2>
+                    <div className="modelmenu">
+                      <div className="p-l-55 p-r-55 p-t-25 p-b-25">
+                      </div>
+                    </div>
+
+                  </Modal>
                   <div className="container gridcontent">
                     <div className="row gridgraybg">
-                      <div className="col-sm-3 gridbr">Period</div>
-                      <div className="col gridbr">Paid as Title</div>
-                      <div className="col gridbr">PV</div>
-                      <div className="col gridbr">TV</div>
-                      <div className="col-sm-1 gridbr textcenter"><i class="fas fa-edit iconcolor"></i></div>
-                      <div className="col-sm-1 gridbr textcenter"><i class="fas fa-trash-alt iconcolor"></i></div>
+                      <div className="col-sm-3 gridbr">Name</div>
+                      <div className="col gridbr">Type</div>
+                      <div className="col gridbr">Parent</div>
+                      <div className="col gridbr">State</div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                    </div>
+                    {values.length > 0 ? (
+                      values.map((data, index) => {
+                        return (
+                          <div className="row gridwtbg" key={index}>
+                            <div className="col-sm-3 gridbr">{data.name}</div>
+                            <div className="col gridbr">{data.type}</div>
+                            <div className="col gridbr">{values.find(d => d.id === data.parentid) === undefined ? '' : values.find(d => d.id === data.parentid).name || ''}</div>
+                            <div className="col gridbr">{`${data.state}d`}</div>
+                            <div className="col-sm-1 gridbr textcenter">
+                              {/* <button type="button" className="hidden-print" onClick={this.onOpenEditModal}> <i className="fas fa-edit iconcolor"></i></button> */}
+                              <i className="fas fa-edit iconcolor"></i>
+                            </div>
+                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                        <p>No records found..</p>
+                      )}
+                    {/* <div className="row gridgraybg">
+                      <div className="col-sm-3 gridbr">Name</div>
+                      <div className="col gridbr">Type</div>
+                      <div className="col gridbr">State</div>
+                      <div className="col gridbr">Parent</div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
                     <div className="row gridwtbg">
-                      <div className="col-sm-3 gridbr">October 2019</div>
-                      <div className="col gridbr">Designer</div>
-                      <div className="col gridbr">0.00</div>
-                      <div className="col gridbr">0.00</div>
-                      <div className="col-sm-1 gridbr textcenter"><i class="fas fa-edit iconcolor"></i></div>
-                      <div className="col-sm-1 gridbr textcenter"><i class="fas fa-trash-alt iconcolor"></i></div>
+                      <div className="col-sm-3 gridbr">Home</div>
+                      <div className="col gridbr">menu</div>
+                      <div className="col gridbr">enable</div>
+                      <div className="col gridbr"></div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
                     <div className="row gridgraybg">
-                      <div className="col-sm-3 gridbr">September 2019</div>
-                      <div className="col gridbr">Designer</div>
-                      <div className="col gridbr">58.74</div>
-                      <div className="col gridbr">2,974.41	</div>
-                      <div className="col-sm-1 gridbr textcenter"><i class="fas fa-edit iconcolor"></i></div>
-                      <div className="col-sm-1 gridbr textcenter"><i class="fas fa-trash-alt iconcolor"></i></div>
-                    </div>
+                      <div className="col-sm-3 gridbr">About</div>
+                      <div className="col gridbr">menu</div>
+                      <div className="col gridbr">enable</div>
+                      <div className="col gridbr">	</div>
+                      <div className="col-sm-1 gridbr textcenter">
+                        <button type="button" className="hidden-print" onClick={this.onOpenEditModal}> <i className="fas fa-edit iconcolor"></i></button>
+                      </div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                    </div> */}
                   </div>
-
-
                 </div>
               </div>
 
