@@ -61,20 +61,20 @@ export default class Sidebarmenu  extends Component{
                   </Card>
                   <Card>
                     <Accordion.Toggle as={Card.Header} eventKey="2">
-                      Column 2 <i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
+                      Admin <i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey="2">
                       <Card.Body>
                         <div className="leftnavlinks">
                           <ul>
-                            <li><a href={BASE_URL}><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Column 1</a></li>
-                            <li><a href={BASE_URL}><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Column 2</a></li>
+                            <li><Link to="/menu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Menu</Link></li>
+                            {/* <li><Link to="/submenu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Sub Menu</Link></li> */}
                           </ul>
                         </div>
                       </Card.Body>
                     </Accordion.Collapse>
                   </Card>
-                  <Card>
+                  {/* <Card>
                     <Accordion.Toggle as={Card.Header} eventKey="3">
                       Column 3 <i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
                     </Accordion.Toggle>
@@ -88,7 +88,7 @@ export default class Sidebarmenu  extends Component{
                         </div>
                       </Card.Body>
                     </Accordion.Collapse>
-                  </Card>
+                  </Card> */}
                 </Accordion>
                 </div>
               </div>

@@ -133,7 +133,11 @@ class ChangePassword extends Component {
         <div className="container-fluid">
           <div className="row fixed-header" style={styleBack1}>
             <div className="col col-sm-6 col-md-2">
-              <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
+              <div className="logo" style={styleBack}>
+              <Link to="/dashboard">
+                <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
+              </Link>
+              </div>
             </div>
             <div className="col col-sm-6 col-md-10 textalign changepassword">
               <div className="innerlinks">

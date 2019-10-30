@@ -328,7 +328,7 @@ class DashboardScreen extends Component {
                           <div className="row">
                             <div className="col-md-3"></div>
                             <div className="col-md-7 ">
-                              <div className="Promotionbg rounded-circle">0<span className="per-font">%</span></div>
+                              <div className="Promotionbg rounded-circle">75<span className="per-font">%</span></div>
                             </div>
                           </div>
                         </table>
@@ -560,7 +560,6 @@ class DashboardScreen extends Component {
                             </div>
                           </div>
                         </div>
-
 
                         <div className="viewallbr"><a href={BASE_URL}><i className="fa fa-arrow-circle-right sicon" aria-hidden="true"></i> View Newest Distributors</a></div>
                       </div>

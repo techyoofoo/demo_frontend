@@ -32,40 +32,40 @@ class LoginScreen extends Component {
   submituserRegistrationForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
-      // let fields = {};
-      // console.log('Fields Message', fields);
-      // fields["UserName"] = "";
-      // fields["password"] = "";
-      // this.setState({ fields: fields });
+      let fields = {};
+      console.log('Fields Message', fields);
+      fields["UserName"] = "";
+      fields["password"] = "";
+      this.setState({ fields: fields });
 
-      var jsonData = {
-        "ApiAuthentication":
-        {
-          "LoginName": "chalkapi",
-          "Password": "5PhHK339B76k2eM8",
-          "Company": "chalkcouture"
-        },
-        "AuthenticateCustomerRequest":
-        {
-          "LoginName": this.state.fields.UserName,
-          "Password": this.state.fields.password
-        }
-      }
-      axios.post('http://localhost:3000/rogue/yoofoo/usermodeule/authenticate', {
-        data: jsonData
-      })
-        .then(function (response) {
-          if (response.data.Message.Result !== undefined && response.data.Message.Result[0].Status === "Success") {
-            //this.props.history.push('/dashboard');
-            window.location = '/dashboard';
-          }
-          else {
-            console.log(response.data.Message);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        })
+      // var jsonData = {
+      //   "ApiAuthentication":
+      //   {
+      //     "LoginName": "chalkapi",
+      //     "Password": "5PhHK339B76k2eM8",
+      //     "Company": "chalkcouture"
+      //   },
+      //   "AuthenticateCustomerRequest":
+      //   {
+      //     "LoginName": this.state.fields.UserName,
+      //     "Password": this.state.fields.password
+      //   }
+      // }
+      // axios.post('http://localhost:3000/rogue/yoofoo/usermodeule/authenticate', {
+      //   data: jsonData
+      // })
+      //   .then(function (response) {
+      //     if (response.data.Message.Result !== undefined && response.data.Message.Result[0].Status === "Success") {
+      //       //this.props.history.push('/dashboard');
+      //       window.location = '/dashboard';
+      //     }
+      //     else {
+      //       console.log(response.data.Message);
+      //     }
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   })
         this.props.history.push('/dashboard');
     }
   }

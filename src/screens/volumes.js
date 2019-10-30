@@ -155,7 +155,11 @@ class VolumesScreen extends Component {
           {/* <PageHeader headerColor={this.state.background}/> */}
           <div className="row fixed-header" style={styleBack1}>
             <div className="col col-sm-6 col-md-2">
-              <div className="logo" style={styleBack}> <a href={BASE_URL}><img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img></a></div>
+              <div className="logo" style={styleBack}>
+                <Link to="/dashboard">
+                  <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
+                </Link>
+              </div>
             </div>
             <div className="col col-sm-6 col-md-10 textalign changepassword">
               <div className="innerlinks">
@@ -205,7 +209,6 @@ class VolumesScreen extends Component {
               <div className="col-md-12">
                 <div className="col-md-1"></div>
                 <div className="col-md-10 innercontent">
-
                   <div class="condensed-grid">
                     <button type="button" class="btn btn-primary hidden-print">
                       <i class="fa fa-download"></i> Excel

@@ -9,7 +9,7 @@ import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-class RankScreen extends Component {
+class SubmenuScreen extends Component {
   constructor() {
     super();
 
@@ -155,10 +155,10 @@ class RankScreen extends Component {
           {/* <PageHeader headerColor={this.state.background}/> */}
           <div className="row fixed-header" style={styleBack1}>
             <div className="col col-sm-6 col-md-2">
-              <div className="logo" style={styleBack}> 
-              <Link to="/dashboard">
-                <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
-              </Link>
+              <div className="logo" style={styleBack}>
+                <Link to="/dashboard">
+                  <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
+                </Link>
               </div>
             </div>
             <div className="col col-sm-6 col-md-10 textalign changepassword">
@@ -201,138 +201,14 @@ class RankScreen extends Component {
                       <a className="navbar-minimalize minimalize-styl-2 btn btn-primary navbaralign" onClick={this.SideNvaBaropenClick}>
                         <i className="fa fa-bars"></i> </a>
                     </div>
-                    <h3><span className="toppdng">Rank Advancement </span></h3>
+                    <h3><span className="toppdng">Sub Menu </span></h3>
                   </div>
                 </div>
               </div>
 
               <div className="col-md-12">
-                <div className="col-md-1"></div>
-                <div className="col-md-12 innercontent">
-
-                  <div className="row">
-                    <div className="col-md-10">
-                      <div class="well well-sm searchbox">
-                        <div class="row">
-                          <div class="col-sm-6">
-                            <div class="input-group">
-                              <span class="input-group-btn">
-                                <button id="gotopreviousrank" class="btn btn-default" type="button">
-                                  <i className="fa fa-chevron-left"></i></button>
-                              </span>
-                              <select id="rankchoice" class="form-control">
-                                <option value="0">
-                                  No Rank
-                                    </option>
-                                <option value="1" selected="">
-                                  Designer
-                                    </option>
-                                <option value="10">
-                                  Qualified Designer
-                                    </option>
-                                <option value="20">
-                                  Leading Designer
-                                    </option>
-                                <option value="30">
-                                  Master Designer
-                                    </option>
-                                <option value="40">
-                                  Mentor
-                                    </option>
-                                <option value="50">
-                                  Leading Mentor
-                                    </option>
-                                <option value="60">
-                                  Master Mentor
-                                    </option>
-                                <option value="70">
-                                  Couturier
-                                    </option>
-                                <option value="80">
-                                  Executive Couturier
-                                    </option>
-                                <option value="90">
-                                  Master Couturier
-                                    </option>
-                              </select>
-                              <span class="input-group-btn">
-                                <button id="gotonextrank" class="btn btn-default" type="button">
-                                  <i className="fa fa-chevron-right"></i></button>
-                              </span>
-                            </div>
-                          </div>
-                          <div class="col-sm-7">
-
-                          </div>
-                        </div>
-                      </div>
-                      <div class="panel panel-default mrgntop">
-                        <div class="panel-body">
-                          <h3 className="paneltitle">Qualified Designer</h3>
-                          <div class="row">
-                            <div class="col-sm-4">
-                              <div class="metric metric-sm">
-                                <div class="metric-body text-info">75%</div>
-                                <div class="metric-title">
-                                  Complete
-                        </div>
-                              </div>
-                            </div>
-                            <div class="col-sm-8">
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-sm-10">
-                      <div class="panel panel-default mrgntop">
-                        <div class="panel-heading paneltitlebg">
-                          <h4 class="panel-title">Qualification Requirements</h4>
-                        </div>
-                        <div class="list-group">
-                          <div class="list-group-item">
-                            <div class="media">
-                              <div class="media-object pull-left text-success"><i class="fa fa-check" aria-hidden="true"></i></div>
-                              <div class="media-body">
-                                You must be a Designer.
-            </div>
-                            </div>
-                          </div>
-                          <div class="list-group-item">
-                            <div class="media">
-                              <div class="media-object pull-left text-success"><i class="fa fa-check" aria-hidden="true"></i></div>
-                              <div class="media-body">
-                                Your account must be in good standing.
-            </div>
-                            </div>
-                          </div>
-                          <div class="list-group-item">
-                            <div class="media">
-                              <div class="media-object pull-left text-danger"><i class="fa fa-times" aria-hidden="true"></i></div>
-                              <div class="media-body">
-                                You need at least 100 Personal Volume (PV).
-
-                    <div class="space-10"></div>
-                                <div class="progress progress-sm no-margin">
-                                  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                    <span class="sr-only">0% Complete</span>
-                                  </div>
-                                </div>
-                                <small class="text-muted">0 of 100</small>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
-                </div>
+                
+            
               </div>
             </div>
           </div>
@@ -346,4 +222,4 @@ class RankScreen extends Component {
   }
 }
 
-export default RankScreen;
+export default SubmenuScreen;
