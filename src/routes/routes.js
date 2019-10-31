@@ -13,7 +13,9 @@ import CommissionsScreen from '../screens/commissions';
 import RankScreen from '../screens/rank';
 import VolumesScreen from '../screens/volumes';
 import MenuScreen from '../screens/menu';
-import SubmenuScreen from '../screens/submenu';
+// import SubmenuScreen from '../screens/submenu';
+import UserGroupsScreen from '../screens/usergroups';
+import RoleScreen from '../screens/role';
 
 class Routes extends Component {
     render() {
@@ -33,7 +35,9 @@ class Routes extends Component {
             <Route exact path="/rank"  component={RankScreen} /> 
             <Route exact path="/volumes"  component={VolumesScreen} />
             <Route exact path="/menu"  component={MenuScreen} />
-            <Route exact path="/submenu"  component={SubmenuScreen} />
+            {/* <Route exact path="/submenu"  component={SubmenuScreen} /> */}
+            <Route exact path="/usergroups"  component={UserGroupsScreen} />
+            <Route exact path="/role"  component={RoleScreen} />
                              
           </div>
         </HashRouter>
