@@ -240,7 +240,7 @@ class UserGroupsScreen extends Component {
 
                         <div className="wrap-input100 validate-input">
                           <span className="label-input100"> Role</span>
-                          <select className="form-control" value={this.state.fields.Role} onChange={this.handleChange}>
+                          <select className="input100" value={this.state.fields.Role} onChange={this.handleChange}>
                               <option>-- Select --</option>
                               <option>User 1</option>
                               <option>User 2</option>
