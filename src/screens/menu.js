@@ -139,7 +139,7 @@ class MenuScreen extends Component {
         state: fields.state,
         parentid: fields.type === 'menu' ? "0" : fields.menu
       }
-      console.log(JSON.stringify(formData))
+     
       const config = {
         headers: {
           "content-type": "application/json"
@@ -325,7 +325,7 @@ class MenuScreen extends Component {
                     <div>
                       <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                       <Modal open={open} onClose={this.onCloseModal}>
-                        <h2 className="modelhdr">Add new</h2>
+                        <h2 className="modelhdr">Add New</h2>
                         <div className="modelmenu">
                           <div className="p-l-55 p-r-55 p-t-25 p-b-25">
                             <div className="wrap-input100 validate-input">
