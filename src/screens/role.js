@@ -28,7 +28,8 @@ class RoleScreen extends Component {
       sidebarClose: true,
       values: [],
       fields: {},
-      errors: {}
+      errors: {},
+      roles: []
     };
   }
 
@@ -45,8 +46,9 @@ class RoleScreen extends Component {
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    this.bindRoleGrid();
   }
-  
+
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
     document.getElementById("main").style.marginLeft = "0";
@@ -90,6 +92,18 @@ class RoleScreen extends Component {
     this.handleClick();
   };
 
+  bindRoleGrid() {
+    axios
+      .get(BASE_URL + "rouge/role/get")
+      .then((response) => {
+        this.setState({
+          roles: response.data,
+        });
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
 
   handleChange(e) {
     let fields = this.state.fields;
@@ -118,9 +132,12 @@ class RoleScreen extends Component {
       axios.post(BASE_URL + `rouge/role/create`, JSON.stringify(formData), config)
         .then(response => {
           alert(response.data.Message);
-          let fields = {};
-          this.setState({ fields: fields });
-          this.onCloseModal();
+          if (response.status === 201) {
+            let fields = {};
+            this.setState({ fields: fields });
+            this.bindRoleGrid();
+            this.onCloseModal();
+          }
         })
         .catch(error => {
           console.log(error)
@@ -168,7 +185,7 @@ class RoleScreen extends Component {
 
   render() {
     const BASE_URL = '#'
-    const { open } = this.state;
+    const { open, roles } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -284,18 +301,20 @@ class RoleScreen extends Component {
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
-                    <div className="row gridgraybg">
-                      <div className="col-sm-3 gridbr">User</div>
-                      <div className="col gridbr">User has only read permission</div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
-                    </div>
-                    <div className="row gridgraybg">
-                      <div className="col-sm-3 gridbr">Admin</div>
-                      <div className="col gridbr">Admin has read,write and delete permission</div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
-                    </div>
+                    {roles.length > 0 ? (
+                      roles.map((data, index) => {
+                        return (
+                          <div className="row gridgraybg" key={index}>
+                            <div className="col-sm-3 gridbr">{data.name}</div>
+                            <div className="col gridbr">{data.description}</div>
+                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
+                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                        <p><center>No records found..</center></p>
+                      )}
                   </div>
                 </div>
               </div>

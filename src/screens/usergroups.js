@@ -30,7 +30,8 @@ class UserGroupsScreen extends Component {
       values: [],
       fields: {},
       errors: {},
-      roles: []
+      roles: [],
+      gridData: []
     };
   }
 
@@ -47,7 +48,8 @@ class UserGroupsScreen extends Component {
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
-    this.bindRoles()
+    this.bindRolesDropdown()
+    this.bindUserGroupGrid()
   }
 
   SideNavBarcloseClick = () => {
@@ -93,19 +95,28 @@ class UserGroupsScreen extends Component {
     this.handleClick();
   };
 
-  bindRoles() {
+  bindRolesDropdown() {
     axios
       .get(BASE_URL_ROLE + "rouge/role/get")
       .then((response) => {
-        let roles = [];
-        roles = response.data
         this.setState({
-          roles: roles
+          roles: response.data
         });
       })
       .catch(error => {
         console.log(error)
       });
+  }
+
+  bindUserGroupGrid() {
+    axios.get(BASE_URL + "rouge/usergroup/get")
+      .then((response) => {
+        this.setState({
+          gridData: response.data
+        })
+      }).catch(error => {
+        console.log(error)
+      })
   }
 
   handleChange(e) {
@@ -134,9 +145,12 @@ class UserGroupsScreen extends Component {
       axios.post(BASE_URL + `rouge/usergroup/create`, JSON.stringify(formData), config)
         .then(response => {
           alert(response.data.Message);
-          let fields = {};
-          this.setState({ fields: fields });
-          this.onCloseModal();
+          if (response.status === 201) {
+            let fields = {};
+            this.setState({ fields: fields });
+            this.bindUserGroupGrid();
+            this.onCloseModal();
+          }
         })
         .catch(error => {
           console.log(error)
@@ -202,7 +216,7 @@ class UserGroupsScreen extends Component {
     const styleBack1 = {
       backgroundColor: this.state.background
     }
-    const { roles } = this.state
+    const { roles, gridData } = this.state
     return (
       <div>
         <div className="container-fluid">
@@ -325,20 +339,21 @@ class UserGroupsScreen extends Component {
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
-                    <div className="row gridgraybg">
-                      <div className="col-sm-3 gridbr">First Group</div>
-                      <div className="col gridbr">Buyer </div>
-                      <div className="col gridbr">User</div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
-                    </div>
-                    <div className="row gridgraybg">
-                      <div className="col-sm-3 gridbr">Second Group</div>
-                      <div className="col gridbr">Seller</div>
-                      <div className="col gridbr">Admin</div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
-                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
-                    </div>
+                    {gridData.length > 0 ? (
+                      gridData.map((data, index) => {
+                        return (
+                          <div className="row gridgraybg">
+                            <div className="col-sm-3 gridbr">{data.name}</div>
+                            <div className="col gridbr">{data.description} </div>
+                            <div className="col gridbr">{roles.find(d => d.id === data.roleid) === undefined ? '' : roles.find(d => d.id === data.roleid).name || ''}</div>
+                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
+                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                        <p><center>No records found..</center></p>
+                      )}
                   </div>
                 </div>
               </div>
