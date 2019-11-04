@@ -7,7 +7,9 @@ import Sidebarmenu from './sidebar';
 import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import axios from 'axios';
+const BASE_URL = `http://localhost:6003/`;
+const BASE_URL_ROLE = `http://localhost:6005/`;
 
 class UserScreen extends Component {
   constructor() {
@@ -26,13 +28,15 @@ class UserScreen extends Component {
       sidebarClose: true,
       values: [],
       fields: {},
-      errors: {}
+      errors: {},
+      roles: []
     };
   }
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    this.bindRolesDropdown()
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -73,10 +77,21 @@ class UserScreen extends Component {
     if (this.node.contains(e.target)) {
       return;
     }
-
     this.handleClick();
   };
 
+  bindRolesDropdown() {
+    axios
+      .get(BASE_URL_ROLE + "rouge/role/get")
+      .then((response) => {
+        this.setState({
+          roles: response.data
+        });
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
 
   handleChange(e) {
     let fields = this.state.fields;
@@ -84,26 +99,44 @@ class UserScreen extends Component {
     this.setState({
       fields
     });
-
   }
+
   UserForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
-      let fields = {};
-      fields["FirstName"] = "";
-      fields["LastName"] = "";
-      fields["emailid"] = "";
-      fields["Age"] = "";
-      fields["password"] = "";
-      fields["ConfirmPassword"] = "";
-      fields["mobileno"] = "";
-      fields["companyname"] = "";
-      fields["UserType"] = "";
-      fields["Role"] = "";
-      this.setState({ fields: fields });
-      alert("Form submitted");
+      const { fields } = this.state
+      let formData = {
+        id: '',
+        firstname: fields.FirstName,
+        lastname: fields.LastName,
+        email: fields.EmailId,
+        age: Number(fields.Age),
+        gender: fields.Gender,
+        password: fields.Password,
+        username: fields.FirstName + "" + fields.LastName,
+        mobileno: fields.MobileNo,
+        usertype: fields.UserType,
+        roleid: fields.Role,
+        companyname: fields.CompanyName,
+      }
+      const config = {
+        headers: {
+          "content-type": "application/json"
+        }
+      };
+      axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
+        .then(response => {
+          alert(response.data.Message);
+          if (response.status === 201) {
+            let fields = {};
+            this.setState({ fields: fields });
+            this.onCloseModal();
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        });
     }
-
   }
 
   validateForm() {
@@ -123,13 +156,13 @@ class UserScreen extends Component {
       }
     }
 
-    if (!fields["companyname"]) {
+    if (!fields["CompanyName"]) {
       formIsValid = false;
-      errors["companyname"] = "*Please enter your company name.";
+      errors["CompanyName"] = "*Please enter your company name.";
     }
 
-    if (typeof fields["companyname"] !== "undefined") {
-      if (!fields["companyname"].match(/^[a-zA-Z ]*$/)) {
+    if (typeof fields["CompanyName"] !== "undefined") {
+      if (!fields["CompanyName"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
         errors["CompanyName"] = "*Please enter alphabet characters only.";
       }
@@ -147,17 +180,17 @@ class UserScreen extends Component {
       }
     }
 
-    if (!fields["emailid"]) {
+    if (!fields["EmailId"]) {
       formIsValid = false;
-      errors["emailid"] = "*Please enter your email-ID.";
+      errors["EmailId"] = "*Please enter your email-ID.";
     }
 
-    if (typeof fields["emailid"] !== "undefined") {
+    if (typeof fields["EmailId"] !== "undefined") {
       //regular expression for email validation
       var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-      if (!pattern.test(fields["emailid"])) {
+      if (!pattern.test(fields["EmailId"])) {
         formIsValid = false;
-        errors["emailid"] = "*Please enter valid email-ID.";
+        errors["EmailId"] = "*Please enter valid Email-ID.";
       }
     }
 
@@ -166,6 +199,19 @@ class UserScreen extends Component {
       errors["Age"] = "*Please enter your Age.";
     }
 
+    if (typeof fields["Age"] !== "undefined") {
+      if (Number(fields["Age"]) < 18 || Number(fields["Age"]) > 100) {
+        formIsValid = false;
+        errors["Age"] = "*Please enter valid age .";
+      }
+    }
+
+    if (!fields["Gender"]) {
+      formIsValid = false;
+      errors["Gender"] = "*Please select your gender.";
+    }
+
+
     // if (typeof fields["Age"] !== "undefined") {
     //   if (!fields["Age"].match(/^[0-9]{10}$/)) {
     //     formIsValid = false;
@@ -173,15 +219,15 @@ class UserScreen extends Component {
     //   }
     // }
 
-    if (!fields["password"]) {
+    if (!fields["Password"]) {
       formIsValid = false;
-      errors["password"] = "*Please enter your password.";
+      errors["Password"] = "*Please enter your password.";
     }
 
-    if (typeof fields["password"] !== "undefined") {
-      if (!fields["password"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
+    if (typeof fields["Password"] !== "undefined") {
+      if (!fields["Password"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
         formIsValid = false;
-        errors["password"] = "*Please enter secure and strong password.";
+        errors["Password"] = "*Please enter secure and strong password.";
       }
     }
 
@@ -191,21 +237,28 @@ class UserScreen extends Component {
     }
 
     if (typeof fields["ConfirmPassword"] !== "undefined") {
-      if (!fields["ConfirmPassword"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
+      if (!fields["ConfirmPassword"].match(fields["Password"])) {
         formIsValid = false;
-        errors["ConfirmPassword"] = "*Please enter secure and strong password.";
+        errors["ConfirmPassword"] = "*Password not match.";
       }
     }
 
-    if (!fields["mobileno"]) {
+    // if (typeof fields["ConfirmPassword"] !== "undefined") {
+    //   if (!fields["ConfirmPassword"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
+    //     formIsValid = false;
+    //     errors["ConfirmPassword"] = "*Please enter secure and strong password.";
+    //   }
+    // }
+
+    if (!fields["MobileNo"]) {
       formIsValid = false;
-      errors["mobileno"] = "*Please enter your mobile no.";
+      errors["MobileNo"] = "*Please enter your mobile no.";
     }
 
-    if (typeof fields["mobileno"] !== "undefined") {
-      if (!fields["mobileno"].match(/^[0-9]{10}$/)) {
+    if (typeof fields["MobileNo"] !== "undefined") {
+      if (!fields["MobileNo"].match(/^[0-9]{10}$/)) {
         formIsValid = false;
-        errors["mobileno"] = "*Please enter valid mobile no.";
+        errors["MobileNo"] = "*Please enter valid mobile no.";
       }
     }
 
@@ -228,7 +281,7 @@ class UserScreen extends Component {
 
   render() {
     const BASE_URL = '#'
-    const { open } = this.state;
+    const { open, roles } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -300,28 +353,28 @@ class UserScreen extends Component {
                       <div className="login100-form validate-form">
                         <div className="wrap-input100 validate-input">
                           <span className="label-input100">First Name</span>
-                          <input className="input100" type="text" name="FirstName" placeholder="Type your first name" value={this.state.fields.FirstName} onChange={this.handleChange} />
+                          <input className="input100" type="text" name="FirstName" placeholder="Type your first name" value={this.state.fields.FirstName || ''} onChange={this.handleChange} />
                           <span className="focus-input100" data-symbol="&#xf206;"></span>
                         </div>
                         <div className="errorMsg">{this.state.errors.FirstName}</div>
 
                         <div className="wrap-input100 validate-input m-t-20">
                           <span className="label-input100">Last Name</span>
-                          <input className="input100" type="text" name="LastName" placeholder="Type your last name" value={this.state.fields.LastName} onChange={this.handleChange} />
+                          <input className="input100" type="text" name="LastName" placeholder="Type your last name" value={this.state.fields.LastName || ''} onChange={this.handleChange} />
                           <span className="focus-input100" data-symbol="&#xf206;"></span>
                         </div>
                         <div className="errorMsg">{this.state.errors.LastName}</div>
 
                         <div className="wrap-input100 validate-input m-t-20">
                           <span className="label-input100">Email Id</span>
-                          <input className="input100" type="text" name="emailid" placeholder="Type your email Id" value={this.state.fields.emailid} onChange={this.handleChange} />
+                          <input className="input100" type="text" name="EmailId" placeholder="Type your email Id" value={this.state.fields.EmailId || ''} onChange={this.handleChange} />
                           <span className="focus-input100"><i class="far fa-envelope fa_icon"></i></span>
                         </div>
-                        <div className="errorMsg">{this.state.errors.emailid}</div>
+                        <div className="errorMsg">{this.state.errors.EmailId}</div>
 
                         <div className="wrap-input100 validate-input m-t-20">
                           <span className="label-input100">Age</span>
-                          <input className="input100" type="text" name="Age" placeholder="Type your Age" value={this.state.fields.Age} onChange={this.handleChange} />
+                          <input className="input100" type="number" min="18" max="100" name="Age" placeholder="Type your Age" value={this.state.fields.Age || ''} onChange={this.handleChange} />
                           <span className="focus-input100" data-symbol="&#xf206;"></span>
                         </div>
                         <div className="errorMsg">{this.state.errors.Age}</div>
@@ -330,82 +383,89 @@ class UserScreen extends Component {
                           <div className="label-input100">Gender</div>
                           <div className="col col-md-4 floatl">
                             <label className="radio menumrgn">
-                              <input type="radio" name="type" value="menu" checked={this.state.fields.type === "menu"} onChange={this.handleChange} />
+                              <input type="radio" name="Gender" value="male" checked={this.state.fields.Gender === "male"} onChange={this.handleChange} />
                               Male
-                                 </label>
+                             </label>
                           </div>
                           <div className="col col-md-4 floatl">
                             <label className="radio menumrgn">
-                              <input type="radio" name="type" value="submenu" checked={this.state.fields.type === "submenu"} onChange={this.handleChange} />
+                              <input type="radio" name="Gender" value="female" checked={this.state.fields.Gender === "female"} onChange={this.handleChange} />
                               Female
-                                </label>
+                             </label>
                           </div>
                         </div>
                         <div className="clear"></div>
+                        <div className="errorMsg">{this.state.errors.Gender}</div>
+
                         <div className="wrap-input100 validate-input m-t-20">
                           <span className="label-input100">Password</span>
-                          <input className="input100" type="password" name="password" placeholder="Type your password" value={this.state.fields.password} onChange={this.handleChange} />
+                          <input className="input100" type="password" name="Password" placeholder="Type your password" value={this.state.fields.Password || ''} onChange={this.handleChange} />
                           <span className="focus-input100" data-symbol="&#xf190;"></span>
                         </div>
-                        <div className="errorMsg">{this.state.errors.password}</div>
+                        <div className="errorMsg">{this.state.errors.Password}</div>
                       </div>
                     </div>
                   </div>
                   <div className="col-sm-5">
                     <div className="wrap-input100 validate-input">
                       <span className="label-input100">Confirm Password</span>
-                      <input className="input100" type="password" name="confirmpassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword} onChange={this.handleChange} />
+                      <input className="input100" type="password" name="ConfirmPassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword || ''} onChange={this.handleChange} />
                       <span className="focus-input100" data-symbol="&#xf190;"></span>
                     </div>
                     <div className="errorMsg">{this.state.errors.ConfirmPassword}</div>
 
                     <div className="wrap-input100 validate-input m-t-20">
                       <span className="label-input100">Mobile No</span>
-                      <input className="input100" type="mobileno" name="mobileno" placeholder="Type your mobile no" value={this.state.fields.mobileno} onChange={this.handleChange} />
+                      <input className="input100" type="mobileno" name="MobileNo" placeholder="Type your mobile no" value={this.state.fields.MobileNo || ''} onChange={this.handleChange} />
                       <span className="focus-input100"><i class="fas fa-mobile-alt fa_icon"></i></span>
                     </div>
-                    <div className="errorMsg">{this.state.errors.mobileno}</div>
+                    <div className="errorMsg">{this.state.errors.MobileNo}</div>
 
                     <div className="wrap-input100 validate-input m-t-20">
                       <span className="label-input100"> User Type</span>
-                      <select className="input100" value={this.state.fields.UserType} onChange={this.handleChange}>
-                        <option>-- Select --</option>
-                        <option>ANONYMOUS</option>
-                        <option>CUSTOMER</option>
+                      <select name="UserType" className="input100" value={this.state.fields.UserType || ""} onChange={this.handleChange}>
+                        <option value="">-- Select --</option>
+                        <option value="ANONYMOUS">ANONYMOUS</option>
+                        <option value="CUSTOMER">CUSTOMER</option>
                       </select>
                     </div>
                     <div className="errorMsg">{this.state.errors.UserType}</div>
 
                     <div className="wrap-input100 validate-input m-t-20">
                       <span className="label-input100"> Role</span>
-                      <select className="input100" value={this.state.fields.Role} onChange={this.handleChange}>
-                        <option>-- Select --</option>
-                        <option>Role 1</option>
-                        <option>Role 2</option>
+                      <select className="input100" name="Role" value={this.state.fields.Role || ""} onChange={this.handleChange}>
+                        <option value="">-- Select --</option>
+                        {roles.length > 0 ? (
+                          roles.map((data, index) => {
+                            return (
+                              <option key={index} value={data.id}> {data.name}</option>
+                            );
+                          })
+                        ) : (
+                            null
+                          )}
                       </select>
                     </div>
                     <div className="errorMsg">{this.state.errors.Role}</div>
 
                     <div className="wrap-input100 validate-input m-t-20">
                       <span className="label-input100">Company Name</span>
-                      <input className="input100" type="text" name="companyname" placeholder="Type your company name" value={this.state.fields.companyname} onChange={this.handleChange} />
+                      <input className="input100" type="text" name="CompanyName" placeholder="Type your company name" value={this.state.fields.CompanyName || ''} onChange={this.handleChange} />
                       <span className="focus-input100"><i class="far fa-building fa_icon"></i></span>
                     </div>
-                    <div className="errorMsg">{this.state.errors.companyname}</div>
+                    <div className="errorMsg">{this.state.errors.CompanyName}</div>
 
                     <div className="container-login100-form-btn p-t-31 p-b-25">
                       <div className="wrap-login100-form-btn">
                         <div className="login100-form-bgbtn"></div>
                         <button className="login100-form-btn" onClick={this.UserForm}>
                           Submit
-                           </button>
+                        </button>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
           <div className="fixed-footer">

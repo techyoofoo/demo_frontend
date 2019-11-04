@@ -120,8 +120,7 @@ class RoleScreen extends Component {
       let formData = {
         id: '',
         name: fields.Name,
-        description: fields.Description,
-        permission: ["read", "write"]
+        description: fields.Description
       }
       const config = {
         headers: {
