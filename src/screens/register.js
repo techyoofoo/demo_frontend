@@ -300,7 +300,7 @@ class RegisterScreen extends Component {
                         </div>
                         <div className="errorMsg">{this.state.errors.Password}</div>
 
-                        <div className="wrap-input100 validate-input">
+                        <div className="wrap-input100 validate-input m-t-20">
                           <span className="label-input100">Confirm Password</span>
                           <input className="input100" type="password" name="ConfirmPassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword || ''} onChange={this.handleChange} />
                           <span className="focus-input100" data-symbol="&#xf190;"></span>
