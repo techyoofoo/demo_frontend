@@ -127,12 +127,39 @@ class UserGroupsScreen extends Component {
     });
   }
 
+  onOpenEditModal = (data) => {
+    this.setState({ open: true });
+    let fields = this.state.fields;
+    fields["_id"] = data._id;
+    fields["clientid"] = data.clientid;
+    fields["Name"] = data.name;
+    fields["Description"] = data.description;
+    fields["Role"] = data.roleid;
+    this.setState({ fields: fields });
+  };
+
+  onDeleteClick = (data) => {
+    if (window.confirm("Are u sure to delete ?")) {
+      axios.delete(BASE_URL + `rouge/usergroup/delete/` + data._id)
+        .then(response => {
+          if (response.status === 200) {
+            let fields = {};
+            this.setState({ fields: fields });
+            this.bindUserGroupGrid();
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        });
+    }
+  }
+
   UserGroupsForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
       const { fields } = this.state
       let formData = {
-        clientid: '',
+        clientid: !fields.clientid ? ' ' : fields.clientid,
         name: fields.Name,
         description: fields.Description,
         roleid: fields.Role
@@ -142,19 +169,36 @@ class UserGroupsScreen extends Component {
           "content-type": "application/json"
         }
       };
-      axios.post(BASE_URL + `rouge/usergroup/create`, JSON.stringify(formData), config)
-        .then(response => {
-          alert(response.data.Message);
-          if (response.status === 201) {
-            let fields = {};
-            this.setState({ fields: fields });
-            this.bindUserGroupGrid();
-            this.onCloseModal();
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        });
+      if (!fields._id) {
+        axios.post(BASE_URL + `rouge/usergroup/create`, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 201) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.bindUserGroupGrid();
+              this.onCloseModal();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      }
+      else {
+        axios.put(BASE_URL + `rouge/usergroup/update/` + fields._id, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 200) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.bindUserGroupGrid();
+              this.onCloseModal();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      }
     }
   }
 
@@ -346,8 +390,12 @@ class UserGroupsScreen extends Component {
                             <div className="col-sm-3 gridbr">{data.name}</div>
                             <div className="col gridbr">{data.description} </div>
                             <div className="col gridbr">{roles.find(d => d.id === data.roleid) === undefined ? '' : roles.find(d => d.id === data.roleid).name || ''}</div>
-                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
-                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                            <div className="col-sm-1 gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>
+                            </div>
+                            <div className="col-sm-1 gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onDeleteClick(data)}> <i className="fas fa-trash-alt iconcolor"></i></button>
+                            </div>
                           </div>
                         );
                       })

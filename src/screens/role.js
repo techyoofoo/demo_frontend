@@ -113,12 +113,38 @@ class RoleScreen extends Component {
     });
   }
 
+  onOpenEditModal = (data) => {
+    this.setState({ open: true });
+    let fields = this.state.fields;
+    fields["_id"] = data._id;
+    fields["id"] = data.id;
+    fields["Name"] = data.name;
+    fields["Description"] = data.description;
+    this.setState({ fields: fields });
+  };
+
+  onDeleteClick = (data) => {
+    if (window.confirm("Are u sure to delete ?")) {
+      axios.delete(BASE_URL + `rouge/role/delete/` + data._id)
+        .then(response => {
+          if (response.status === 200) {
+            let fields = {};
+            this.setState({ fields: fields });
+            this.bindRoleGrid();
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        });
+    }
+  }
+
   RoleForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
       const { fields } = this.state;
       let formData = {
-        id: '',
+        id: !fields.id ? '' : fields.id,
         name: fields.Name,
         description: fields.Description
       }
@@ -128,19 +154,35 @@ class RoleScreen extends Component {
         }
       };
 
-      axios.post(BASE_URL + `rouge/role/create`, JSON.stringify(formData), config)
-        .then(response => {
-          alert(response.data.Message);
-          if (response.status === 201) {
-            let fields = {};
-            this.setState({ fields: fields });
-            this.bindRoleGrid();
-            this.onCloseModal();
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        });
+      if (!fields._id) {
+        axios.post(BASE_URL + `rouge/role/create`, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 201) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.bindRoleGrid();
+              this.onCloseModal();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      } else {
+        axios.put(BASE_URL + `rouge/role/update/` + fields._id, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 200) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.bindRoleGrid();
+              this.onCloseModal();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      }
     }
   }
 
@@ -306,8 +348,13 @@ class RoleScreen extends Component {
                           <div className="row gridgraybg" key={index}>
                             <div className="col-sm-3 gridbr">{data.name}</div>
                             <div className="col gridbr">{data.description}</div>
-                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
-                            <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                            <div className="col-sm-1 gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>
+                              {/* <i className="fas fa-edit iconcolor"></i> */}
+                            </div>
+                            <div className="col-sm-1 gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onDeleteClick(data)}> <i className="fas fa-trash-alt iconcolor"></i></button>
+                            </div>
                           </div>
                         );
                       })
