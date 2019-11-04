@@ -35,6 +35,7 @@ export default class Sidebarmenu extends Component {
                   <Card.Body>
                     <div className="leftnavlinks">
                       <ul>
+                        <input type="hidden" id="0" />
                         <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/install">Install</Link></li>
                         <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/uninstall"> Uninstall </Link></li>
                       </ul>
@@ -51,6 +52,7 @@ export default class Sidebarmenu extends Component {
                   <Card.Body>
                     <div className="leftnavlinks">
                       <ul>
+                        <input type="hidden" id="1" />
                         <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/commissions">COMMISSIONS</Link></li>
                         <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/rank">RANK ADVANCEMENT</Link> </li>
                         <li><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> <Link to="/volumes">VOLUMES</Link></li>
@@ -67,6 +69,7 @@ export default class Sidebarmenu extends Component {
                   <Card.Body>
                     <div className="leftnavlinks">
                       <ul>
+                        <input type="hidden" id="2" />
                         <li><Link to="/menu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Menu</Link></li>
                         {/* <li><Link to="/submenu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Sub Menu</Link></li> */}
                       </ul>
@@ -82,6 +85,7 @@ export default class Sidebarmenu extends Component {
                   <Card.Body>
                     <div className="leftnavlinks">
                       <ul>
+                        <input type="hidden" id="3" />
                         <li><Link to="/user"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> User</Link></li>
                         <li><Link to="/usergroups"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> User Groups</Link></li>
                         <li><Link to="/role"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Role</Link></li>
