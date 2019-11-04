@@ -31,6 +31,7 @@ class MenuScreen extends Component {
       fields: {},
       errors: {},
       menus: [],
+      gridData: [],
       openEdit: false
     };
   }
@@ -110,7 +111,7 @@ class MenuScreen extends Component {
           }
         })
         this.setState({
-          values: response.data,
+          gridData: response.data,
           menus: menus
         });
       })
@@ -139,7 +140,7 @@ class MenuScreen extends Component {
         state: fields.state,
         parentid: fields.type === 'menu' ? "0" : fields.menu
       }
-      console.log(JSON.stringify(formData))
+
       const config = {
         headers: {
           "content-type": "application/json"
@@ -148,11 +149,13 @@ class MenuScreen extends Component {
       axios.post(BASE_URL + `rouge/menu/create`, JSON.stringify(formData), config)
         .then(response => {
           alert(response.data.Message);
-          let fields = {};
-          // fields["Name"] = "";
-          this.setState({ fields: fields });
-          this.bindMenuGrid();
-          this.onCloseModal();
+          if (response.status === 201) {
+            let fields = {};
+            // fields["Name"] = "";
+            this.setState({ fields: fields });
+            this.bindMenuGrid();
+            this.onCloseModal();
+          }
         })
         .catch(error => {
           console.log(error)
@@ -195,7 +198,7 @@ class MenuScreen extends Component {
     const styleBack1 = {
       backgroundColor: this.state.background
     }
-    const { values, menus } = this.state
+    const { gridData, menus } = this.state
     return (
       <div>
 
@@ -325,7 +328,7 @@ class MenuScreen extends Component {
                     <div>
                       <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                       <Modal open={open} onClose={this.onCloseModal}>
-                        <h2 className="modelhdr">Add new</h2>
+                        <h2 className="modelhdr">Add New</h2>
                         <div className="modelmenu">
                           <div className="p-l-55 p-r-55 p-t-25 p-b-25">
                             <div className="wrap-input100 validate-input">
@@ -417,13 +420,13 @@ class MenuScreen extends Component {
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
-                    {values.length > 0 ? (
-                      values.map((data, index) => {
+                    {gridData.length > 0 ? (
+                      gridData.map((data, index) => {
                         return (
                           <div className="row gridwtbg" key={index}>
                             <div className="col-sm-3 gridbr">{data.name}</div>
                             <div className="col gridbr">{data.type}</div>
-                            <div className="col gridbr">{values.find(d => d.id === data.parentid) === undefined ? '' : values.find(d => d.id === data.parentid).name || ''}</div>
+                            <div className="col gridbr">{gridData.find(d => d.id === data.parentid) === undefined ? '' : gridData.find(d => d.id === data.parentid).name || ''}</div>
                             <div className="col gridbr">{`${data.state}d`}</div>
                             <div className="col-sm-1 gridbr textcenter">
                               {/* <button type="button" className="hidden-print" onClick={this.onOpenEditModal}> <i className="fas fa-edit iconcolor"></i></button> */}
