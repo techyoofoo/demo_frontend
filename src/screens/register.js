@@ -4,8 +4,18 @@ import HomeHeaderscreen from './homeheader';
 import PageFooter from './footer';
 import '../styles/styles.css';
 import '../styles/login.css';
+import langdata from '../../src/locales/de/registertranslation';
+import LocalizedStrings from 'react-localization';
+import { string } from 'prop-types';
 import axios from 'axios';
 const BASE_URL = `http://localhost:6003/`;
+
+let strings = new LocalizedStrings(langdata);
+console.log(strings);
+const selLang = localStorage.getItem('lang');
+console.log("Saved lang", selLang)
+strings.setLanguage(selLang);
+console.log('strings', strings)
 
 class RegisterScreen extends Component {
 
@@ -217,7 +227,7 @@ class RegisterScreen extends Component {
               <div className="p-t-25 p-b-25">
                 <div className="login100-form validate-form">
                   <span className="login100-form-title p-b-17">
-                    Register
+                    {strings.Registration}
 			        		</span>
                   <div className="col-md-12 p-t-25">
                     <div className="row">

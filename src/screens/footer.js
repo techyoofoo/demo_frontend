@@ -4,6 +4,15 @@ import { SketchPicker } from 'react-color';
 import PageHeader from './header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/styles.css';
+import langdata from '../../src/locales/de/registertranslation';
+import LocalizedStrings from 'react-localization';
+
+let strings = new LocalizedStrings(langdata);
+console.log(strings);
+const selLang = localStorage.getItem('lang');
+console.log("Saved lang", selLang)
+strings.setLanguage(selLang);
+console.log('strings', strings)
 
 const gbHeaderColor = localStorage.getItem("headerColor");
 export default class PageFooter extends Component {
@@ -32,7 +41,7 @@ export default class PageFooter extends Component {
     return (
       <div>
          <div className="row fixed-footer">
-            <div className="col-md-12 Footer" onClick = {this.props.handler}>Copyright © 2019 Rogue All Rights Reserved</div>
+            <div className="col-md-12 Footer" onClick = {this.props.handler}>{strings.Copyright}</div>
           </div>
       </div>
     )

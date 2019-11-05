@@ -1,0 +1,17 @@
+{
+    "Login": "Einloggen",
+    "Registration":"Registrieren",
+    "FName":"Vorname",
+    "FNameLablel":"Geben Sie Ihren Vornamen ein",
+    "LName":"Familienname, Nachname",
+    "LNameLabel":"Geben Sie Ihren Nachnamen ein",
+    "EmailId":"E-Mail-ID",
+    "EmailLabel":"Geben Sie Ihre E-Mail-ID ein",
+    "Password":"Passwort",
+    "PasswordLabel":"Geben Sie Ihr Passwort ein",
+    "ConfirmPassword":"Passwort bestätigen",
+    "ConfirmPasswordLabel":"Geben Sie Ihr Bestätigungskennwort ein",
+    "ShowPassword":"Zeigen Sie Ihr Passwort",
+    "RegistrationButton":"Anmeldungen",
+    "Copyright":"Copyright © 2019 Rogue Alle Rechte vorbehalten"
+}

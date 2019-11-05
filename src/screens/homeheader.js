@@ -3,10 +3,48 @@ import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
+import langdata from '../../src/locales/de/registertranslation';
+import LocalizedStrings from 'react-localization';
+
+let strings = new LocalizedStrings(langdata);
+console.log(strings);
+const selLang = localStorage.getItem('lang');
+console.log("Saved lang", selLang)
+strings.setLanguage(selLang);
+console.log('strings', strings)
 
 export default class HomeHeaderscreen extends Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      selected : null,
+    }
+    this.handleLanguageChange = this.handleLanguageChange.bind(this)
+  }
+  componentDidMount(){
+    let selected =localStorage.getItem('lang');
+    console.log('Selected **', selected);
+    this.setState({ selected : selected });
+  }
+  handleLanguageChange(e) {
+    debugger;
+    e.preventDefault();
+    let lang = e.target.value;
+    localStorage.setItem('lang', lang);
+    console.log('----Changed Language----', lang);
+    // let fields = this.state.selected;
+    // fields[lang] = lang;
+
+    this.setState({ selected : lang });
+    window.location.reload(false);
+    // this.setState(prevState => ({
+    //   language: lang
+    // }))
+  }
   render() {
     const BASE_URL = '#'
+    console.log('-----render---lang', this.state.selected);
     return (
       <div>
         <div className="row fixed-header">
@@ -17,13 +55,16 @@ export default class HomeHeaderscreen extends Component {
             <div className="navlinks">
               <ul>
                 <li>
-                  <ReactFlagsSelect
-                    countries={["US", "GB", "FR", "DE", "IT"]}
-                    customLabels={{ "US": "EN-US", "GB": "EN-GB", "FR": "FR", "DE": "DE", "IT": "IT" }}
-                    placeholder="Select Language" />
+                  <div>
+                    <select class="browser-default custom-select" onChange={this.handleLanguageChange} value={this.state.selected}>
+                      <option value="en">En- English</option>
+                      <option value="de">de- German</option>
+                      <option value="hi">hi- Hindi</option>
+                    </select>
+                  </div>
                 </li>
-                <li><a href="/#/login/">Login</a></li>
-                <li><a href="/#/register/">Register</a></li>
+                <li><a href="/#/login/">{strings.Login}</a></li>
+                <li><a href="/#/register/">{strings.Registration}</a></li>
               </ul>
             </div>
           </div>

@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
+import LocalizedStrings from 'react-localization';
 import HomeHeaderscreen from './homeheader';
 import PageFooter from './footer';
 import '../App.css';
 import '../styles/styles.css';
 import '../styles/login.css';
 import { link } from 'fs';
+import langdata from '../../src/locales/de/logintranslation';
 const axios = require('axios');
 
+let strings = new LocalizedStrings(langdata);
+console.log(strings);
+const selLang = localStorage.getItem('lang');
+console.log("Saved lang", selLang)
+strings.setLanguage(selLang);
+console.log('strings', strings)
 class LoginScreen extends Component {
 
   constructor() {
@@ -21,6 +29,9 @@ class LoginScreen extends Component {
     this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
 
   };
+  componentDidMount() {
+   
+  }
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
@@ -114,11 +125,12 @@ class LoginScreen extends Component {
   //   this.props.history.push('/dashboard');
   // }
   render() {
-    const BASE_URL = '#'
+    const BASE_URL = '#';
     return (
       <div>
         <div className="container-fluid">
           <HomeHeaderscreen />
+          {/* <Languagehandler lang="de" /> */}
           <div className="row Loginvbg container-login100">
             <div className="col-sm-2"></div>
             <div className="col-sm-4">
@@ -126,42 +138,44 @@ class LoginScreen extends Component {
               <div className="wrap-login100 p-l-55 p-r-55 p-t-25 p-b-25">
                 <form className="login100-form validate-form">
                   <span className="login100-form-title p-b-49">
-                    Login
+                    {/* Login */}
+                    {strings.Login}
+                    {/* {string} */}
 			        		</span>
 
                   <div className="wrap-input100 validate-input">
-                    <span className="label-input100">Username</span>
-                    <input className="input100" type="text" name="UserName" placeholder="Type your username" value={this.state.fields.UserName} onChange={this.handleChange} />
+                    <span className="label-input100">{strings.UserName}</span>
+                    <input className="input100" type="text" name="UserName" placeholder={strings.UsernameLabel} value={this.state.fields.UserName} onChange={this.handleChange} />
                     <span className="focus-input100"><i class="far fa-user fa_icon"></i></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.UserName}</div>
 
                   <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">Password</span>
-                    <input className="input100" type="password" name="password" placeholder="Type your password" value={this.state.fields.password} onChange={this.handleChange} />
+                    <span className="label-input100">{strings.password}</span>
+                    <input className="input100" type="password" name="password" placeholder={strings.PasswordLabel} value={this.state.fields.password} onChange={this.handleChange} />
                     <span className="focus-input100" data-symbol="&#xf190;"></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.password}</div>
 
                   <div className="text-right p-t-8 p-b-31">
-                    <Link to="/forgotpassword" className="btn btn-link">  Forgot password? </Link>
+                    <Link to="/forgotpassword" className="btn btn-link">  {strings.ForgotPassword} </Link>
                   </div>
 
                   <div className="container-login100-form-btn">
                     <div className="wrap-login100-form-btn">
                       <div className="login100-form-bgbtn"></div>
                       <button className="login100-form-btn" onClick={this.submituserRegistrationForm}>
-                        Login
+                      {strings.Login}
 						        	</button>
                     </div>
                   </div>
                   <div className="flex-col-c p-t-15">
                     <span className="txt1 p-b-17">
-                      Or Sign Up Using
+                    {strings.OrSignupUsing}
 				        		</span>
 
                     <a href="#" className="txt2">
-                      <Link to="/register" className="btn btn-link"> Sign Up </Link>
+                      <Link to="/register" className="btn btn-link">  {strings.Signup} </Link>
                     </a>
                   </div>
                 </form>
