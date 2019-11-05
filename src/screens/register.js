@@ -307,7 +307,7 @@ class RegisterScreen extends Component {
 
                         <div className="wrap-input100 validate-input m-t-20">
                           <span className="label-input100">{strings.CompanyName}</span>
-                          <input className="input100" type="text" name="CompanyName" placeholder={strings.CompanyNameLable} value={this.state.fields.CompanyName || ''} onChange={this.handleChange} />
+                          <input className="input100" type="text" name="CompanyName" placeholder={strings.CompanyNameLabel} value={this.state.fields.CompanyName || ''} onChange={this.handleChange} />
                           <span className="focus-input100"><i class="far fa-building fa_icon"></i></span>
                         </div>
                         <div className="errorMsg">{this.state.errors.CompanyName}</div>
