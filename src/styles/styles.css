@@ -1052,6 +1052,35 @@ dd {
 }
 /*-------------------*/
 
+.MuiTypography-body1 {
+    font-size: 14px !important;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+}
+.MuiTreeItem-content {
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: left;
+    text-align: left;
+}
+.ckboxalign{	
+	padding: 0;
+	margin: 0;
+	float: left;
+}
+.MuiTreeItem-iconContainer {
+    width: 24px;
+    display: flex;
+    margin-right: 2px;
+    justify-content: left;
+}
+.mrgtop{
+margin-top: 20px;
+}
+
 @media screen and (min-width: 980px) /* Desktop */ {
    
     
