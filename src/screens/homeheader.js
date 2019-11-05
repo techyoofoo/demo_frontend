@@ -8,6 +8,11 @@ import LocalizedStrings from 'react-localization';
 
 let strings = new LocalizedStrings(langdata);
 console.log(strings);
+const getLang= localStorage.getItem('lang');
+if(getLang =="" || getLang== null)
+{
+  localStorage.setItem('lang', "en");
+}
 const selLang = localStorage.getItem('lang');
 console.log("Saved lang", selLang)
 strings.setLanguage(selLang);
