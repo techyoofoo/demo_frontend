@@ -4,15 +4,11 @@ import HomeHeaderscreen from './homeheader';
 import PageFooter from './footer';
 import '../styles/styles.css';
 import '../styles/login.css';
-<<<<<<< HEAD
 import langdata from '../../src/locales/de/registertranslation';
 import LocalizedStrings from 'react-localization';
 import { string } from 'prop-types';
-const axios = require('axios');
-=======
 import axios from 'axios';
 const BASE_URL = `http://localhost:6003/`;
->>>>>>> c0ad2f356d1b525d59ae3de71325c942e29097b0
 
 let strings = new LocalizedStrings(langdata);
 console.log(strings);
