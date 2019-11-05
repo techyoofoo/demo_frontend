@@ -4,7 +4,8 @@ import HomeHeaderscreen from './homeheader';
 import PageFooter from './footer';
 import '../styles/styles.css';
 import '../styles/login.css';
-const axios = require('axios');
+import axios from 'axios';
+const BASE_URL = `http://localhost:6003/`;
 
 class RegisterScreen extends Component {
 
@@ -19,58 +20,51 @@ class RegisterScreen extends Component {
     this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
 
   };
+
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
     });
-
   }
+
   submituserRegistrationForm(e) {
     e.preventDefault();
-    if (!this.validateForm()) {
-      // let fields = {};
-      // fields["FirstName"] = "";
-      // fields["LastName"] = "";
-      // fields["emailid"] = "";
-      // fields["password"] = "";
-      // this.setState({ fields: fields });
-      // alert("Form submitted");
-      var jsonData = {
-        "ApiAuthentication":
-        {
-          "LoginName": "chalkapi",
-          "Password": "5PhHK339B76k2eM8",
-          "Company": "chalkcouture"
-        },
-        "User": {
-          "FirstName": this.state.fields.FirstName,
-          "LastName": this.state.fields.LastName,
-          "CustomerType": 1,
-          "CustomerStatus": 1,
-          "Email": this.state.fields.emailid,
-          "CanLogin": 1,
-          "LoginName": this.state.fields.emailid,
-          "LoginPassword": this.state.fields.password,
-          "CurrencyCode": "USD",
-          "LanguageID": 1
-        }
+    if (this.validateForm()) {
+      const { fields } = this.state
+      let formData = {
+        id: '',
+        firstname: fields.FirstName,
+        lastname: fields.LastName,
+        email: fields.EmailId,
+        age: Number(fields.Age),
+        gender: fields.Gender,
+        password: fields.Password,
+        username: fields.FirstName + "" + fields.LastName,
+        mobileno: fields.MobileNo,
+        companyname: fields.CompanyName,
+        roleid :""
       }
+
       debugger;
-      // Optionally the request above could also be done as
-      axios.post('http://localhost:3000/rogue/yoofoo/usermodeule/register', {
-        data: jsonData
-      })
+      const config = {
+        headers: {
+          "content-type": "application/json"
+        }
+      };
+      axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
         .then(function (response) {
-          if (response.data.Message.Result !== undefined && response.data.Message.Result[0].Status === "Success") {
+          if (response.status === 201) {
             //this.props.history.push('/dashboard');
             window.location = '/dashboard';
           }
-          else {
-            console.log(response.data.Message);
+          else if (response.status === 200) {
+            alert(response.data.Message)
           }
-
+          else {
+            console.log(response.data.Message)
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -82,7 +76,6 @@ class RegisterScreen extends Component {
       //this.props.history.push('/dashboard');
       // alert("Form submitted");
     }
-
   }
 
   validateForm() {
@@ -208,17 +201,6 @@ class RegisterScreen extends Component {
       }
     }
 
-    if (!fields["UserType"]) {
-      formIsValid = false;
-      errors["UserType"] = "*Please select user type.";
-    }
-
-    if (!fields["Role"]) {
-      formIsValid = false;
-      errors["Role"] = "*Please select role.";
-    }
-
-
     this.setState({
       errors: errors
     });
@@ -226,7 +208,6 @@ class RegisterScreen extends Component {
   }
 
   render() {
-    const BASE_URL = '#'
     return (
       <div>
         <div className="container-fluid">
@@ -313,16 +294,6 @@ class RegisterScreen extends Component {
                           <span className="focus-input100"><i class="fas fa-mobile-alt fa_icon"></i></span>
                         </div>
                         <div className="errorMsg">{this.state.errors.MobileNo}</div>
-
-                        <div className="wrap-input100 validate-input m-t-20">
-                          <span className="label-input100"> User Type</span>
-                          <select name="UserType" className="input100" value={this.state.fields.UserType || ""} onChange={this.handleChange}>
-                            <option value="">-- Select --</option>
-                            <option value="ANONYMOUS">ANONYMOUS</option>
-                            <option value="CUSTOMER">CUSTOMER</option>
-                          </select>
-                        </div>
-                        <div className="errorMsg">{this.state.errors.UserType}</div>
 
                         <div className="wrap-input100 validate-input m-t-20">
                           <span className="label-input100">Company Name</span>
