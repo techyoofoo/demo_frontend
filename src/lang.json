@@ -1,0 +1,14 @@
+{
+    "en":{
+        "Login":"Login",
+        "boiledEgg":"Boiled egg",
+        "softBoiledEgg":"Soft-boiled egg",
+        "choice":"How to choose the egg"
+    },
+    "de": {
+      "Login":"Einloggen",
+      "boiledEgg":"Uovo sodo",
+      "softBoiledEgg":"Uovo alla coque",
+      "choice":"Come scegliere l'uovo"
+    }
+   }

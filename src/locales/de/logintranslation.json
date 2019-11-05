@@ -1,0 +1,32 @@
+{
+    "en": {
+        "Login": "Login",
+        "Username": "Username",
+        "UsernameLabel": "Type your username",
+        "Password": "Password",
+        "PasswordLabel": "Type your password",
+        "ForgotPassword": "Forgot password?",
+        "OrSignupUsing": "Or Sign Up Using",
+        "Signup": "Signup"
+    },
+    "hi": {
+        "Login": "लॉग इन करें",
+        "Username": "उपयोगकर्ता नाम",
+        "UsernameLabel": "अपना उपयोगकर्ता नाम लिखें",
+        "Password": "पासवर्ड",
+        "PasswordLabel": "अपना पासवर्ड टाइप करें",
+        "ForgotPassword": "पासवर्ड भूल गए?",
+        "OrSignupUsing": "या साइन अप का उपयोग कर",
+        "Signup": "साइन अप करें"
+    },
+    "de": {
+        "Login": "Einloggen",
+        "Username": "Nutzername",
+        "UsernameLabel": "Geben Sie Ihren Benutzernamen ein",
+        "Password": "Passwort",
+        "PasswordLabel": "Geben Sie Ihr Passwort ein",
+        "ForgotPassword": "Passwort vergessen?",
+        "OrSignupUsing": "Oder melden Sie sich mit an",
+        "Signup": "Anmelden"
+    }
+}

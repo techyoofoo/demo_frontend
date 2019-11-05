@@ -1,0 +1,53 @@
+{
+    "en": {
+        "Login": "Login",
+        "Registration": "Register",
+        "FName": "First Name",
+        "FNameLablel": "Type your first name",
+        "LName": "Last Name",
+        "LNameLabel": "Type your last name",
+        "EmailId": "Email Id",
+        "EmailLabel": "Type your email Id",
+        "Password": "Password",
+        "PasswordLabel": "Type your password",
+        "ConfirmPassword": "Confirm Password",
+        "ConfirmPasswordLabel": "Type your confirm password",
+        "ShowPassword": "Show my password",
+        "RegistrationButton": "Registration",
+        "Copyright": "Copyright © 2019 Rogue All Rights Reserved"
+    },
+    "hi": {
+        "Login": "लॉग इन",
+        "Registration": "रजिस्टर",
+        "FName": "पहला नाम",
+        "FNameLablel": "अपना पहला नाम लिखें",
+        "LName": "अंतिम नाम",
+        "LNameLabel": "अपना अंतिम नाम लिखें",
+        "EmailId": "ईमेल आईडी",
+        "EmailLabel": "अपना ईमेल आईडी टाइप करें",
+        "Password": "पासवर्ड",
+        "PasswordLabel": "अपना पासवर्ड टाइप करें",
+        "ConfirmPassword": "पासवर्ड की पुष्टि कीजिये",
+        "ConfirmPasswordLabel": "अपना कन्फर्म पासवर्ड टाइप करें",
+        "ShowPassword": "मेरा पासवर्ड दिखाओ",
+        "RegistrationButton": "पंजीकरण",
+        "Copyright": "कॉपीराइट © 2019 दुष्ट सभी अधिकार सुरक्षित"
+    },
+    "de": {
+        "Login": "Einloggen",
+        "Registration": "Registrieren",
+        "FName": "Vorname",
+        "FNameLablel": "Geben Sie Ihren Vornamen ein",
+        "LName": "Familienname, Nachname",
+        "LNameLabel": "Geben Sie Ihren Nachnamen ein",
+        "EmailId": "E-Mail-ID",
+        "EmailLabel": "Geben Sie Ihre E-Mail-ID ein",
+        "Password": "Passwort",
+        "PasswordLabel": "Geben Sie Ihr Passwort ein",
+        "ConfirmPassword": "Passwort bestätigen",
+        "ConfirmPasswordLabel": "Geben Sie Ihr Bestätigungskennwort ein",
+        "ShowPassword": "Zeigen Sie Ihr Passwort",
+        "RegistrationButton": "Anmeldungen",
+        "Copyright": "Copyright © 2019 Rogue Alle Rechte vorbehalten"
+    }
+}

@@ -4,7 +4,17 @@ import HomeHeaderscreen from './homeheader';
 import PageFooter from './footer';
 import '../styles/styles.css';
 import '../styles/login.css';
+import langdata from '../../src/locales/de/registertranslation';
+import LocalizedStrings from 'react-localization';
+import { string } from 'prop-types';
 const axios = require('axios');
+
+let strings = new LocalizedStrings(langdata);
+console.log(strings);
+const selLang = localStorage.getItem('lang');
+console.log("Saved lang", selLang)
+strings.setLanguage(selLang);
+console.log('strings', strings)
 
 class RegisterScreen extends Component {
 
@@ -176,54 +186,54 @@ class RegisterScreen extends Component {
               <div className="wrap-login100 p-l-55 p-r-55 p-t-25 p-b-25">
                 <form className="login100-form validate-form">
                   <span className="login100-form-title p-b-17">
-                    Register
+                    {strings.Registration}
 			        		</span>
 
                   <div className="wrap-input100 validate-input">
-                    <span className="label-input100">First Name</span>
-                    <input className="input100" type="text" name="FirstName" placeholder="Type your first name" value={this.state.fields.FirstName} onChange={this.handleChange} />
+                    <span className="label-input100">{strings.FName}</span>
+                    <input className="input100" type="text" name="FirstName" placeholder={strings.FNameLablel} value={this.state.fields.FirstName} onChange={this.handleChange} />
                     <span className="focus-input100" data-symbol="&#xf206;"></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.FirstName}</div>
 
                   <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">Last Name</span>
-                    <input className="input100" type="text" name="LastName" placeholder="Type your last name" value={this.state.fields.LastName} onChange={this.handleChange} />
+                    <span className="label-input100">{strings.LName}</span>
+                    <input className="input100" type="text" name="LastName" placeholder={strings.LNameLabel} value={this.state.fields.LastName} onChange={this.handleChange} />
                     <span className="focus-input100" data-symbol="&#xf206;"></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.LastName}</div>
 
                   <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">Email Id</span>
-                    <input className="input100" type="text" name="emailid" placeholder="Type your email Id" value={this.state.fields.emailid} onChange={this.handleChange} />
+                    <span className="label-input100">{strings.EmailId}</span>
+                    <input className="input100" type="text" name="emailid" placeholder={strings.EmailLabel} value={this.state.fields.emailid} onChange={this.handleChange} />
                     <span className="focus-input100"><i class="far fa-envelope fa_icon"></i></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.emailid}</div>
 
                   <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">Password</span>
-                    <input className="input100" type="password" name="password" placeholder="Type your password" value={this.state.fields.password} onChange={this.handleChange} />
+                    <span className="label-input100">{strings.Password}</span>
+                    <input className="input100" type="password" name="password" placeholder={strings.PasswordLabel} value={this.state.fields.password} onChange={this.handleChange} />
                     <span className="focus-input100" data-symbol="&#xf190;"></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.password}</div>
 
                   <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">Confirm Password</span>
-                    <input className="input100" type="password" name="confirmpassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword} onChange={this.handleChange} />
+                    <span className="label-input100">{strings.ConfirmPassword}</span>
+                    <input className="input100" type="password" name="confirmpassword" placeholder={strings.ConfirmPasswordLabel} value={this.state.fields.ConfirmPassword} onChange={this.handleChange} />
                     <span className="focus-input100" data-symbol="&#xf190;"></span>
                   </div>
                   <div className="errorMsg">{this.state.errors.ConfirmPassword}</div>
 
                   <div class="m-t-20 checkbox checkp">
                     <input type="checkbox" class="form-check-input" />
-                    <label for="customCheck">Show my password</label>
+                    <label for="customCheck">{strings.ShowPassword}</label>
                   </div>
 
                   <div className="container-login100-form-btn  m-t-20">
                     <div className="wrap-login100-form-btn">
                       <div className="login100-form-bgbtn"></div>
                       <button className="login100-form-btn" onClick={this.submituserRegistrationForm}>
-                        Registration
+                      {strings.RegistrationButton}
 						        	</button>
                     </div>
                   </div>
