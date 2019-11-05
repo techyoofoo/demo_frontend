@@ -4,6 +4,7 @@ import { Button, Accordion, Card } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
 import { PageHeader, PageFooter } from './header';
 import Sidebarmenu from './sidebar';
+import Modal from "react-responsive-modal";
 import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,7 +20,7 @@ import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is requir
 import axios from 'axios';
 const BASE_URL = `http://localhost:6003/`;
 const BASE_URL_ROLE = `http://localhost:6005/`;
-
+const BASE_URL_MENU = `http://localhost:6008/`;
 
 
 function MinusSquare(props) {
@@ -41,7 +42,6 @@ function PlusSquare(props) {
 }
 
 function CloseSquare(props) {
-  console.log(props)
   return (
     <input type="checkbox" className="ckboxalign" />
     // <SvgIcon className="close" fontSize="inherit" {...props}>
@@ -92,6 +92,29 @@ const StyledTreeItem = withStyles(theme => ({
 //     },
 // });
 
+const permissions = [
+  {
+    id: "1",
+    name: "read",
+    state: "enable"
+  },
+  {
+    id: "2",
+    name: "create",
+    state: "enable"
+  },
+  {
+    id: "3",
+    name: "update",
+    state: "enable"
+  },
+  {
+    id: "4",
+    name: "delete",
+    state: "enable"
+  }
+]
+
 class RoleAccessScreen extends Component {
   constructor() {
     super();
@@ -110,14 +133,26 @@ class RoleAccessScreen extends Component {
       values: [],
       fields: {},
       errors: {},
-      roles: []
+      roles: [],
+      menus: []
     };
   }
+
+  onOpenModal = () => {
+    let fields = {}
+    let errors = {}
+    this.setState({ open: true, fields: fields, errors: errors });
+  };
+
+  onCloseModal = () => {
+    this.setState({ open: false });
+  };
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
     this.bindRolesDropdown()
+    this.bindMenus()
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -167,6 +202,62 @@ class RoleAccessScreen extends Component {
       .then((response) => {
         this.setState({
           roles: response.data
+        });
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
+
+  onChangeCheckBox(e, p, d) {
+    if(e.target.checked){
+      d.permission.push(p.id)
+    } 
+    else{
+      var index = d.permission.indexOf(p.id)
+      d.permission.splice(index, 1);
+    }
+  
+ 
+    this.setState(d);
+  }
+
+  bindMenus() {
+    axios
+      .get(BASE_URL_MENU + "rouge/menu/get")
+      .then((response) => {
+        let menus = [];
+        response.data.forEach(function (d) {
+          let submenus = []
+          let submenu = response.data.filter(s => s.type === "submenu" && s.parentid === d.id)
+          submenu.forEach(function (s) {
+            let data = {
+              id: s.id,
+              name: s.name,
+              type: s.type,
+              state: s.state,
+              parentid: s.parentid,
+              permission: []
+            }
+            submenus.push(data)
+          })
+
+          if (d.type === 'menu') {
+            let data = {
+              id: d.id,
+              name: d.name,
+              type: d.type,
+              state: d.state,
+              parentid: d.parentid,
+              submenus: submenus,
+              permission: []
+            }
+            menus.push(data)
+          }
+        })
+        this.setState({
+          gridData: response.data,
+          menus: menus
         });
       })
       .catch(error => {
@@ -225,21 +316,21 @@ class RoleAccessScreen extends Component {
     let errors = {};
     let formIsValid = true;
 
-    if (!fields["FirstName"]) {
+    if (!fields["Name"]) {
       formIsValid = false;
-      errors["FirstName"] = "*Please enter your Role access Name.";
+      errors["Name"] = "*Please enter your Role access Name.";
     }
 
-    if (typeof fields["FirstName"] !== "undefined") {
-      if (!fields["FirstName"].match(/^[a-zA-Z ]*$/)) {
+    if (typeof fields["Name"] !== "undefined") {
+      if (!fields["Name"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
-        errors["FirstName"] = "*Please enter alphabet characters only.";
+        errors["Name"] = "*Please enter alphabet characters only.";
       }
     }
 
-    if (!fields["RoleAccess"]) {
+    if (!fields["Role"]) {
       formIsValid = false;
-      errors["RoleAccess"] = "*Please select role.";
+      errors["Role"] = "*Please select role.";
     }
 
     this.setState({
@@ -255,7 +346,7 @@ class RoleAccessScreen extends Component {
       maxWidth: 400
     }
     const BASE_URL = '#'
-    const { open, roles } = this.state;
+    const { open, roles, menus } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -315,75 +406,134 @@ class RoleAccessScreen extends Component {
                       <a className="navbar-minimalize minimalize-styl-2 btn btn-primary navbaralign" onClick={this.SideNvaBaropenClick}>
                         <i className="fa fa-bars"></i> </a>
                     </div>
-                    <h3><span className="toppdng">Role Access </span></h3>
+                    <h3><span className="toppdng">Role Permission </span></h3>
                   </div>
                 </div>
               </div>
 
-              <div className="col-md-12 p-t-25">
-                <div className="row">
-                  <div className="col-sm-5">
-                    <div className="p-l-55 p-r-55 p-b-25">
-                      <div className="login100-form validate-form">
-                        <div className="wrap-input100 validate-input">
-                          <span className="label-input100">Name</span>
-                          <input className="input100" type="text" name="FirstName" placeholder="Type your Role access Name" value={this.state.fields.FirstName || ''} onChange={this.handleChange} />
-                          <span className="focus-input100" data-symbol="&#xf206;"></span>
-                        </div>
-                        <div className="errorMsg">{this.state.errors.FirstName}</div>
 
-                        <div className="wrap-input100 validate-input m-t-20">
-                          <span className="label-input100"> Role </span>
-                          <select name="RoleAccess" className="input100" value={this.state.fields.RoleAccess || ""} onChange={this.handleChange}>
-                            <option value="">-- Select --</option>
-                            <option value="Role1">Role 1</option>
-                            <option value="Role2">Role  2</option>
-                          </select>
-                        </div>
-                        <div className="errorMsg">{this.state.errors.RoleAccess}</div>
+              {/* Role Permission Grid Start*/}
+              <div className="col col-md-12">
+                <div className="col col-md-12 innercontent">
+                  <div className="condensed-grid">
+                    <div>
+                      <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
+                      <Modal open={open} onClose={this.onCloseModal}>
+                        <h2 className="modelhdr">Role Permission</h2>
+                        <div className="modelmenu">
+                          <div className="p-l-55 p-r-55 p-t-25 p-b-25">
+                            <div className="login100-form validate-form">
+                              <div className="wrap-input100 validate-input">
+                                <span className="label-input100">Name:</span>
+                                <input className="input100" type="text" name="Name" placeholder="Type your Role access Name" value={this.state.fields.Name || ''} onChange={this.handleChange} />
+                                <span className="focus-input100" data-symbol="&#xf206;"></span>
+                              </div>
+                              <div className="errorMsg">{this.state.errors.Name}</div>
 
-                        <div className="container-login100-form-btn p-t-31 p-b-25">
-                          <div className="wrap-login100-form-btn">
-                            <div className="login100-form-bgbtn"></div>
-                            <button className="login100-form-btn" onClick={this.RoleAccessForm}>
-                              Submit
-                        </button>
+                              <div className="wrap-input100 validate-input m-t-20">
+                                <span className="label-input100"> Role: </span>
+                                <select name="Role" className="input100" value={this.state.fields.Role} onChange={this.handleChange}>
+                                  <option selected={this.state.fields.Role === undefined} value="">-- Select --</option>
+                                  {roles.length > 0 ? (
+                                    roles.map((data, index) => {
+                                      return (
+                                        <option key={index} value={data.id}> {data.name}</option>
+                                      );
+                                    })
+                                  ) : (
+                                      null
+                                    )}
+                                </select>
+                              </div>
+                              <div className="errorMsg">{this.state.errors.Role}</div>
+
+                              <div className="wrap-input100 validate-input">
+                                <div className="mrgtop">
+                                  <span className="label-input100">Permission:</span>
+                                  <TreeView
+                                    style={{ useStyles }}
+                                    defaultExpanded={['1', '2', '9']}
+                                    defaultCollapseIcon={<MinusSquare />}
+                                    defaultExpandIcon={<PlusSquare />}
+                                    defaultEndIcon={<CloseSquare />}
+                                  >
+                                    {menus.length > 0 ? (
+                                      menus.map((data, index) => {
+                                        return (
+                                          <StyledTreeItem nodeId={data.id} label={data.id}>
+                                            {
+                                              data.submenus.length > 0 ? (
+                                                data.submenus.map((sdata, sindex) => {
+                                                  return (<StyledTreeItem nodeId={sdata.id} label={sdata.id}>
+                                                    {
+                                                      permissions.map((pdata, pindex) => {
+                                                        return (<div style={{ color: "black" }}>
+                                                          <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, pdata, sdata)} checked={sdata.permission.indexOf(pdata.id) > -1} className="ckboxalign" /> {pdata.name}
+                                                        </div>)
+                                                      })
+                                                    }
+                                                  </StyledTreeItem>)
+                                                })
+                                              ) : (
+                                                  permissions.map((pdata, pindex) => {
+                                                    return (<div style={{ color: "black" }}>
+                                                      <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, pdata, data)} checked={data.permission.indexOf(pdata.id) > -1} className="ckboxalign" /> {pdata.name}
+                                                    </div>)
+                                                  })
+                                                )}
+                                          </StyledTreeItem>
+                                        );
+                                      })
+                                    ) : null}
+                                  </TreeView>
+                                </div>
+                              </div>
+
+                              <div className="container-login100-form-btn p-t-31 p-b-25">
+                                <div className="wrap-login100-form-btn">
+                                  <div className="login100-form-bgbtn"></div>
+                                  <button className="login100-form-btn" onClick={this.RoleAccessForm}>
+                                    Submit
+                                   </button>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-
-                      </div>
+                      </Modal>
                     </div>
                   </div>
 
-                  <div className="col-sm-5">
-                  <span className="label-input100"> Access  </span>
-                  <div className="mrgtop">
-                    <TreeView
-                      style={{ useStyles }}
-                      defaultExpanded={['1']}
-                      defaultCollapseIcon={<MinusSquare />}
-                      defaultExpandIcon={<PlusSquare />}
-                      defaultEndIcon={<CloseSquare />}
-                    >
-                      <StyledTreeItem nodeId="1" label="Main">
-                        <StyledTreeItem nodeId="2" label="Hello" />
-                        <StyledTreeItem nodeId="3" label="Subtree with children">
-                          <StyledTreeItem nodeId="6" label="Hello" />
-                          <StyledTreeItem nodeId="7" label="Sub-subtree with children">
-                            <StyledTreeItem nodeId="9" label="Child 1" />
-                            <StyledTreeItem nodeId="10" label="Child 2" />
-                            <StyledTreeItem nodeId="11" label="Child 3" />
-                          </StyledTreeItem>
-                          <StyledTreeItem nodeId="8" label="Hello" />
-                        </StyledTreeItem>
-                        <StyledTreeItem nodeId="4" label="World" />
-                        <StyledTreeItem nodeId="5" label="Something something" />
-                      </StyledTreeItem>
-                    </TreeView>
-                  </div>
+                  <div className="container gridcontent">
+                    <div className="row gridgraybg">
+                      <div className="col-sm-3 gridbr">Name</div>
+                      <div className="col gridbr">Role</div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
+                      <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
+                    </div>
+                    {/* {roles.length > 0 ? (
+                      roles.map((data, index) => {
+                        return (
+                          <div className="row gridgraybg" key={index}>
+                            <div className="col-sm-3 gridbr">{data.name}</div>
+                            <div className="col gridbr">{data.description}</div>
+                            <div className="col-sm-1 gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>
+                            </div>
+                            <div className="col-sm-1 gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onDeleteClick(data)}> <i className="fas fa-trash-alt iconcolor"></i></button>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                        <p><center>No records found..</center></p>
+                      )} */}
                   </div>
                 </div>
               </div>
+              {/* Role Permission Grid End*/}
+
             </div>
           </div>
           <div className="fixed-footer">
