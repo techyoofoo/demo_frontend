@@ -4,10 +4,15 @@ import HomeHeaderscreen from './homeheader';
 import PageFooter from './footer';
 import '../styles/styles.css';
 import '../styles/login.css';
+<<<<<<< HEAD
 import langdata from '../../src/locales/de/registertranslation';
 import LocalizedStrings from 'react-localization';
 import { string } from 'prop-types';
 const axios = require('axios');
+=======
+import axios from 'axios';
+const BASE_URL = `http://localhost:6003/`;
+>>>>>>> c0ad2f356d1b525d59ae3de71325c942e29097b0
 
 let strings = new LocalizedStrings(langdata);
 console.log(strings);
@@ -29,75 +34,65 @@ class RegisterScreen extends Component {
     this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
 
   };
+
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
     });
-
   }
+
   submituserRegistrationForm(e) {
     e.preventDefault();
-    if (!this.validateForm()) {
-      // let fields = {};
-      // fields["FirstName"] = "";
-      // fields["LastName"] = "";
-      // fields["emailid"] = "";
-      // fields["password"] = "";
-      // this.setState({ fields: fields });
-      // alert("Form submitted");
-      var jsonData = {
-        "ApiAuthentication":
-        {
-          "LoginName": "chalkapi",
-          "Password": "5PhHK339B76k2eM8",
-          "Company": "chalkcouture"
-        },
-        "User":{ 
-          "FirstName":this.state.fields.FirstName,
-          "LastName":this.state.fields.LastName,
-          "CustomerType":1,
-          "CustomerStatus":1,
-          "Email":this.state.fields.emailid,
-          "CanLogin":1,
-          "LoginName":this.state.fields.emailid,
-          "LoginPassword":this.state.fields.password,
-          "CurrencyCode":"USD",
-          "LanguageID":1
-       }
+    if (this.validateForm()) {
+      const { fields } = this.state
+      let formData = {
+        id: '',
+        firstname: fields.FirstName,
+        lastname: fields.LastName,
+        email: fields.EmailId,
+        age: Number(fields.Age),
+        gender: fields.Gender,
+        password: fields.Password,
+        username: fields.FirstName + "" + fields.LastName,
+        mobileno: fields.MobileNo,
+        companyname: fields.CompanyName,
+        roleid :""
       }
-     debugger;
-      // Optionally the request above could also be done as
-      axios.post('http://localhost:3000/rogue/yoofoo/usermodeule/register', {
-          data: jsonData
-      })
+
+      debugger;
+      const config = {
+        headers: {
+          "content-type": "application/json"
+        }
+      };
+      axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
         .then(function (response) {
-          if(response.data.Message.Result !==undefined && response.data.Message.Result[0].Status==="Success")
-          {
+          if (response.status === 201) {
             //this.props.history.push('/dashboard');
-            window.location='/dashboard';
+            window.location = '/dashboard';
           }
-          else{
-            console.log(response.data.Message);
+          else if (response.status === 200) {
+            alert(response.data.Message)
           }
-          
+          else {
+            console.log(response.data.Message)
+          }
         })
         .catch(function (error) {
           console.log(error);
         })
         .then(function () {
           // always executed
-        });  
+        });
 
       //this.props.history.push('/dashboard');
       // alert("Form submitted");
     }
-
   }
-  
-  validateForm() {
 
+  validateForm() {
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;
@@ -114,6 +109,18 @@ class RegisterScreen extends Component {
       }
     }
 
+    if (!fields["CompanyName"]) {
+      formIsValid = false;
+      errors["CompanyName"] = "*Please enter your company name.";
+    }
+
+    if (typeof fields["CompanyName"] !== "undefined") {
+      if (!fields["CompanyName"].match(/^[a-zA-Z ]*$/)) {
+        formIsValid = false;
+        errors["CompanyName"] = "*Please enter alphabet characters only.";
+      }
+    }
+
     if (!fields["LastName"]) {
       formIsValid = false;
       errors["LastName"] = "*Please enter your last name.";
@@ -126,29 +133,54 @@ class RegisterScreen extends Component {
       }
     }
 
-    if (!fields["emailid"]) {
+    if (!fields["EmailId"]) {
       formIsValid = false;
-      errors["emailid"] = "*Please enter your email-ID.";
+      errors["EmailId"] = "*Please enter your email-ID.";
     }
 
-    if (typeof fields["emailid"] !== "undefined") {
+    if (typeof fields["EmailId"] !== "undefined") {
       //regular expression for email validation
       var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-      if (!pattern.test(fields["emailid"])) {
+      if (!pattern.test(fields["EmailId"])) {
         formIsValid = false;
-        errors["emailid"] = "*Please enter valid email-ID.";
+        errors["EmailId"] = "*Please enter valid Email-ID.";
       }
     }
 
-    if (!fields["password"]) {
+    if (!fields["Age"]) {
       formIsValid = false;
-      errors["password"] = "*Please enter your password.";
+      errors["Age"] = "*Please enter your Age.";
     }
 
-    if (typeof fields["password"] !== "undefined") {
-      if (!fields["password"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
+    if (typeof fields["Age"] !== "undefined") {
+      if (Number(fields["Age"]) < 18 || Number(fields["Age"]) > 100) {
         formIsValid = false;
-        errors["password"] = "*Please enter secure and strong password.";
+        errors["Age"] = "*Please enter valid age .";
+      }
+    }
+
+    if (!fields["Gender"]) {
+      formIsValid = false;
+      errors["Gender"] = "*Please select your gender.";
+    }
+
+
+    // if (typeof fields["Age"] !== "undefined") {
+    //   if (!fields["Age"].match(/^[0-9]{10}$/)) {
+    //     formIsValid = false;
+    //     errors["Age"] = "*Please enter valid mobile no.";
+    //   }
+    // }
+
+    if (!fields["Password"]) {
+      formIsValid = false;
+      errors["Password"] = "*Please enter your password.";
+    }
+
+    if (typeof fields["Password"] !== "undefined") {
+      if (!fields["Password"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
+        formIsValid = false;
+        errors["Password"] = "*Please enter secure and strong password.";
       }
     }
 
@@ -158,92 +190,153 @@ class RegisterScreen extends Component {
     }
 
     if (typeof fields["ConfirmPassword"] !== "undefined") {
-      if (!fields["ConfirmPassword"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
+      if (!fields["ConfirmPassword"].match(fields["Password"])) {
         formIsValid = false;
-        errors["ConfirmPassword"] = "*Please enter secure and strong password.";
+        errors["ConfirmPassword"] = "*Password not match.";
       }
     }
 
+    // if (typeof fields["ConfirmPassword"] !== "undefined") {
+    //   if (!fields["ConfirmPassword"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
+    //     formIsValid = false;
+    //     errors["ConfirmPassword"] = "*Please enter secure and strong password.";
+    //   }
+    // }
+
+    if (!fields["MobileNo"]) {
+      formIsValid = false;
+      errors["MobileNo"] = "*Please enter your mobile no.";
+    }
+
+    if (typeof fields["MobileNo"] !== "undefined") {
+      if (!fields["MobileNo"].match(/^[0-9]{10}$/)) {
+        formIsValid = false;
+        errors["MobileNo"] = "*Please enter valid mobile no.";
+      }
+    }
 
     this.setState({
       errors: errors
     });
     return formIsValid;
-
   }
 
   render() {
-    const BASE_URL = '#'
     return (
       <div>
         <div className="container-fluid">
           <HomeHeaderscreen />
-          <div className="">
-          <div className="row Loginvbg container-login100">
-
-            <div className="col-sm-4">
-
-              <div className="wrap-login100 p-l-55 p-r-55 p-t-25 p-b-25">
-                <form className="login100-form validate-form">
+          <div>
+            <div className="col-md-12">
+              <div className="p-t-25 p-b-25">
+                <div className="login100-form validate-form">
                   <span className="login100-form-title p-b-17">
                     {strings.Registration}
 			        		</span>
+                  <div className="col-md-12 p-t-25">
+                    <div className="row">
+                      <div className="col-sm-2"></div>
+                      <div className="col-sm-4">
+                        <div className="p-b-25">
+                          <div className="login100-form validate-form">
+                            <div className="wrap-input100 validate-input">
+                              <span className="label-input100">First Name</span>
+                              <input className="input100" type="text" name="FirstName" placeholder="Type your first name" value={this.state.fields.FirstName || ''} onChange={this.handleChange} />
+                              <span className="focus-input100" data-symbol="&#xf206;"></span>
+                            </div>
+                            <div className="errorMsg">{this.state.errors.FirstName}</div>
 
-                  <div className="wrap-input100 validate-input">
-                    <span className="label-input100">{strings.FName}</span>
-                    <input className="input100" type="text" name="FirstName" placeholder={strings.FNameLablel} value={this.state.fields.FirstName} onChange={this.handleChange} />
-                    <span className="focus-input100" data-symbol="&#xf206;"></span>
-                  </div>
-                  <div className="errorMsg">{this.state.errors.FirstName}</div>
+                            <div className="wrap-input100 validate-input m-t-20">
+                              <span className="label-input100">Last Name</span>
+                              <input className="input100" type="text" name="LastName" placeholder="Type your last name" value={this.state.fields.LastName || ''} onChange={this.handleChange} />
+                              <span className="focus-input100" data-symbol="&#xf206;"></span>
+                            </div>
+                            <div className="errorMsg">{this.state.errors.LastName}</div>
 
-                  <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">{strings.LName}</span>
-                    <input className="input100" type="text" name="LastName" placeholder={strings.LNameLabel} value={this.state.fields.LastName} onChange={this.handleChange} />
-                    <span className="focus-input100" data-symbol="&#xf206;"></span>
-                  </div>
-                  <div className="errorMsg">{this.state.errors.LastName}</div>
+                            <div className="wrap-input100 validate-input m-t-20">
+                              <span className="label-input100">Email Id</span>
+                              <input className="input100" type="text" name="EmailId" placeholder="Type your email Id" value={this.state.fields.EmailId || ''} onChange={this.handleChange} />
+                              <span className="focus-input100"><i class="far fa-envelope fa_icon"></i></span>
+                            </div>
+                            <div className="errorMsg">{this.state.errors.EmailId}</div>
 
-                  <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">{strings.EmailId}</span>
-                    <input className="input100" type="text" name="emailid" placeholder={strings.EmailLabel} value={this.state.fields.emailid} onChange={this.handleChange} />
-                    <span className="focus-input100"><i class="far fa-envelope fa_icon"></i></span>
-                  </div>
-                  <div className="errorMsg">{this.state.errors.emailid}</div>
+                            <div className="wrap-input100 validate-input m-t-20">
+                              <span className="label-input100">Age</span>
+                              <input className="input100" type="number" min="18" max="100" name="Age" placeholder="Type your Age" value={this.state.fields.Age || ''} onChange={this.handleChange} />
+                              <span className="focus-input100" data-symbol="&#xf206;"></span>
+                            </div>
+                            <div className="errorMsg">{this.state.errors.Age}</div>
 
-                  <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">{strings.Password}</span>
-                    <input className="input100" type="password" name="password" placeholder={strings.PasswordLabel} value={this.state.fields.password} onChange={this.handleChange} />
-                    <span className="focus-input100" data-symbol="&#xf190;"></span>
-                  </div>
-                  <div className="errorMsg">{this.state.errors.password}</div>
+                            <div className="validate-input m-t-20">
+                              <div className="label-input100">Gender</div>
+                              <div className="col col-md-4 floatl">
+                                <label className="radio menumrgn">
+                                  <input type="radio" name="Gender" value="male" checked={this.state.fields.Gender === "male"} onChange={this.handleChange} />
+                                  Male
+                             </label>
+                              </div>
+                              <div className="col col-md-4 floatl">
+                                <label className="radio menumrgn">
+                                  <input type="radio" name="Gender" value="female" checked={this.state.fields.Gender === "female"} onChange={this.handleChange} />
+                                  Female
+                             </label>
+                              </div>
+                            </div>
+                            <div className="clear"></div>
+                            <div className="errorMsg">{this.state.errors.Gender}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-sm-4">
+                        <div className="wrap-input100 validate-input m-t-20">
+                          <span className="label-input100">Password</span>
+                          <input className="input100" type="password" name="Password" placeholder="Type your password" value={this.state.fields.Password || ''} onChange={this.handleChange} />
+                          <span className="focus-input100" data-symbol="&#xf190;"></span>
+                        </div>
+                        <div className="errorMsg">{this.state.errors.Password}</div>
 
-                  <div className="wrap-input100 validate-input m-t-20">
-                    <span className="label-input100">{strings.ConfirmPassword}</span>
-                    <input className="input100" type="password" name="confirmpassword" placeholder={strings.ConfirmPasswordLabel} value={this.state.fields.ConfirmPassword} onChange={this.handleChange} />
-                    <span className="focus-input100" data-symbol="&#xf190;"></span>
-                  </div>
-                  <div className="errorMsg">{this.state.errors.ConfirmPassword}</div>
+                        <div className="wrap-input100 validate-input m-t-20">
+                          <span className="label-input100">Confirm Password</span>
+                          <input className="input100" type="password" name="ConfirmPassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword || ''} onChange={this.handleChange} />
+                          <span className="focus-input100" data-symbol="&#xf190;"></span>
+                        </div>
+                        <div className="errorMsg">{this.state.errors.ConfirmPassword}</div>
 
-                  <div class="m-t-20 checkbox checkp">
-                    <input type="checkbox" class="form-check-input" />
-                    <label for="customCheck">{strings.ShowPassword}</label>
-                  </div>
+                        <div className="wrap-input100 validate-input m-t-20">
+                          <span className="label-input100">Mobile No</span>
+                          <input className="input100" type="mobileno" name="MobileNo" placeholder="Type your mobile no" value={this.state.fields.MobileNo || ''} onChange={this.handleChange} />
+                          <span className="focus-input100"><i class="fas fa-mobile-alt fa_icon"></i></span>
+                        </div>
+                        <div className="errorMsg">{this.state.errors.MobileNo}</div>
 
-                  <div className="container-login100-form-btn  m-t-20">
-                    <div className="wrap-login100-form-btn">
-                      <div className="login100-form-bgbtn"></div>
-                      <button className="login100-form-btn" onClick={this.submituserRegistrationForm}>
-                      {strings.RegistrationButton}
+                        <div className="wrap-input100 validate-input m-t-20">
+                          <span className="label-input100">Company Name</span>
+                          <input className="input100" type="text" name="CompanyName" placeholder="Type your company name" value={this.state.fields.CompanyName || ''} onChange={this.handleChange} />
+                          <span className="focus-input100"><i class="far fa-building fa_icon"></i></span>
+                        </div>
+                        <div className="errorMsg">{this.state.errors.CompanyName}</div>
+
+                        <div className="container-login100-form-btn  m-t-20">
+                          <div className="wrap-login100-form-btn">
+                            <div className="login100-form-bgbtn"></div>
+                            <button className="login100-form-btn" onClick={this.submituserRegistrationForm}>
+                              Registration
 						        	</button>
+                          </div>
+                        </div>
+
+                      </div>
                     </div>
                   </div>
-                </form>
+
+
+                </div>
               </div>
+
             </div>
           </div>
-          </div>
           <div className="fixed-footer">
-          <PageFooter footerColor={this.state.background} />
+            <PageFooter footerColor={this.state.background} />
           </div>
         </div>
 

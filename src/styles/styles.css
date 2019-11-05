@@ -252,9 +252,9 @@ h3{
             box-shadow: 0 10px 6px -6px #777;
   }
   .fa_icon{
-      font-size: 18px;
+      font-size: 20px;
       color: #b8b8b8;
-      margin-top: 40px;
+      margin-top: 37px;
       margin-left: 10px;
   }
   /* .btn-link {
@@ -756,15 +756,16 @@ h3{
     padding-top: 0px;
 }
 .Promotionbg{
-    margin: 30px 0 10px 0;
+    margin: 10px 0 10px 0;
     background-color: #218bed;
-    min-height: 170px;
-    min-width: 50px;
+    min-height: 200px;
+    min-width: 200px;
     text-align: center;
     font-size: 40px;
     color: #fff;
     font-weight: bold;
-    padding-top: 50px;
+    padding-top: 60px;
+    border: solid 5px #4ca5f8;
     background-image: linear-gradient(to top, #6ec8e5, #62bbdf, #5aadd9, #54a0d1, #5292c9);
 }
 .tablehdr{
@@ -978,7 +979,77 @@ dd {
     padding: 10px;   
     border: solid 1px #ccc;
 }
-
+.menumrgn{
+    margin:0px 0 0px 0px;
+    padding: 10px;   
+    font-weight: normal;
+}
+.menupdng{
+    margin:0px 0 0px 0px;
+    padding:0 0 0 10px;   
+    font-weight: normal;
+}
+.paddingl0{
+    padding-left: 0;
+}
+.checkboxpd{
+    padding-left: 3px;
+}
+.iconcolor{
+    color: #135ca0;
+}
+.textcenter{
+    text-align: center;
+}
+.clear{
+    clear: both;
+}
+.modelmenu{
+    width: 500px;
+    padding: 30px;
+}
+.styles_overlay__CLSq- {
+    background: rgba(0, 0, 0, 0.55) !important;
+    display: flex;
+    align-items: flex-start;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+    padding: 1.2rem;
+}
+.styles_modal__gNwvD {
+    max-width: 800px;
+    position: relative;
+    padding: 1.2rem;
+    background: #ffffff;
+    background-clip: padding-box;
+    box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.25);
+    margin: 0 auto;
+    padding: 0;
+}
+.styles_closeButton__20ID4 {
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    border: none;
+    padding: 0;
+    background-color: #fff;
+    display: flex;
+    color: #fff !important;
+    border-radius: 50%;
+}
+.modelhdr{
+    font-weight: normal;
+    font-size: 20px;
+    color: #fff;
+    padding: 10px 10px 10px 20px;
+    background-color: #135ca0;
+}
 /*-------------------*/
 
 @media screen and (min-width: 980px) /* Desktop */ {

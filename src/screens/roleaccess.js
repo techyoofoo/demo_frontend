@@ -7,9 +7,11 @@ import Sidebarmenu from './sidebar';
 import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
+const BASE_URL = `http://localhost:6003/`;
+const BASE_URL_ROLE = `http://localhost:6005/`;
 
-
-class UninstallScreen extends Component {
+class RoleAccessScreen extends Component {
   constructor() {
     super();
 
@@ -17,7 +19,7 @@ class UninstallScreen extends Component {
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
-    this.submituserRegistrationForm = this.submituserRegistrationForm.bind(this);
+    this.RoleAccessForm = this.RoleAccessForm.bind(this);
 
     this.state = {
       popupVisible: false,
@@ -26,13 +28,15 @@ class UninstallScreen extends Component {
       sidebarClose: true,
       values: [],
       fields: {},
-      errors: {}
+      errors: {},
+      roles: []
     };
   }
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    this.bindRolesDropdown()
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -73,10 +77,21 @@ class UninstallScreen extends Component {
     if (this.node.contains(e.target)) {
       return;
     }
-
     this.handleClick();
   };
 
+  bindRolesDropdown() {
+    axios
+      .get(BASE_URL_ROLE + "rouge/role/get")
+      .then((response) => {
+        this.setState({
+          roles: response.data
+        });
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
 
   handleChange(e) {
     let fields = this.state.fields;
@@ -84,29 +99,54 @@ class UninstallScreen extends Component {
     this.setState({
       fields
     });
-
   }
-  submituserRegistrationForm(e) {
+
+  RoleAccessForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
-      let fields = {};
-
-      fields["FirstName"] = "";
-      fields["Description"] = "";
-      this.setState({ fields: fields });
-      alert("Form submitted");
+      const { fields } = this.state
+      let formData = {
+        id: '',
+        firstname: fields.FirstName,
+        // lastname: fields.LastName,
+        // email: fields.EmailId,
+        // age: Number(fields.Age),
+        // gender: fields.Gender,
+        // password: fields.Password,
+        // username: fields.FirstName + "" + fields.LastName,
+        // mobileno: fields.MobileNo,
+        RoleAccess: fields.RoleAccess,
+        // roleid: fields.Role,
+        // companyname: fields.CompanyName,
+      }
+      const config = {
+        headers: {
+          "content-type": "application/json"
+        }
+      };
+      axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
+        .then(response => {
+          alert(response.data.Message);
+          if (response.status === 201) {
+            let fields = {};
+            this.setState({ fields: fields });
+            this.onCloseModal();
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        });
     }
-
   }
-  validateForm() {
 
+  validateForm() {
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;
 
     if (!fields["FirstName"]) {
       formIsValid = false;
-      errors["FirstName"] = "*Please enter your first name.";
+      errors["FirstName"] = "*Please enter your Role access Name.";
     }
 
     if (typeof fields["FirstName"] !== "undefined") {
@@ -116,30 +156,20 @@ class UninstallScreen extends Component {
       }
     }
 
-    if (!fields["Description"]) {
+    if (!fields["RoleAccess"]) {
       formIsValid = false;
-      errors["Description"] = "*Please enter your Description.";
-    }
-
-    if (typeof fields["Description"] !== "undefined") {
-      //regular expression for Description validation
-      var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-      if (!pattern.test(fields["Description"])) {
-        formIsValid = false;
-        errors["Description"] = "*Please enter Description.";
-      }
+      errors["RoleAccess"] = "*Please select role.";
     }
 
     this.setState({
       errors: errors
     });
     return formIsValid;
-
   }
 
   render() {
     const BASE_URL = '#'
-    const { open } = this.state;
+    const { open, roles } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -154,16 +184,16 @@ class UninstallScreen extends Component {
           <div className="row fixed-header" style={styleBack1}>
             <div className="col col-sm-6 col-md-2">
               <div className="logo" style={styleBack}>
-              <Link to="/dashboard">
-                <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
-              </Link>
-                 </div>
+                <Link to="/dashboard">
+                  <img className="img-fluid logopdng" src="../images/logo.png" alt="logo"></img>
+                </Link>
+              </div>
             </div>
             <div className="col col-sm-6 col-md-10 textalign changepassword">
               <div className="innerlinks">
                 <ul>
                   <li>
-                    <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
+                    <button className="btn btn-outline-light" onClick={this.RoleAccessForm}>
                       <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
                   </li>
                   <li>
@@ -195,43 +225,50 @@ class UninstallScreen extends Component {
               <div className="row sidebarhdr">
                 <div className="col-md-12">
                   <div className="row">
-                    <div class="navbar-header">
-                      <a class="navbar-minimalize minimalize-styl-2 btn btn-primary navbaralign" onClick={this.SideNvaBaropenClick}>
-                        <i class="fa fa-bars"></i> </a>
+                    <div className="navbar-header">
+                      <a className="navbar-minimalize minimalize-styl-2 btn btn-primary navbaralign" onClick={this.SideNvaBaropenClick}>
+                        <i className="fa fa-bars"></i> </a>
                     </div>
-                    <h3><span className="toppdng">Uninstall </span></h3>
+                    <h3><span className="toppdng">Role Access </span></h3>
                   </div>
                 </div>
               </div>
 
-              <div className="col-md-12">
-                <div className="col-md-2"></div>
-                <div className="col-md-4 innercontent">
-                  <div className="form-group formrgn1">
-                    <div className="input-group">
-                      <span className="input-group-addon">
-                        <span className="fa fa-user facolor" aria-hidden="true" />
-                      </span>
-                      <input type="text" name="FirstName" className="form-control" placeholder="First Name" value={this.state.fields.FirstName} onChange={this.handleChange} />
-                    </div>
-                    <div className="errorMsg">{this.state.errors.FirstName}</div>
-                    <div>
+              <div className="col-md-12 p-t-25">
+                <div className="row">
+                  <div className="col-sm-5">
+                    <div className="p-l-55 p-r-55 p-b-25">
+                      <div className="login100-form validate-form">
+                        <div className="wrap-input100 validate-input">
+                          <span className="label-input100">Name</span>
+                          <input className="input100" type="text" name="FirstName" placeholder="Type your Role access Name" value={this.state.fields.FirstName || ''} onChange={this.handleChange} />
+                          <span className="focus-input100" data-symbol="&#xf206;"></span>
+                        </div>
+                        <div className="errorMsg">{this.state.errors.FirstName}</div>
+
+                        <div className="wrap-input100 validate-input m-t-20">
+                          <span className="label-input100"> Role </span>
+                          <select name="RoleAccess" className="input100" value={this.state.fields.RoleAccess || ""} onChange={this.handleChange}>
+                            <option value="">-- Select --</option>
+                            <option value="Role1">Role 1</option>
+                            <option value="Role2">Role  2</option>
+                          </select>
+                        </div>
+                        <div className="errorMsg">{this.state.errors.RoleAccess}</div>
+
+                        <div className="container-login100-form-btn p-t-31 p-b-25">
+                          <div className="wrap-login100-form-btn">
+                            <div className="login100-form-bgbtn"></div>
+                            <button className="login100-form-btn" onClick={this.RoleAccessForm}>
+                              Submit
+                        </button>
+                          </div>
+                        </div>
+
+                      </div>
                     </div>
                   </div>
-                  <div className="form-group formrgn1">
-                    <div className="input-group">
-                      <span className="input-group-addon">
-                        <span className="fa fa-address-card facolor" aria-hidden="true" />
-                      </span>
-                      <textarea className="form-control" placeholder="Description" rows="4" cols="50" value={this.state.fields.Description} onChange={this.handleChange}>
-                      </textarea>
-                      <div className="errorMsg">{this.state.errors.Description}</div>
-                    </div>
-                  </div>
-                  <div className="form-group text-center">
-                    <button type="submit" className="btn btn-lg btn-primary btn-block mb-1 btnshadow" onClick={this.submituserRegistrationForm}>
-                      SUBMIT</button>
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -246,4 +283,4 @@ class UninstallScreen extends Component {
   }
 }
 
-export default UninstallScreen;
+export default RoleAccessScreen;
