@@ -71,13 +71,17 @@ export default class Sidebarmenu extends Component {
                       <ul>
                         <input type="hidden" id="2" />
                         <li><Link to="/menu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Menu</Link></li>
+                        <li><Link to="/user"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> User</Link></li>
+                        <li><Link to="/usergroups"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> User Groups</Link></li>
+                        <li><Link to="/role"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Role</Link></li>
+                        <li><Link to="/roleaccess"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Role Access </Link></li>
                         {/* <li><Link to="/submenu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Sub Menu</Link></li> */}
                       </ul>
                     </div>
                   </Card.Body>
                 </Accordion.Collapse>
               </Card>
-              <Card>
+              {/* <Card>
                 <Accordion.Toggle as={Card.Header} eventKey="3">
                   Users<i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
                 </Accordion.Toggle>
@@ -94,7 +98,7 @@ export default class Sidebarmenu extends Component {
                     </div>
                   </Card.Body>
                 </Accordion.Collapse>
-              </Card>
+              </Card> */}
             </Accordion>
           </div>
         </div>
