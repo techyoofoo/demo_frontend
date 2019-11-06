@@ -18,7 +18,7 @@ import Collapse from '@material-ui/core/Collapse';
 import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is required for IE 11 support
 
 import axios from 'axios';
-const BASE_URL = `http://localhost:6003/`;
+const BASE_URL = `http://localhost:6006/`;
 const BASE_URL_ROLE = `http://localhost:6005/`;
 const BASE_URL_MENU = `http://localhost:6008/`;
 
@@ -94,22 +94,22 @@ const StyledTreeItem = withStyles(theme => ({
 
 const permissions = [
   {
-    id: "1",
+    _id: "5dc1472491aee6e859ce1110",
     name: "read",
     state: "enable"
   },
   {
-    id: "2",
+    _id: "5dc1472491aee6e859ce1111",
     name: "create",
     state: "enable"
   },
   {
-    id: "3",
+    _id: "5dc1472491aee6e859ce1112",
     name: "update",
     state: "enable"
   },
   {
-    id: "4",
+    _id: "5dc1472491aee6e859ce1113",
     name: "delete",
     state: "enable"
   }
@@ -134,14 +134,19 @@ class RoleAccessScreen extends Component {
       fields: {},
       errors: {},
       roles: [],
-      menus: []
+      responseMenuData: [],
+      menus: [],
+      permissionGridData: [],
+      expandElements: []
     };
   }
 
   onOpenModal = () => {
-    let fields = {}
-    let errors = {}
-    this.setState({ open: true, fields: fields, errors: errors });
+    let fields = {};
+    let errors = {};
+    let expandElements = []
+    this.organiseMenus();
+    this.setState({ open: true, fields: fields, errors: errors, expandElements: expandElements });
   };
 
   onCloseModal = () => {
@@ -153,6 +158,7 @@ class RoleAccessScreen extends Component {
     document.getElementById("main").style.marginLeft = "200px";
     this.bindRolesDropdown()
     this.bindMenus()
+    this.bindRolePermissionGrid()
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -210,15 +216,13 @@ class RoleAccessScreen extends Component {
   }
 
   onChangeCheckBox(e, p, d) {
-    if(e.target.checked){
-      d.permission.push(p.id)
-    } 
-    else{
-      var index = d.permission.indexOf(p.id)
+    if (e.target.checked) {
+      d.permission.push(p._id)
+    }
+    else {
+      var index = d.permission.indexOf(p._id)
       d.permission.splice(index, 1);
     }
-  
- 
     this.setState(d);
   }
 
@@ -226,39 +230,62 @@ class RoleAccessScreen extends Component {
     axios
       .get(BASE_URL_MENU + "rouge/menu/get")
       .then((response) => {
-        let menus = [];
-        response.data.forEach(function (d) {
-          let submenus = []
-          let submenu = response.data.filter(s => s.type === "submenu" && s.parentid === d.id)
-          submenu.forEach(function (s) {
-            let data = {
-              id: s.id,
-              name: s.name,
-              type: s.type,
-              state: s.state,
-              parentid: s.parentid,
-              permission: []
-            }
-            submenus.push(data)
+        if (response.status === 200) {
+          this.setState({
+            responseMenuData: response.data
           })
+          this.organiseMenus();
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
 
-          if (d.type === 'menu') {
-            let data = {
-              id: d.id,
-              name: d.name,
-              type: d.type,
-              state: d.state,
-              parentid: d.parentid,
-              submenus: submenus,
-              permission: []
-            }
-            menus.push(data)
+  organiseMenus() {
+    const { responseMenuData } = this.state
+    let menus = [];
+    responseMenuData.forEach(function (d) {
+      if (d.type === 'menu') {
+        let submenus = []
+        let submenu = responseMenuData.filter(s => s.type === "submenu" && s.parentid === d._id)
+        submenu.forEach(function (s) {
+          let submenuData = {
+            _id: s._id,
+            name: s.name,
+            type: s.type,
+            state: s.state,
+            parentid: s.parentid,
+            permission: []
           }
+          submenus.push(submenuData)
         })
-        this.setState({
-          gridData: response.data,
-          menus: menus
-        });
+        let menuData = {
+          _id: d._id,
+          name: d.name,
+          type: d.type,
+          state: d.state,
+          parentid: d.parentid,
+          submenus: submenus,
+          permission: []
+        }
+        menus.push(menuData)
+      }
+    })
+    this.setState({
+      menus: menus
+    });
+  }
+
+  bindRolePermissionGrid() {
+    axios
+      .get(BASE_URL + "rouge/roleaccess/get")
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            permissionGridData: response.data
+          })
+        }
       })
       .catch(error => {
         console.log(error)
@@ -273,41 +300,142 @@ class RoleAccessScreen extends Component {
     });
   }
 
+  onOpenEditModal = (data) => {
+    this.setState({ open: true });
+    let fields = this.state.fields;
+    fields["_id"] = data._id;
+    fields["Name"] = data.name;
+    fields["Role"] = data.roleid;
+    let expandElements = []
+    let menus = this.state.menus;
+    data.menus.forEach((menu, index) => {
+      if (menu.type === "submenu") {
+        let findMenu = menus.filter(d => d._id === menu.parentid)
+        var findSubmenu = findMenu.length > 0 ? findMenu[0].submenus.filter(d => d._id === menu._id) : []
+        if (findSubmenu.length > 0) {
+          findSubmenu[0].permission = menu.permission.filter(d => d.value === true).map(d => d._id)
+          if (findSubmenu[0].permission.length > 0) {
+            expandElements.push(findSubmenu[0].parentid)
+            expandElements.push(findSubmenu[0]._id)
+          }
+        }
+      }
+      else {
+        let findMenu = menus.filter(d => d._id === menu._id)
+        if (findMenu.length > 0) {
+          findMenu[0].permission = menu.permission.filter(d => d.value === true).map(d => d._id)
+          if (findMenu[0].permission.length > 0) {
+            expandElements.push(findMenu[0]._id)
+          }
+        }
+      }
+    })
+
+    this.setState({ fields: fields, menus: menus, expandElements: expandElements });
+  };
+
+  onDeleteClick = (data) => {
+    if (window.confirm("Are u sure to delete ?")) {
+      axios.delete(BASE_URL + `rouge/roleaccess/delete/` + data._id)
+        .then(response => {
+          if (response.status === 200) {
+            this.bindRolePermissionGrid();
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        });
+    }
+  }
+
   RoleAccessForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
-      const { fields } = this.state
+      const { fields, menus } = this.state
+      let selectedMenusData = []
+      menus.forEach((d, i) => {
+        if (d.submenus.length > 0) {
+          d.submenus.forEach((sm, si) => {
+            let permission = []
+            permissions.forEach((p, i) => {
+              let per = {
+                _id: p._id,
+                value: sm.permission.indexOf(p._id) > -1 ? true : false
+              }
+              permission.push(per)
+            })
+
+            let data = {
+              _id: sm._id,
+              parentid: sm.parentid,
+              type: sm.type,
+              permission: permission
+            }
+            selectedMenusData.push(data)
+          })
+        }
+        else {
+          let permission = []
+          permissions.forEach((p, i) => {
+            let per = {
+              _id: p._id,
+              value: d.permission.indexOf(p._id) > -1 ? true : false
+            }
+            permission.push(per)
+          })
+          let data = {
+            _id: d._id,
+            parentid: d.parentid,
+            type: d.type,
+            permission: permission
+          }
+          selectedMenusData.push(data)
+        }
+      })
+
       let formData = {
-        id: '',
-        firstname: fields.FirstName,
-        // lastname: fields.LastName,
-        // email: fields.EmailId,
-        // age: Number(fields.Age),
-        // gender: fields.Gender,
-        // password: fields.Password,
-        // username: fields.FirstName + "" + fields.LastName,
-        // mobileno: fields.MobileNo,
-        RoleAccess: fields.RoleAccess,
-        // roleid: fields.Role,
-        // companyname: fields.CompanyName,
+        name: fields.Name,
+        roleid: fields.Role,
+        menus: selectedMenusData
       }
       const config = {
         headers: {
           "content-type": "application/json"
         }
       };
-      axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
-        .then(response => {
-          alert(response.data.Message);
-          if (response.status === 201) {
-            let fields = {};
-            this.setState({ fields: fields });
-            this.onCloseModal();
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        });
+
+      if (!fields._id) {
+        axios.post(BASE_URL + `rouge/roleaccess/create`, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 201) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.organiseMenus();
+              this.onCloseModal();
+              this.bindRolePermissionGrid();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      } else {
+        axios.put(BASE_URL + `rouge/roleaccess/update/` + fields._id, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 200) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.organiseMenus();
+              this.onCloseModal();
+              this.bindRolePermissionGrid();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      }
+
     }
   }
 
@@ -346,7 +474,7 @@ class RoleAccessScreen extends Component {
       maxWidth: 400
     }
     const BASE_URL = '#'
-    const { open, roles, menus } = this.state;
+    const { open, roles, menus, permissionGridData, expandElements } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -419,10 +547,11 @@ class RoleAccessScreen extends Component {
                     <div>
                       <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                       <Modal open={open} onClose={this.onCloseModal}>
-                        <h2 className="modelhdr">Role Permission</h2>
-                        <div className="modelmenu">
-                          <div className="p-l-55 p-r-55 p-t-25 p-b-25">
-                            <div className="login100-form validate-form">
+                        <h2 className="modelhdr">{this.state.fields._id === undefined ? `Add New Permission` : `Edit Permission`}</h2>
+                        <div className="modelmenu" style={{ width: "800px" }}>
+
+                          <div className="login100-form validate-form">
+                            <div className="col-md-6">
                               <div className="wrap-input100 validate-input">
                                 <span className="label-input100">Name:</span>
                                 <input className="input100" type="text" name="Name" placeholder="Type your Role access Name" value={this.state.fields.Name || ''} onChange={this.handleChange} />
@@ -437,7 +566,7 @@ class RoleAccessScreen extends Component {
                                   {roles.length > 0 ? (
                                     roles.map((data, index) => {
                                       return (
-                                        <option key={index} value={data.id}> {data.name}</option>
+                                        <option key={index} value={data._id}> {data.name}</option>
                                       );
                                     })
                                   ) : (
@@ -446,13 +575,22 @@ class RoleAccessScreen extends Component {
                                 </select>
                               </div>
                               <div className="errorMsg">{this.state.errors.Role}</div>
-
+                              <div className="container-login100-form-btn p-t-31 p-b-25">
+                                <div className="wrap-login100-form-btn">
+                                  <div className="login100-form-bgbtn"></div>
+                                  <button className="login100-form-btn" onClick={this.RoleAccessForm}>
+                                    Submit
+                                   </button>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-md-6">
                               <div className="wrap-input100 validate-input">
                                 <div className="mrgtop">
                                   <span className="label-input100">Permission:</span>
                                   <TreeView
                                     style={{ useStyles }}
-                                    defaultExpanded={['1', '2', '9']}
+                                    defaultExpanded={expandElements}
                                     defaultCollapseIcon={<MinusSquare />}
                                     defaultExpandIcon={<PlusSquare />}
                                     defaultEndIcon={<CloseSquare />}
@@ -460,15 +598,15 @@ class RoleAccessScreen extends Component {
                                     {menus.length > 0 ? (
                                       menus.map((data, index) => {
                                         return (
-                                          <StyledTreeItem nodeId={data.id} label={data.id}>
+                                          <StyledTreeItem nodeId={data._id} label={data.name}>
                                             {
                                               data.submenus.length > 0 ? (
                                                 data.submenus.map((sdata, sindex) => {
-                                                  return (<StyledTreeItem nodeId={sdata.id} label={sdata.id}>
+                                                  return (<StyledTreeItem nodeId={sdata._id} label={sdata.name}>
                                                     {
                                                       permissions.map((pdata, pindex) => {
                                                         return (<div style={{ color: "black" }}>
-                                                          <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, pdata, sdata)} checked={sdata.permission.indexOf(pdata.id) > -1} className="ckboxalign" /> {pdata.name}
+                                                          <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, pdata, sdata)} checked={sdata.permission.indexOf(pdata._id) > -1} className="ckboxalign" /> {pdata.name}
                                                         </div>)
                                                       })
                                                     }
@@ -477,7 +615,7 @@ class RoleAccessScreen extends Component {
                                               ) : (
                                                   permissions.map((pdata, pindex) => {
                                                     return (<div style={{ color: "black" }}>
-                                                      <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, pdata, data)} checked={data.permission.indexOf(pdata.id) > -1} className="ckboxalign" /> {pdata.name}
+                                                      <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, pdata, data)} checked={data.permission.indexOf(pdata._id) > -1} className="ckboxalign" /> {pdata.name}
                                                     </div>)
                                                   })
                                                 )}
@@ -486,15 +624,6 @@ class RoleAccessScreen extends Component {
                                       })
                                     ) : null}
                                   </TreeView>
-                                </div>
-                              </div>
-
-                              <div className="container-login100-form-btn p-t-31 p-b-25">
-                                <div className="wrap-login100-form-btn">
-                                  <div className="login100-form-bgbtn"></div>
-                                  <button className="login100-form-btn" onClick={this.RoleAccessForm}>
-                                    Submit
-                                   </button>
                                 </div>
                               </div>
                             </div>
@@ -511,12 +640,12 @@ class RoleAccessScreen extends Component {
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
-                    {/* {roles.length > 0 ? (
-                      roles.map((data, index) => {
+                    {permissionGridData.length > 0 ? (
+                      permissionGridData.map((data, index) => {
                         return (
                           <div className="row gridgraybg" key={index}>
                             <div className="col-sm-3 gridbr">{data.name}</div>
-                            <div className="col gridbr">{data.description}</div>
+                            <div className="col gridbr">{roles.find(d => d._id === data.roleid) === undefined ? '' : roles.find(d => d._id === data.roleid).name || ''}</div>
                             <div className="col-sm-1 gridbr textcenter">
                               <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>
                             </div>
@@ -528,7 +657,7 @@ class RoleAccessScreen extends Component {
                       })
                     ) : (
                         <p><center>No records found..</center></p>
-                      )} */}
+                      )}
                   </div>
                 </div>
               </div>

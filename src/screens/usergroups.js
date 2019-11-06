@@ -143,8 +143,6 @@ class UserGroupsScreen extends Component {
       axios.delete(BASE_URL + `rouge/usergroup/delete/` + data._id)
         .then(response => {
           if (response.status === 200) {
-            let fields = {};
-            this.setState({ fields: fields });
             this.bindUserGroupGrid();
           }
         })
@@ -350,7 +348,7 @@ class UserGroupsScreen extends Component {
                                   {roles.length > 0 ? (
                                     roles.map((data, index) => {
                                       return (
-                                        <option key={index} value={data.id}> {data.name}</option>
+                                        <option key={index} value={data._id}> {data.name}</option>
                                       );
                                     })
                                   ) : (
@@ -389,7 +387,7 @@ class UserGroupsScreen extends Component {
                           <div className="row gridgraybg">
                             <div className="col-sm-3 gridbr">{data.name}</div>
                             <div className="col gridbr">{data.description} </div>
-                            <div className="col gridbr">{roles.find(d => d.id === data.roleid) === undefined ? '' : roles.find(d => d.id === data.roleid).name || ''}</div>
+                            <div className="col gridbr">{roles.find(d => d._id === data.roleid) === undefined ? '' : roles.find(d => d._id === data.roleid).name || ''}</div>
                             <div className="col-sm-1 gridbr textcenter">
                               <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>
                             </div>

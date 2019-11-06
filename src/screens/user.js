@@ -106,7 +106,6 @@ class UserScreen extends Component {
     if (this.validateForm()) {
       const { fields } = this.state
       let formData = {
-        id: '',
         firstname: fields.FirstName,
         lastname: fields.LastName,
         email: fields.EmailId,
@@ -438,7 +437,7 @@ class UserScreen extends Component {
                         {roles.length > 0 ? (
                           roles.map((data, index) => {
                             return (
-                              <option key={index} value={data.id}> {data.name}</option>
+                              <option key={index} value={data._id}> {data.name}</option>
                             );
                           })
                         ) : (

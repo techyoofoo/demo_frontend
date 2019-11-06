@@ -74,7 +74,7 @@ export default class Sidebarmenu extends Component {
                         <li><Link to="/user"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> User</Link></li>
                         <li><Link to="/usergroups"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> User Groups</Link></li>
                         <li><Link to="/role"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Role</Link></li>
-                        <li><Link to="/roleaccess"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Role Access </Link></li>
+                        <li><Link to="/roleaccess"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Role Permissions </Link></li>
                         {/* <li><Link to="/submenu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Sub Menu</Link></li> */}
                       </ul>
                     </div>

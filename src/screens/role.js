@@ -117,7 +117,6 @@ class RoleScreen extends Component {
     this.setState({ open: true });
     let fields = this.state.fields;
     fields["_id"] = data._id;
-    fields["id"] = data.id;
     fields["Name"] = data.name;
     fields["Description"] = data.description;
     this.setState({ fields: fields });
@@ -128,8 +127,6 @@ class RoleScreen extends Component {
       axios.delete(BASE_URL + `rouge/role/delete/` + data._id)
         .then(response => {
           if (response.status === 200) {
-            let fields = {};
-            this.setState({ fields: fields });
             this.bindRoleGrid();
           }
         })
@@ -144,7 +141,6 @@ class RoleScreen extends Component {
     if (this.validateForm()) {
       const { fields } = this.state;
       let formData = {
-        id: !fields.id ? '' : fields.id,
         name: fields.Name,
         description: fields.Description
       }
