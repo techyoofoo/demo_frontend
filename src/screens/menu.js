@@ -133,8 +133,6 @@ class MenuScreen extends Component {
     if (this.validateForm()) {
       const { fields } = this.state
       let formData = {
-        id: '',
-        clientid: '',
         name: fields.name,
         type: fields.type,
         state: fields.state,
@@ -360,7 +358,7 @@ class MenuScreen extends Component {
                                   {menus.length > 0 ? (
                                     menus.map((data, index) => {
                                       return (
-                                        <option key={index} value={data.id}> {data.name}</option>
+                                        <option key={index} value={data._id}> {data.name}</option>
                                       );
                                     })
                                   ) : (
@@ -426,7 +424,7 @@ class MenuScreen extends Component {
                           <div className="row gridwtbg" key={index}>
                             <div className="col-sm-3 gridbr">{data.name}</div>
                             <div className="col gridbr">{data.type}</div>
-                            <div className="col gridbr">{gridData.find(d => d.id === data.parentid) === undefined ? '' : gridData.find(d => d.id === data.parentid).name || ''}</div>
+                            <div className="col gridbr">{gridData.find(d => d._id === data.parentid) === undefined ? '' : gridData.find(d => d._id === data.parentid).name || ''}</div>
                             <div className="col gridbr">{`${data.state}d`}</div>
                             <div className="col-sm-1 gridbr textcenter">
                               {/* <button type="button" className="hidden-print" onClick={this.onOpenEditModal}> <i className="fas fa-edit iconcolor"></i></button> */}

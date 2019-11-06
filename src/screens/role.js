@@ -117,7 +117,6 @@ class RoleScreen extends Component {
     this.setState({ open: true });
     let fields = this.state.fields;
     fields["_id"] = data._id;
-    fields["id"] = data.id;
     fields["Name"] = data.name;
     fields["Description"] = data.description;
     this.setState({ fields: fields });
@@ -128,8 +127,6 @@ class RoleScreen extends Component {
       axios.delete(BASE_URL + `rouge/role/delete/` + data._id)
         .then(response => {
           if (response.status === 200) {
-            let fields = {};
-            this.setState({ fields: fields });
             this.bindRoleGrid();
           }
         })
@@ -144,7 +141,6 @@ class RoleScreen extends Component {
     if (this.validateForm()) {
       const { fields } = this.state;
       let formData = {
-        id: !fields.id ? '' : fields.id,
         name: fields.Name,
         description: fields.Description
       }
@@ -299,7 +295,7 @@ class RoleScreen extends Component {
                     <div>
                       <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                       <Modal open={open} onClose={this.onCloseModal}>
-                        <h2 className="modelhdr">Add New</h2>
+                        <h2 className="modelhdr">{this.state.fields._id === undefined ? `Add New` : `Edit Role`}</h2>
                         <div className="modelmenu">
                           <div className="p-l-55 p-r-55 p-t-25 p-b-25">
                             <form className="login100-form validate-form">

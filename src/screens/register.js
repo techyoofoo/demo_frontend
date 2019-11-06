@@ -44,7 +44,6 @@ class RegisterScreen extends Component {
     if (this.validateForm()) {
       const { fields } = this.state
       let formData = {
-        id: '',
         firstname: fields.FirstName,
         lastname: fields.LastName,
         email: fields.EmailId,
