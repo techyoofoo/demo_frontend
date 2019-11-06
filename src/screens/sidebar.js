@@ -44,7 +44,7 @@ export default class Sidebarmenu extends Component {
 
                 </Accordion.Collapse>
               </Card>
-              <Card>
+              {/* <Card>
                 <Accordion.Toggle as={Card.Header} eventKey="1">
                   Commissions <i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
                 </Accordion.Toggle>
@@ -60,7 +60,7 @@ export default class Sidebarmenu extends Component {
                     </div>
                   </Card.Body>
                 </Accordion.Collapse>
-              </Card>
+              </Card> */}
               <Card>
                 <Accordion.Toggle as={Card.Header} eventKey="2">
                   Admin <i className="fa fa-angle-down dwnarrow" aria-hidden="true"></i>
@@ -99,7 +99,10 @@ export default class Sidebarmenu extends Component {
                   </Card.Body>
                 </Accordion.Collapse>
               </Card> */}
-            </Accordion>
+            
+
+
+</Accordion>
           </div>
         </div>
       </div>
