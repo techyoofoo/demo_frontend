@@ -8,7 +8,7 @@
         "User": "User",
         "UserGroups": "User Groups",
         "Role": "Role",
-        "RoleAccess": "Role Access"
+        "RolePermission": "Role Permission"
     },
     "hi": {
         "Plugins":"प्लगइन्स",
@@ -19,7 +19,7 @@
         "User": "उपयोगकर्ता",
         "UserGroups": "यूसर समूह",
         "Role": "भूमिका",
-        "RoleAccess": "रोल एक्सेस"
+        "RolePermission": "रोल एक्सेस"
     },
     "de": {
         "Plugins":"Plugins",
@@ -30,6 +30,6 @@
         "User": "Benutzerin",
         "UserGroups": "Benutzergruppen",
         "Role": "Rolle",
-        "RoleAccess": "Rollenzugriff"
+        "RolePermission": "Rollenzugriff"
     }
 }
