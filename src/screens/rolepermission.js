@@ -115,7 +115,7 @@ const permissions = [
   }
 ]
 
-class RoleAccessScreen extends Component {
+class RolePermissionScreen extends Component {
   constructor() {
     super();
 
@@ -123,7 +123,7 @@ class RoleAccessScreen extends Component {
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
-    this.RoleAccessForm = this.RoleAccessForm.bind(this);
+    this.RolePermissionForm = this.RolePermissionForm.bind(this);
 
     this.state = {
       popupVisible: false,
@@ -279,7 +279,7 @@ class RoleAccessScreen extends Component {
 
   bindRolePermissionGrid() {
     axios
-      .get(BASE_URL + "rouge/roleaccess/get")
+      .get(BASE_URL + "rouge/rolepermission/get")
       .then((response) => {
         if (response.status === 200) {
           this.setState({
@@ -336,7 +336,7 @@ class RoleAccessScreen extends Component {
 
   onDeleteClick = (data) => {
     if (window.confirm("Are u sure to delete ?")) {
-      axios.delete(BASE_URL + `rouge/roleaccess/delete/` + data._id)
+      axios.delete(BASE_URL + `rouge/rolepermission/delete/` + data._id)
         .then(response => {
           if (response.status === 200) {
             this.bindRolePermissionGrid();
@@ -348,7 +348,7 @@ class RoleAccessScreen extends Component {
     }
   }
 
-  RoleAccessForm(e) {
+  RolePermissionForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
       const { fields, menus } = this.state
@@ -405,7 +405,7 @@ class RoleAccessScreen extends Component {
       };
 
       if (!fields._id) {
-        axios.post(BASE_URL + `rouge/roleaccess/create`, JSON.stringify(formData), config)
+        axios.post(BASE_URL + `rouge/rolepermission/create`, JSON.stringify(formData), config)
           .then(response => {
             alert(response.data.Message);
             if (response.status === 201) {
@@ -420,7 +420,7 @@ class RoleAccessScreen extends Component {
             console.log(error)
           });
       } else {
-        axios.put(BASE_URL + `rouge/roleaccess/update/` + fields._id, JSON.stringify(formData), config)
+        axios.put(BASE_URL + `rouge/rolepermission/update/` + fields._id, JSON.stringify(formData), config)
           .then(response => {
             alert(response.data.Message);
             if (response.status === 200) {
@@ -446,7 +446,7 @@ class RoleAccessScreen extends Component {
 
     if (!fields["Name"]) {
       formIsValid = false;
-      errors["Name"] = "*Please enter your Role access Name.";
+      errors["Name"] = "*Please enter your Role Permission Name.";
     }
 
     if (typeof fields["Name"] !== "undefined") {
@@ -498,7 +498,7 @@ class RoleAccessScreen extends Component {
               <div className="innerlinks">
                 <ul>
                   <li>
-                    <button className="btn btn-outline-light" onClick={this.RoleAccessForm}>
+                    <button className="btn btn-outline-light" onClick={this.RolePermissionForm}>
                       <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
                   </li>
                   <li>
@@ -554,7 +554,7 @@ class RoleAccessScreen extends Component {
                             <div className="col-md-6">
                               <div className="wrap-input100 validate-input">
                                 <span className="label-input100">Name:</span>
-                                <input className="input100" type="text" name="Name" placeholder="Type your Role access Name" value={this.state.fields.Name || ''} onChange={this.handleChange} />
+                                <input className="input100" type="text" name="Name" placeholder="Type your Role Permission Name" value={this.state.fields.Name || ''} onChange={this.handleChange} />
                                 <span className="focus-input100" data-symbol="&#xf206;"></span>
                               </div>
                               <div className="errorMsg">{this.state.errors.Name}</div>
@@ -562,7 +562,7 @@ class RoleAccessScreen extends Component {
                               <div className="wrap-input100 validate-input m-t-20">
                                 <span className="label-input100"> Role: </span>
                                 <select name="Role" className="input100" value={this.state.fields.Role} onChange={this.handleChange}>
-                                  <option selected={this.state.fields.Role === undefined} value="">-- Select --</option>
+                                  <option selected={this.state.fields.Role === undefined} value="">-- Select Role--</option>
                                   {roles.length > 0 ? (
                                     roles.map((data, index) => {
                                       return (
@@ -578,7 +578,7 @@ class RoleAccessScreen extends Component {
                               <div className="container-login100-form-btn p-t-31 p-b-25">
                                 <div className="wrap-login100-form-btn">
                                   <div className="login100-form-bgbtn"></div>
-                                  <button className="login100-form-btn" onClick={this.RoleAccessForm}>
+                                  <button className="login100-form-btn" onClick={this.RolePermissionForm}>
                                     Submit
                                    </button>
                                 </div>
@@ -675,4 +675,4 @@ class RoleAccessScreen extends Component {
   }
 }
 
-export default RoleAccessScreen;
+export default RolePermissionScreen;

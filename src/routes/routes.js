@@ -17,7 +17,7 @@ import MenuScreen from '../screens/menu';
 import UserGroupsScreen from '../screens/usergroups';
 import RoleScreen from '../screens/role';
 import UserScreen from '../screens/user';
-import RoleAccessScreen from '../screens/roleaccess';
+import RolePermissionScreen from '../screens/rolepermission';
 
 class Routes extends Component {
     render() {
@@ -41,7 +41,7 @@ class Routes extends Component {
             <Route exact path="/usergroups"  component={UserGroupsScreen} />
             <Route exact path="/role"  component={RoleScreen} />
             <Route exact path="/user"  component={UserScreen} />
-            <Route exact path="/roleaccess"  component={RoleAccessScreen} />
+            <Route exact path="/rolepermission"  component={RolePermissionScreen} />
                              
           </div>
         </HashRouter>
