@@ -89,20 +89,20 @@ class LoginScreen extends Component {
 
     if (!fields["UserName"]) {
       formIsValid = false;
-      errors["UserName"] = "*Please enter your user name.";
+      errors["UserName"] = strings.UsernameError;
     }
 
     if (typeof fields["UserName"] !== "undefined") {
       if (!fields["UserName"].match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
         formIsValid = false;
-        errors["UserName"] = "*Please enter alphabet characters only.";
+        errors["UserName"] = strings.UsernameAlphabetError;
       }
     }
 
 
     if (!fields["password"]) {
       formIsValid = false;
-      errors["password"] = "*Please enter your password.";
+      errors["password"] = strings.PasswordError;
     }
 
     // if (typeof fields["password"] !== "undefined") {

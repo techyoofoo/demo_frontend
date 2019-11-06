@@ -5,6 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactFlagsSelect from 'react-flags-select';
 import 'react-flags-select/css/react-flags-select.css';
 import '../styles/styles.css';
+import langdata from '../../src/locales/de/dashboardtranslation';
+import LocalizedStrings from 'react-localization';
+
+let strings = new LocalizedStrings(langdata);
+const selLang = localStorage.getItem('lang');
+strings.setLanguage(selLang);
 
 const gbHeaderColor = localStorage.getItem("headerColor");
 export class PageHeader extends Component {
@@ -12,11 +18,29 @@ export class PageHeader extends Component {
     popupVisible: false,
     show: false, background: '#296091'
   };
+  constructor(props){
+    super(props);
 
+    this.state = {
+      selected : null,
+    }
+    this.handleLanguageChange = this.handleLanguageChange.bind(this)
+  }
   handleChangeComplete = (color) => {
     this.setState({ background: color.hex });
   };
-
+  handleLanguageChange(e) {
+    debugger;
+    e.preventDefault();
+    let lang = e.target.value;
+    localStorage.setItem('lang', lang);
+    this.setState({ selected : lang });
+    window.location.reload(false);
+  };
+  componentDidMount(){
+    let selected =localStorage.getItem('lang');
+    this.setState({ selected : selected });
+  }
   handleClick = () => {
     if (!this.state.popupVisible) {
       document.addEventListener("click", this.handleOutsideClick, false);
@@ -64,8 +88,15 @@ export class PageHeader extends Component {
             <div className="innerlinks">
               <ul>
                 <li>
+                <select class="browser-default custom-select" onChange={this.handleLanguageChange} value={this.state.selected}>
+                      <option value="en">En- English</option>
+                      <option value="de">de- German</option>
+                      <option value="hi">hi- Hindi</option>
+                    </select>
+                </li>
+                <li>
                   <button className="btn btn-outline-light" onClick={this.submituserRegistrationForm}>
-                    <Link to="/changepassword" className="btn btn-link"> Change Password  </Link></button>
+                    <Link to="/changepassword" className="btn btn-link"> {strings.ChangePassword}  </Link></button>
                 </li>
                 <li>
                   <div className="popover-container"
@@ -73,7 +104,7 @@ export class PageHeader extends Component {
                       this.node = node;
                     }}
                   >
-                    <button className="btn btn-outline-light" onClick={this.handleClick}>Change Color Theme</button>
+                    <button className="btn btn-outline-light" onClick={this.handleClick}>{strings.ChangeColorTheme}</button>
                     {this.state.popupVisible && (
                       <div className="popover">
                         <SketchPicker color={this.state.background} onChangeComplete={this.handleChangeComplete} />
@@ -141,7 +172,7 @@ export class PageFooter extends Component {
     return (
       <div>
        <div className="row fixed-footer">
-            <div className="col-md-12 Footer" onClick = {this.props.handler}>Copyright © 2019 Rogue All Rights Reserved</div>
+            <div className="col-md-12 Footer" onClick = {this.props.handler}>{strings.Copyright}</div>
           </div>
       </div>
     )

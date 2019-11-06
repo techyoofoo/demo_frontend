@@ -95,43 +95,43 @@ class RegisterScreen extends Component {
 
     if (!fields["FirstName"]) {
       formIsValid = false;
-      errors["FirstName"] = "*Please enter your first name.";
+      errors["FirstName"] = strings.FirstNameErrorMsg;
     }
 
     if (typeof fields["FirstName"] !== "undefined") {
       if (!fields["FirstName"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
-        errors["FirstName"] = "*Please enter alphabet characters only.";
+        errors["FirstName"] = strings.OnlyAlphabetErrorMsg;
       }
     }
 
     if (!fields["CompanyName"]) {
       formIsValid = false;
-      errors["CompanyName"] = "*Please enter your company name.";
+      errors["CompanyName"] = strings.CompanyNameErrorMsg;
     }
 
     if (typeof fields["CompanyName"] !== "undefined") {
       if (!fields["CompanyName"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
-        errors["CompanyName"] = "*Please enter alphabet characters only.";
+        errors["CompanyName"] = strings.OnlyAlphabetErrorMsg;
       }
     }
 
     if (!fields["LastName"]) {
       formIsValid = false;
-      errors["LastName"] = "*Please enter your last name.";
+      errors["LastName"] = strings.LastNameErrorMsg;
     }
 
     if (typeof fields["LastName"] !== "undefined") {
       if (!fields["LastName"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
-        errors["LastName"] = "*Please enter alphabet characters only.";
+        errors["LastName"] = strings.OnlyAlphabetErrorMsg;
       }
     }
 
     if (!fields["EmailId"]) {
       formIsValid = false;
-      errors["EmailId"] = "*Please enter your email-ID.";
+      errors["EmailId"] = strings.EmailIdErrorMsg;
     }
 
     if (typeof fields["EmailId"] !== "undefined") {
@@ -139,25 +139,25 @@ class RegisterScreen extends Component {
       var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
       if (!pattern.test(fields["EmailId"])) {
         formIsValid = false;
-        errors["EmailId"] = "*Please enter valid Email-ID.";
+        errors["EmailId"] = strings.ValidEmailErrorMsg;
       }
     }
 
     if (!fields["Age"]) {
       formIsValid = false;
-      errors["Age"] = "*Please enter your Age.";
+      errors["Age"] = strings.AgeErrorMsg;
     }
 
     if (typeof fields["Age"] !== "undefined") {
       if (Number(fields["Age"]) < 18 || Number(fields["Age"]) > 100) {
         formIsValid = false;
-        errors["Age"] = "*Please enter valid age .";
+        errors["Age"] = strings.AgeValidErrorMsg;
       }
     }
 
     if (!fields["Gender"]) {
       formIsValid = false;
-      errors["Gender"] = "*Please select your gender.";
+      errors["Gender"] = strings.GenderErrorMsg;
     }
 
 
@@ -170,25 +170,25 @@ class RegisterScreen extends Component {
 
     if (!fields["Password"]) {
       formIsValid = false;
-      errors["Password"] = "*Please enter your password.";
+      errors["Password"] = strings.PasswordErrorMsg;
     }
 
     if (typeof fields["Password"] !== "undefined") {
       if (!fields["Password"].match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&]).*$/)) {
         formIsValid = false;
-        errors["Password"] = "*Please enter secure and strong password.";
+        errors["Password"] = strings.SecurePasswordErrorMsg;
       }
     }
 
     if (!fields["ConfirmPassword"]) {
       formIsValid = false;
-      errors["ConfirmPassword"] = "*Please enter your Confirm Password.";
+      errors["ConfirmPassword"] = strings.ConfirmPasswordErrorMsg;
     }
 
     if (typeof fields["ConfirmPassword"] !== "undefined") {
       if (!fields["ConfirmPassword"].match(fields["Password"])) {
         formIsValid = false;
-        errors["ConfirmPassword"] = "*Password not match.";
+        errors["ConfirmPassword"] = strings.MatchPasswordErrorMsg;
       }
     }
 
@@ -201,13 +201,13 @@ class RegisterScreen extends Component {
 
     if (!fields["MobileNo"]) {
       formIsValid = false;
-      errors["MobileNo"] = "*Please enter your mobile no.";
+      errors["MobileNo"] = strings.MobileNoErrorMsg;
     }
 
     if (typeof fields["MobileNo"] !== "undefined") {
       if (!fields["MobileNo"].match(/^[0-9]{10}$/)) {
         formIsValid = false;
-        errors["MobileNo"] = "*Please enter valid mobile no.";
+        errors["MobileNo"] = strings.MobileNoValidErrorMsg;
       }
     }
 

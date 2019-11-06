@@ -1,8 +1,8 @@
 {
     "en": {
-        "Login": "Login",
-        "Username": "Username",
-        "UsernameLabel": "Type your username",
+        "ChangePassword": "Change Password",
+        "ChangeColorTheme": "Change Color Theme",
+        "Copyright": "Copyright © 2019 Rogue All Rights Reserved",
         "Password": "Password",
         "PasswordLabel": "Type your password",
         "ForgotPassword": "Forgot password?",
@@ -13,8 +13,9 @@
         "PasswordError":"*Please enter your password."
     },
     "hi": {
-        "Login": "लॉग इन करें",
-        "Username": "उपयोगकर्ता नाम",
+        "ChangePassword": "पासवर्ड बदलें",
+        "ChangeColorTheme": "रंग थीम बदलें",
+        "Copyright": "कॉपीराइट © 2019 दुष्ट सभी अधिकार सुरक्षित",
         "UsernameLabel": "अपना उपयोगकर्ता नाम लिखें",
         "Password": "पासवर्ड",
         "PasswordLabel": "अपना पासवर्ड टाइप करें",
@@ -26,8 +27,9 @@
         "PasswordError":"*अपना पासवर्ड दर्ज करें।"
     },
     "de": {
-        "Login": "Einloggen",
-        "Username": "Nutzername",
+        "ChangePassword": "EinloggenPasswort ändern",
+        "ChangeColorTheme": "Farbschema ändern",
+        "Copyright": "Copyright © 2019 Rogue Alle Rechte vorbehalten",
         "UsernameLabel": "Geben Sie Ihren Benutzernamen ein",
         "Password": "Passwort",
         "PasswordLabel": "Geben Sie Ihr Passwort ein",

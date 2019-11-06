@@ -1,0 +1,35 @@
+{
+    "en": {
+        "Plugins":"Plugins",
+        "Install": "Install",
+        "Uninstall": "Uninstall",
+        "Admin": "Admin",
+        "Menu": "Menu",
+        "User": "User",
+        "UserGroups": "User Groups",
+        "Role": "Role",
+        "RoleAccess": "Role Access"
+    },
+    "hi": {
+        "Plugins":"प्लगइन्स",
+        "Install": "इंस्टॉल करें I",
+        "Uninstall": "स्थापना रद्द करें",
+        "Admin": "व्यवस्थापक",
+        "Menu": "मेन्यू",
+        "User": "उपयोगकर्ता",
+        "UserGroups": "यूसर समूह",
+        "Role": "भूमिका",
+        "RoleAccess": "रोल एक्सेस"
+    },
+    "de": {
+        "Plugins":"Plugins",
+        "Install": "Installieren",
+        "Uninstall": "deinstallieren",
+        "Admin": "Administratorin",
+        "Menu": "Speisekarte",
+        "User": "Benutzerin",
+        "UserGroups": "Benutzergruppen",
+        "Role": "Rolle",
+        "RoleAccess": "Rollenzugriff"
+    }
+}
