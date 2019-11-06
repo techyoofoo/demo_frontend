@@ -48,7 +48,14 @@ class LoginScreen extends Component {
       fields["UserName"] = "";
       fields["password"] = "";
       this.setState({ fields: fields });
-
+      if(this.state.fields.UserName === "admin@yoofoo.com") {
+        localStorage.setItem("userType", "Admin");
+        this.props.history.push('/dashboard');
+      }
+      else if(this.state.fields.UserName === "user@yoofoo.com") {
+        localStorage.setItem("userType", "User");
+        this.props.history.push('/dashboard');
+      }
       // var jsonData = {
       //   "ApiAuthentication":
       //   {
@@ -77,7 +84,8 @@ class LoginScreen extends Component {
       //   .catch(function (error) {
       //     console.log(error);
       //   })
-        this.props.history.push('/dashboard');
+
+        // this.props.history.push('/dashboard');
     }
   }
 
