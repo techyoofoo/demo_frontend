@@ -30,13 +30,17 @@ class UninstallScreen extends Component {
       values: [],
       fields: {},
       errors: {},
-      txtPluginName:''
+      txtPluginName:'',
+      plugNames:[]
     };
   }
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    const distElements = [...new Set(JSON.parse(localStorage.getItem("installed_plugins")))]
+    console.log('---dist Ele', distElements);
+    this.setState({plugNames: distElements});
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -87,9 +91,11 @@ class UninstallScreen extends Component {
       fields
     });
   }
-  submituserRegistrationForm(e) {
+  submituserRegistrationForm(filNm) {
     // e.preventDefault();
     // if (this.validateForm()) {
+      // alert('as', filNm)
+      console.log('e-------', filNm)
     //   let fields = {};
       const config = {
         headers: {
@@ -99,7 +105,7 @@ class UninstallScreen extends Component {
       const formData = new FormData();
       formData.append("FileName", "surendra");
       axios.post('http://localhost:9002/uninstallapp', {
-        pluginName: this.state.txtPluginName
+        pluginName: filNm
       }).then(response => {
         console.log('response', response);
       }).catch(error => {});
@@ -243,7 +249,7 @@ class UninstallScreen extends Component {
               <div className="col-md-12">
                 <div className="col-md-2"></div>
                 <div className="col-md-4 innercontent">
-                  <div className="form-group formrgn1">
+                  {/* <div className="form-group formrgn1">
                     <div className="input-group">
                       <span className="input-group-addon">
                         <span
@@ -251,7 +257,7 @@ class UninstallScreen extends Component {
                           aria-hidden="true"
                         />
                       </span>
-                      {/* <input type="text" name="FirstName" className="form-control" placeholder="First Name" value={this.state.fields.FirstName} onChange={this.handleChange} /> */}
+                      
                       <input
                         type="text"
                         name="FirstName"
@@ -267,8 +273,8 @@ class UninstallScreen extends Component {
                       {this.state.errors.FirstName}
                     </div>
                     <div></div>
-                  </div>
-                  <div className="form-group formrgn1">
+                  </div> */}
+                  {/* <div className="form-group formrgn1">
                     <div className="input-group">
                       <span className="input-group-addon">
                         <span
@@ -288,8 +294,35 @@ class UninstallScreen extends Component {
                         {this.state.errors.Description}
                       </div>
                     </div>
+                  </div> */}
+                  
+                  <div>
+                    <table className="table table-bordered">
+                      <thead className="thead-dark">
+                        <tr>
+                          <th scope="col">#</th>                          
+                          <th scope="col">Plugin Name</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {
+                      this.state.plugNames.map((dt, i) => {
+                        return(
+                          <tr>
+                          <th scope="row">{i+1}</th>
+                          <td>{dt}</td>
+                          <td onClick={() =>this.submituserRegistrationForm(dt)}><i className="fas fa-trash-alt iconcolor" ></i></td>                          
+                        </tr>
+                          
+                        )
+                      })
+                    }
+                        
+                      </tbody>
+                    </table>
                   </div>
-                  <div className="form-group text-center">
+                  {/* <div className="form-group text-center">
                     <button
                       type="submit"
                       className="btn btn-lg btn-primary btn-block mb-1 btnshadow"
@@ -297,7 +330,7 @@ class UninstallScreen extends Component {
                     >
                       SUBMIT
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

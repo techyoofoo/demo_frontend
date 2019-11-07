@@ -61,7 +61,13 @@ class InstallScreen extends Component {
       values: [],
       fields: {},
       errors: {},
-      file: undefined
+      file: undefined,
+      plugin_name: "-",
+      author: "-",
+      app_version: "-",
+      copyright: "-",
+      description: "-",
+      company_name: "-"
       // colorCode:''
     };
   }
@@ -121,6 +127,8 @@ class InstallScreen extends Component {
       axios
         .post("http://localhost:9002/un-zip", formData, config)
         .then(response => {
+          console.log("response", response);
+
           alert("The file is successfully uploaded");
         })
         .catch(error => {});
@@ -132,17 +140,17 @@ class InstallScreen extends Component {
     let errors = {};
     let formIsValid = true;
 
-    if (!fields["FirstName"]) {
-      formIsValid = false;
-      errors["FirstName"] = "*Please enter your first name.";
-    }
+    // if (!fields["FirstName"]) {
+    //   formIsValid = false;
+    //   errors["FirstName"] = "*Please enter your first name.";
+    // }
 
-    if (typeof fields["FirstName"] !== "undefined") {
-      if (!fields["FirstName"].match(/^[a-zA-Z ]*$/)) {
-        formIsValid = false;
-        errors["FirstName"] = "*Please enter alphabet characters only.";
-      }
-    }
+    // if (typeof fields["FirstName"] !== "undefined") {
+    //   if (!fields["FirstName"].match(/^[a-zA-Z ]*$/)) {
+    //     formIsValid = false;
+    //     errors["FirstName"] = "*Please enter alphabet characters only.";
+    //   }
+    // }
 
     // if (!fields["SearchData"]) {
     //   formIsValid = false;
@@ -198,7 +206,51 @@ class InstallScreen extends Component {
 
     this.handleClick();
   };
+  onFileChange = selFile => {
+    console.log("---File Data--", selFile.target.files[0]);
+    this.setState({ file: selFile.target.files[0] });
+    //extract-manifest-data
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data"
+      }
+    };
+    const formData = new FormData();
+    formData.append("file", selFile.target.files[0]);
+    formData.append("name", this.state.fields.FirstName);
+    //---------------------Local storage-------------------------------
+    let pluginsData;
+    if(localStorage.getItem("installed_plugins") === null)
+    {
+      pluginsData = []
+    } else{
+      pluginsData = JSON.parse(localStorage.getItem("installed_plugins"));
+    }
+    const splitFileName = selFile.target.files[0].name.split(".")
+    pluginsData.push(splitFileName[0]);
+    localStorage.setItem("installed_plugins", JSON.stringify(pluginsData));   
+    const distElements = [...new Set(JSON.parse(localStorage.getItem("installed_plugins")))]
+    console.log('---dist Ele', distElements)
+    //---------------------Local storage-------------------------------
+    axios
+      .post("http://localhost:9002/extract-manifest-data", formData, config)
+      .then(response => {
+        console.log("response------", response.data);
+        this.setState({
+          plugin_name: response.data.file_info.plugin_name,
+          author: response.data.file_info.app_author,
+          app_version: response.data.file_info.app_version,
+          copyright: response.data.file_info.app_copyright,
+          description: response.data.file_info.app_description,
+          company_name: response.data.file_info.company_name
+        });
+      })
+      .catch(error => {
+        throw error;
+      });
+  };
   render() {
+    console.log("this.state.file", this.state.file);
     const BASE_URL = "#";
     const { open } = this.state;
     const styleBack = {
@@ -296,7 +348,7 @@ class InstallScreen extends Component {
                 <div className="col-md-2"></div>
                 <div className="col-md-4 innercontent">
                   <div className="form-group formrgn1">
-                    <div className="input-group">
+                    {/* <div className="input-group">
                       <span className="input-group-addon">
                         <span
                           className="fa fa-user facolor"
@@ -311,7 +363,7 @@ class InstallScreen extends Component {
                         value={this.state.fields.FirstName}
                         onChange={this.handleChange}
                       />
-                    </div>
+                    </div> */}
                     <div className="errorMsg">
                       {this.state.errors.FirstName}
                     </div>
@@ -329,9 +381,10 @@ class InstallScreen extends Component {
                           type="file"
                           className="custom-file-input rounded-pill"
                           name="file"
-                          onChange={e =>
-                            this.setState({ file: e.target.files[0] })
-                          }
+                          // onChange={e =>
+                          //   this.setState({ file: e.target.files[0] })
+                          // }
+                          onChange={e => this.onFileChange(e)}
                         />
                         <label
                           for="customFile"
@@ -342,7 +395,7 @@ class InstallScreen extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className="form-group formrgn1">
+                  {/* <div className="form-group formrgn1">
                     <div className="input-group">
                       <div className="select_left App">
                         <Multiselect
@@ -363,8 +416,8 @@ class InstallScreen extends Component {
                         {this.state.errors.SearchData}
                       </div>
                     </div>
-                  </div>
-                  <div className="form-group formrgn1">
+                  </div> */}
+                  {/* <div className="form-group formrgn1">
                     <div className="input-group">
                       <span className="input-group-addon">
                         <span
@@ -384,8 +437,33 @@ class InstallScreen extends Component {
                         {this.state.errors.Description}
                       </div>
                     </div>
+                  </div> */}
+                  <div>
+                    <table className="table table-bordered">
+                      <thead className="thead-dark">
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Company Name</th>
+                          <th scope="col">Plugin Name</th>
+                          <th scope="col">Author</th>
+                          <th scope="col">Version</th>
+                          <th scope="col">Copyright</th>
+                          <th scope="col">Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>{this.state.company_name}</td>
+                          <td>{this.state.plugin_name}</td>
+                          <td>{this.state.author}</td>
+                          <td>{this.state.app_version}</td>
+                          <td>{this.state.copyright}</td>
+                          <td>{this.state.description}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-
                   <div className="form-group text-center">
                     <button
                       type="submit"

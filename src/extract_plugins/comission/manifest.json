@@ -1,6 +1,10 @@
 {
-    "plugin_name":"Comission",
-    "version_no":"1.0",
+    "plugin_name":"comission",
+    "version":"1.0",
+    "author":"Surendra",
+    "copyright":"yoofoo tech",
+    "description":"comission module",
+    "company_name":"Yoofoo technologies",
     "menu":[{
         "CommissionsScreen":"./comission-screen",
         "RankScreen":"./rank-screen"

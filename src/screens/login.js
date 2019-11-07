@@ -48,12 +48,15 @@ class LoginScreen extends Component {
       fields["UserName"] = "";
       fields["password"] = "";
       this.setState({ fields: fields });
+      // var pluginsData = [];
       if(this.state.fields.UserName === "admin@yoofoo.com") {
         localStorage.setItem("userType", "Admin");
+        // localStorage.setItem("installed_plugins", []);
         this.props.history.push('/dashboard');
       }
       else if(this.state.fields.UserName === "user@yoofoo.com") {
         localStorage.setItem("userType", "User");
+        // localStorage.setItem("installed_plugins", []);
         this.props.history.push('/dashboard');
       }
       // var jsonData = {
