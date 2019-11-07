@@ -1,7 +1,7 @@
 
     .container{
         width: 80%;
-        margin: 0 auto; /* Center the DIV horizontally */
+        margin: 0 auto; 
     }
     .fixed-header, .fixed-footer{
         width: 100%;
@@ -378,10 +378,11 @@ h3{
     padding: .75rem 1.25rem;
     margin-bottom: 0;
     color:#202020;
-    background-color: #e3e3e3 !important;    
+    background-color: #ebedef !important;    
     border-radius: 0 !important;
     text-shadow: none;
     font-weight: lighter !important;
+    /* border-bottom: solid 1px #ff0000 !important; */
 }
 .dwnarrow{
     float: right;
@@ -390,6 +391,7 @@ h3{
 }
 .rightarrow{
     font-size: 14px;
+    margin-right: 5px;
 }
 .leftmenu{
     border-right: solid 1px #ccc;
@@ -504,7 +506,7 @@ h3{
   
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
+    .sidenav a {font-size: 15px;}
   }
   /*-----------Form--------------------*/
   
@@ -915,9 +917,10 @@ h3{
     margin-bottom: 0px;
 }
 .gridcontent{
-    /* min-height: 700px; */
     border:solid 1px #ccc;
     padding-left: 0;
+    height: 540px;
+    overflow-y: scroll;
 }
 .searchbox{
     margin-top: 20px;
@@ -951,6 +954,11 @@ dd {
 }
 .gridgraybg{  
     background-color: #eeeeee;  
+    border-right: solid 1px #cfcfcf; 
+    border-left: solid 1px #cfcfcf; 
+}
+.gridbluebg{  
+    background-color: #e2f0ff;  
     border-right: solid 1px #cfcfcf; 
     border-left: solid 1px #cfcfcf; 
 }
@@ -1079,6 +1087,16 @@ dd {
 }
 .mrgtop{
 margin-top: 20px;
+}
+.chartDiv{
+    min-height: 400px;
+}
+.charthdr{
+    color: #135ca0;
+    text-align: center;
+    font-size: 25px;
+    font-weight: 700;
+    padding: 15px 0 5px 15px;
 }
 
 @media screen and (min-width: 980px) /* Desktop */ {

@@ -123,12 +123,12 @@ export default class Sidebarmenu extends Component {
                               </Link>
                             </li>
                             <li>
-                              <Link to="/roleaccess">
+                              <Link to="/rolepermission">
                                 <i
                                   className="fa fa-caret-right rightarrow"
                                   aria-hidden="true"
                                 ></i>
-                                {strings.RoleAccess}
+                                {strings.RolePermission}
                               </Link>
                             </li>
                             {/* <li><Link to="/submenu"><i className="fa fa-caret-right rightarrow" aria-hidden="true"></i> Sub Menu</Link></li> */}
