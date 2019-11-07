@@ -9,19 +9,10 @@ import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import PropTypes from 'prop-types';
-import SvgIcon from '@material-ui/core/SvgIcon';
-import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
-import TreeView from '@material-ui/lab/TreeView';
-import TreeItem from '@material-ui/lab/TreeItem';
-import Collapse from '@material-ui/core/Collapse';
-import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is required for IE 11 support
-
 import axios from 'axios';
 const BASE_URL = `http://localhost:6006/`;
 const BASE_URL_ROLE = `http://localhost:6005/`;
 
-const permissions = ['view', 'create', 'edit', 'delete', 'execute']
 
 class RolePermissionScreen extends Component {
   constructor() {
@@ -42,7 +33,8 @@ class RolePermissionScreen extends Component {
       fields: {},
       errors: {},
       roles: [],
-      permissionGridData: []
+      permissionGridData: [],
+      permissions: []
     };
   }
 
@@ -61,6 +53,7 @@ class RolePermissionScreen extends Component {
     document.getElementById("main").style.marginLeft = "200px";
     this.bindRolesDropdown()
     this.bindRolePermissionGrid()
+    this.bindPermission()
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -132,6 +125,21 @@ class RolePermissionScreen extends Component {
       });
   }
 
+  bindPermission() {
+    axios
+      .get(BASE_URL + "rouge/permission/get")
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            permissions: response.data
+          })
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
+
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
@@ -144,14 +152,14 @@ class RolePermissionScreen extends Component {
     let fields = this.state.fields;
     if (e.target.checked) {
       if (fields.Permission !== undefined) {
-        fields.Permission.push(data)
+        fields.Permission.push(data._id)
       }
       else {
-        fields["Permission"] = [data];
+        fields["Permission"] = [data._id];
       }
     }
     else {
-      var index = fields.Permission.indexOf(data)
+      var index = fields.Permission.indexOf(data._id)
       fields.Permission.splice(index, 1);
     }
     this.setState({ fields: fields });
@@ -202,7 +210,7 @@ class RolePermissionScreen extends Component {
           .then(response => {
             if (response.status === 200) {
               if (window.confirm("Permission already exist with same role, Are u want to override it ?")) {
-                this.overridePernission(formData, response.data._id, config)
+                this.overridePermission(formData, response.data._id, config)
               }
             }
             else if (response.status === 201) {
@@ -234,7 +242,7 @@ class RolePermissionScreen extends Component {
     }
   }
 
-  overridePernission(data, id, config) {
+  overridePermission(data, id, config) {
     axios.put(BASE_URL + `rouge/rolepermission/update/` + id, JSON.stringify(data), config)
       .then(response => {
         alert(response.data.Message);
@@ -285,7 +293,7 @@ class RolePermissionScreen extends Component {
       maxWidth: 400
     }
     const BASE_URL = '#'
-    const { open, roles, permissionGridData } = this.state;
+    const { open, roles, permissionGridData, permissions } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -391,7 +399,7 @@ class RolePermissionScreen extends Component {
                                     return (
                                       <div className="col col-md-4 floatl">
                                         <label className="radio menumrgn">
-                                          <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, data)} checked={this.state.fields.Permission !== undefined ? (this.state.fields.Permission.indexOf(data) > -1) : false} />{data}
+                                          <input type="checkbox" onChange={(e) => this.onChangeCheckBox(e, data)} checked={this.state.fields.Permission !== undefined ? (this.state.fields.Permission.indexOf(data._id) > -1) : false} />{data.name}
                                         </label>
                                       </div>
                                     )
@@ -405,7 +413,7 @@ class RolePermissionScreen extends Component {
                                 <div className="login100-form-bgbtn"></div>
                                 <button className="login100-form-btn" onClick={this.RolePermissionForm}>
                                   Submit
-                                   </button>
+                                </button>
                               </div>
                             </div>
                           </div>
