@@ -1,0 +1,11 @@
+{
+    "plugin_name":"grid",
+    "version":"1.0",
+    "author":"Yoofoo Technologies",
+    "copyright":"Yoofoo Technologies",
+    "description":"grid module",
+    "company_name":"Yoofoo technologies",
+    "menu":[{
+        "GridPluginScreen":"./gridplugin"
+    }]
+}

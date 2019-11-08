@@ -30,17 +30,20 @@ class UninstallScreen extends Component {
       values: [],
       fields: {},
       errors: {},
-      txtPluginName:'',
-      plugNames:[]
+      txtPluginName: "",
+      plugNames: []
     };
   }
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
-    const distElements = [...new Set(JSON.parse(localStorage.getItem("installed_plugins")))]
-    console.log('---dist Ele', distElements);
-    this.setState({plugNames: distElements});
+    const distElements = [
+      ...new Set(JSON.parse(localStorage.getItem("installed_plugins")))
+    ];
+    console.log("---dist Ele", distElements);
+    this.setState({ plugNames: distElements });
+    
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -94,21 +97,34 @@ class UninstallScreen extends Component {
   submituserRegistrationForm(filNm) {
     // e.preventDefault();
     // if (this.validateForm()) {
-      // alert('as', filNm)
-      console.log('e-------', filNm)
+    // alert('as', filNm)
+    console.log("e-------", filNm);
     //   let fields = {};
-      const config = {
-        headers: {
-          "content-type": "application/json"
-        }
-      };
-      const formData = new FormData();
-      formData.append("FileName", "surendra");
-      axios.post('http://localhost:9002/uninstallapp', {
+    const config = {
+      headers: {
+        "content-type": "application/json"
+      }
+    };
+
+    const formData = new FormData();
+    formData.append("FileName", "surendra");
+    axios
+      .post("http://localhost:9002/uninstallapp", {
         pluginName: filNm
-      }).then(response => {
-        console.log('response', response);
-      }).catch(error => {});
+      })
+      .then(response => {
+        console.log("response---------", response);
+        const items = JSON.parse(localStorage.getItem("installed_plugins"));
+
+        // const removeItem = (items, i) =>
+        //   items.slice(0, i-1).concat(items.slice(i, items.length))
+        const indxOfPlugin = items.indexOf(filNm);
+        //JSON.parse(localStorage.getItem("installed_plugins")).splice(indxOfPlugin, 1).concat(JSON.parse(localStorage.getItem("installed_plugins")).slice(indxOfPlugin + 1, JSON.parse(localStorage.getItem("installed_plugins")).length))
+        let filteredItems = items.splice(indxOfPlugin, 1); //.concat(items.slice(indxOfPlugin, items.length))
+        console.log("getUnInstallFiles----", filteredItems, items);
+        localStorage.setItem("installed_plugins", JSON.stringify(items));
+      })
+      .catch(error => {});
 
     //   fields["FirstName"] = "";
     //   fields["Description"] = "";
@@ -295,30 +311,32 @@ class UninstallScreen extends Component {
                       </div>
                     </div>
                   </div> */}
-                  
+
                   <div>
                     <table className="table table-bordered">
                       <thead className="thead-dark">
                         <tr>
-                          <th scope="col">#</th>                          
+                          <th scope="col">#</th>
                           <th scope="col">Plugin Name</th>
                           <th scope="col">Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                      {
-                      this.state.plugNames.map((dt, i) => {
-                        return(
-                          <tr>
-                          <th scope="row">{i+1}</th>
-                          <td>{dt}</td>
-                          <td onClick={() =>this.submituserRegistrationForm(dt)}><i className="fas fa-trash-alt iconcolor" ></i></td>                          
-                        </tr>
-                          
-                        )
-                      })
-                    }
-                        
+                        {this.state.plugNames.map((dt, i) => {
+                          return (
+                            <tr>
+                              <th scope="row">{i + 1}</th>
+                              <td>{dt}</td>
+                              <td
+                                onClick={() =>
+                                  this.submituserRegistrationForm(dt)
+                                }
+                              >
+                                <i className="fas fa-trash-alt iconcolor"></i>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>

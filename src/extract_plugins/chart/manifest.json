@@ -1,0 +1,11 @@
+{
+    "plugin_name":"chart",
+    "version":"1.0",
+    "author":"Yoofoo Technologies",
+    "copyright":"Yoofoo Technologies",
+    "description":"chart module",
+    "company_name":"Yoofoo technologies",
+    "menu":[{
+        "ChartScreen":"./chartplugin"
+    }]
+}

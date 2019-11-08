@@ -20,54 +20,54 @@ import UserScreen from '../screens/user';
 import RolePermissionScreen from '../screens/rolepermission';
 
 export default class Root extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      frameworkInspector: false
-    };
-  }
-  componentWillMount() {
-    // console.log('Welcome to Manifest');
-    // const socialMediaList = data.version_no;
-    // console.log('Welcome to Manifest', socialMediaList, data.menu);
-    // this.subscription = showFrameworkObservable.subscribe(newValue => this.setState({frameworkInspector: newValue}));
-  }
-  render() {
-    return (
-      <HashRouter>
-        <div>
-          <Route exact path="/" component={Homescreen} />
-          <Switch>
-          <Route exact path="/" component={Homescreen} />
-            <Route exact path="/register" component={RegisterScreen} />
-            <Route exact path="/login" component={LoginScreen} /> 
-            <Route exact path="/dashboard" component={DashboardScreen} />
-            <Route exact path="/sidebar" component={Sidebarmenu} /> 
-            <Route exact path="/install" component={InstallScreen} /> 
-            <Route exact path="/uninstall" component={UninstallScreen} /> 
-            <Route exact path="/forgotpassword" component={ForgotPassword} /> 
-            <Route exact path="/changepassword"  component={ChangePassword} /> 
-            {/* <Route exact path="/commissions"  component={CommissionsScreen} /> 
-            <Route exact path="/rank"  component={RankScreen} /> 
-            <Route exact path="/volumes"  component={VolumesScreen} /> */}
-            <Route exact path="/menu"  component={MenuScreen} />
-            {/* <Route exact path="/submenu"  component={SubmenuScreen} /> */}
-            <Route exact path="/usergroups"  component={UserGroupsScreen} />
-            <Route exact path="/role"  component={RoleScreen} />
-            <Route exact path="/user"  component={UserScreen} />
-            <Route exact path="/rolepermission"  component={RolePermissionScreen} />
-          </Switch>
-          {/* <Switch>
-            <Route exact path="/commissions" component={CommissionsScreen} />
-          </Switch> */}
-          {/* <Route exact path="/commissions"  component={CommissionsScreen} />  */}
-          {/* <Route exact path="/rank" component={RankScreen} /> */}
+constructor() {
+super();
+this.state = {
+frameworkInspector: false
+};
+}
+componentWillMount() {
+// console.log('Welcome to Manifest');
+// const socialMediaList = data.version_no;
+// console.log('Welcome to Manifest', socialMediaList, data.menu);
+// this.subscription = showFrameworkObservable.subscribe(newValue => this.setState({frameworkInspector: newValue}));
+}
+render() {
+return (
+<HashRouter>
+<div>
+<Route exact path="/" component={Homescreen} />
+<Switch>
+<Route exact path="/" component={Homescreen} />
+<Route exact path="/register" component={RegisterScreen} />
+<Route exact path="/login" component={LoginScreen} />
+<Route exact path="/dashboard" component={DashboardScreen} />
+<Route exact path="/sidebar" component={Sidebarmenu} />
+<Route exact path="/install" component={InstallScreen} />
+<Route exact path="/uninstall" component={UninstallScreen} />
+<Route exact path="/forgotpassword" component={ForgotPassword} />
+<Route exact path="/changepassword"  component={ChangePassword} />
+{/* <Route exact path="/commissions"  component={CommissionsScreen} />
+<Route exact path="/rank"  component={RankScreen} />
+<Route exact path="/volumes"  component={VolumesScreen} /> */}
+<Route exact path="/menu"  component={MenuScreen} />
+{/* <Route exact path="/submenu"  component={SubmenuScreen} /> */}
+<Route exact path="/usergroups"  component={UserGroupsScreen} />
+<Route exact path="/role"  component={RoleScreen} />
+<Route exact path="/user"  component={UserScreen} />
+<Route exact path="/rolepermission"  component={RolePermissionScreen} />
+</Switch>
+{/* <Switch>
+<Route exact path="/commissions" component={CommissionsScreen} />
+</Switch> */}
+{/* <Route exact path="/commissions"  component={CommissionsScreen} />  */}
+{/* <Route exact path="/rank" component={RankScreen} /> */}
 
-        </div>
-      </HashRouter>
-    );
-  }
-  // componentWillUnmount() {
-  //   this.subscription.dispose();
-  // }
+</div>
+</HashRouter>
+);
+}
+// componentWillUnmount() {
+//   this.subscription.dispose();
+// }
 }

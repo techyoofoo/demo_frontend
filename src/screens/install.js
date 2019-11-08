@@ -132,7 +132,7 @@ class InstallScreen extends Component {
           alert("The file is successfully uploaded");
         })
         .catch(error => {});
-      alert("Form submitted");
+      // alert("Form submitted");
     }
   }
   validateForm() {
