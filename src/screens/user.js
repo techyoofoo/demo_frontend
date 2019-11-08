@@ -4,6 +4,7 @@ import { Button, Accordion, Card } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
 import { PageHeader, PageFooter } from './header';
 import Sidebarmenu from './sidebar';
+import Modal from "react-responsive-modal";
 import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -29,14 +30,27 @@ class UserScreen extends Component {
       values: [],
       fields: {},
       errors: {},
-      roles: []
+      roles: [],
+      users: [],
+      usersGridData: []
     };
   }
+
+  onOpenModal = () => {
+    let fields = {}
+    let errors = {}
+    this.setState({ open: true, fields: fields, errors: errors });
+  };
+
+  onCloseModal = () => {
+    this.setState({ open: false });
+  };
 
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
     this.bindRolesDropdown()
+    this.bindUsersGrid()
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -93,12 +107,76 @@ class UserScreen extends Component {
       });
   }
 
+  bindUsersGrid() {
+    axios
+      .get(BASE_URL + "rouge/user/get")
+      .then((response) => {
+        this.setState({
+          users: response.data,
+          usersGridData: response.data
+        });
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
+
+
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
-      fields
+      fields: fields
     });
+  }
+
+  searchUser(e) {
+    const { users } = this.state
+    if (e.target.value.length > 0) {
+      let gridData = users.filter(d => d.firstname.toLowerCase().includes(e.target.value.toLowerCase()))
+      this.setState({
+        usersGridData: gridData
+      });
+    }
+    else if (e.target.value === "") {
+      this.setState({
+        usersGridData: users
+      });
+    }
+
+  }
+
+
+  onOpenEditModal(data) {
+    let fields = this.state.fields;
+    fields["_id"] = data._id;
+    fields["FirstName"] = data.firstname;
+    fields["LastName"] = data.lastname;
+    fields["EmailId"] = data.email;
+    fields["Age"] = data.age;
+    fields["Gender"] = data.gender;
+    fields["Password"] = data.password;
+    fields["ConfirmPassword"] = data.password;
+    fields["MobileNo"] = data.mobileno;
+    fields["UserType"] = data.usertype;
+    fields["Role"] = data.roleid;
+    fields["CompanyName"] = data.companyname;
+    let errors = {};
+    this.setState({ open: true, fields: fields, errors: errors });
+  }
+
+  onDeleteClick(id) {
+    if (window.confirm("Are u sure to delete ?")) {
+      axios.delete(BASE_URL + `rouge/user/delete/` + id)
+        .then(response => {
+          if (response.status === 200) {
+            this.bindUsersGrid()
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        });
+    }
   }
 
   UserForm(e) {
@@ -123,18 +201,36 @@ class UserScreen extends Component {
           "content-type": "application/json"
         }
       };
-      axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
-        .then(response => {
-          alert(response.data.Message);
-          if (response.status === 201) {
-            let fields = {};
-            this.setState({ fields: fields });
-            this.onCloseModal();
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        });
+      if (!fields._id) {
+        axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 201) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.bindUsersGrid();
+              this.onCloseModal();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      }
+      else {
+        axios.put(BASE_URL + `rouge/user/update/` + fields._id, JSON.stringify(formData), config)
+          .then(response => {
+            alert(response.data.Message);
+            if (response.status === 200) {
+              let fields = {};
+              this.setState({ fields: fields });
+              this.bindUsersGrid();
+              this.onCloseModal();
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          });
+      }
     }
   }
 
@@ -280,7 +376,7 @@ class UserScreen extends Component {
 
   render() {
     const BASE_URL = '#'
-    const { open, roles } = this.state;
+    const { open, roles, usersGridData } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -345,126 +441,192 @@ class UserScreen extends Component {
                 </div>
               </div>
 
-              <div className="col-md-12 p-t-25">
-                <div className="row">
-                  <div className="col-sm-5">
-                    <div className="p-l-55 p-r-55 p-b-25">
-                      <div className="login100-form validate-form">
-                        <div className="wrap-input100 validate-input">
-                          <span className="label-input100">First Name</span>
-                          <input className="input100" type="text" name="FirstName" placeholder="Type your first name" value={this.state.fields.FirstName || ''} onChange={this.handleChange} />
-                          <span className="focus-input100" data-symbol="&#xf206;"></span>
-                        </div>
-                        <div className="errorMsg">{this.state.errors.FirstName}</div>
-
-                        <div className="wrap-input100 validate-input m-t-20">
-                          <span className="label-input100">Last Name</span>
-                          <input className="input100" type="text" name="LastName" placeholder="Type your last name" value={this.state.fields.LastName || ''} onChange={this.handleChange} />
-                          <span className="focus-input100" data-symbol="&#xf206;"></span>
-                        </div>
-                        <div className="errorMsg">{this.state.errors.LastName}</div>
-
-                        <div className="wrap-input100 validate-input m-t-20">
-                          <span className="label-input100">Email Id</span>
-                          <input className="input100" type="text" name="EmailId" placeholder="Type your email Id" value={this.state.fields.EmailId || ''} onChange={this.handleChange} />
-                          <span className="focus-input100"><i class="far fa-envelope fa_icon"></i></span>
-                        </div>
-                        <div className="errorMsg">{this.state.errors.EmailId}</div>
-
-                        <div className="wrap-input100 validate-input m-t-20">
-                          <span className="label-input100">Age</span>
-                          <input className="input100" type="number" min="18" max="100" name="Age" placeholder="Type your Age" value={this.state.fields.Age || ''} onChange={this.handleChange} />
-                          <span className="focus-input100" data-symbol="&#xf206;"></span>
-                        </div>
-                        <div className="errorMsg">{this.state.errors.Age}</div>
-
-                        <div className="validate-input m-t-20">
-                          <div className="label-input100">Gender</div>
-                          <div className="col col-md-4 floatl">
-                            <label className="radio menumrgn">
-                              <input type="radio" name="Gender" value="male" checked={this.state.fields.Gender === "male"} onChange={this.handleChange} />
-                              Male
-                             </label>
-                          </div>
-                          <div className="col col-md-4 floatl">
-                            <label className="radio menumrgn">
-                              <input type="radio" name="Gender" value="female" checked={this.state.fields.Gender === "female"} onChange={this.handleChange} />
-                              Female
-                             </label>
+              {/* user's grid start */}
+              <div className="col col-md-12">
+                <div className="col col-md-12 innercontent">
+                  <div className="condensed-grid">
+                    <div>
+                      <div>
+                        <div className="col col-md-4 col-sm-12">
+                          <div className="wrap-input100 validate-input">
+                            <input className="input100" onKeyUp={(e) => this.searchUser(e)} type="text" name="SearchText" placeholder="Search" />
+                            <span style={{ color: "#a99d9d" }} className="focus-input100 fa fa-search"></span>
                           </div>
                         </div>
-                        <div className="clear"></div>
-                        <div className="errorMsg">{this.state.errors.Gender}</div>
-
-                        <div className="wrap-input100 validate-input m-t-20">
-                          <span className="label-input100">Password</span>
-                          <input className="input100" type="password" name="Password" placeholder="Type your password" value={this.state.fields.Password || ''} onChange={this.handleChange} />
-                          <span className="focus-input100" data-symbol="&#xf190;"></span>
+                        <div style={{ float: "right" }} className="col col-md-4 col-sm-12">
+                          <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                         </div>
-                        <div className="errorMsg">{this.state.errors.Password}</div>
                       </div>
+                      <div className="clear"></div>
+                      <Modal open={open} onClose={this.onCloseModal}>
+                        <h2 className="modelhdr">{this.state.fields._id === undefined ? `Add New` : `Edit User`}</h2>
+                        <div className="modelmenu" style={{ width: "800px" }}>
+                          <div className="row">
+                            <div className="col-sm-6">
+                              <div className="p-l-55 p-r-55 p-b-25">
+                                <div className="login100-form validate-form">
+                                  <div className="wrap-input100 validate-input">
+                                    <span className="label-input100">First Name</span>
+                                    <input className="input100" type="text" name="FirstName" placeholder="Type your first name" value={this.state.fields.FirstName || ''} onChange={this.handleChange} />
+                                    <span className="focus-input100" data-symbol="&#xf206;"></span>
+                                  </div>
+                                  <div className="errorMsg">{this.state.errors.FirstName}</div>
+
+                                  <div className="wrap-input100 validate-input m-t-20">
+                                    <span className="label-input100">Last Name</span>
+                                    <input className="input100" type="text" name="LastName" placeholder="Type your last name" value={this.state.fields.LastName || ''} onChange={this.handleChange} />
+                                    <span className="focus-input100" data-symbol="&#xf206;"></span>
+                                  </div>
+                                  <div className="errorMsg">{this.state.errors.LastName}</div>
+
+                                  <div className="wrap-input100 validate-input m-t-20">
+                                    <span className="label-input100">Email Id</span>
+                                    {
+                                      this.state.fields._id !== undefined ? (
+                                        <input className="input100" data-toggle="tooltip" data-placement="top" title="Email id not editable" disabled type="text" name="EmailId" placeholder="Type your email Id" value={this.state.fields.EmailId || ''} onChange={this.handleChange} />
+                                      ) : (
+                                          <input className="input100" type="text" name="EmailId" placeholder="Type your email Id" value={this.state.fields.EmailId || ''} onChange={this.handleChange} />
+                                        )
+                                    }
+                                    <span className="focus-input100"><i class="far fa-envelope fa_icon"></i></span>
+                                  </div>
+                                  <div className="errorMsg">{this.state.errors.EmailId}</div>
+
+                                  <div className="wrap-input100 validate-input m-t-20">
+                                    <span className="label-input100">Age</span>
+                                    <input className="input100" type="number" min="18" max="100" name="Age" placeholder="Type your Age" value={this.state.fields.Age || ''} onChange={this.handleChange} />
+                                    <span className="focus-input100" data-symbol="&#xf206;"></span>
+                                  </div>
+                                  <div className="errorMsg">{this.state.errors.Age}</div>
+
+                                  <div className="validate-input m-t-20">
+                                    <div className="label-input100">Gender</div>
+                                    <div className="col col-md-4 floatl">
+                                      <label className="radio menumrgn">
+                                        <input type="radio" name="Gender" value="male" checked={this.state.fields.Gender === "male"} onChange={this.handleChange} />
+                                        Male
+                                       </label>
+                                    </div>
+                                    <div className="col col-md-4 floatl">
+                                      <label className="radio menumrgn">
+                                        <input type="radio" name="Gender" value="female" checked={this.state.fields.Gender === "female"} onChange={this.handleChange} />
+                                        Female
+                                      </label>
+                                    </div>
+                                  </div>
+                                  <div className="clear"></div>
+                                  <div className="errorMsg">{this.state.errors.Gender}</div>
+
+                                  <div className="wrap-input100 validate-input m-t-20">
+                                    <span className="label-input100">Password</span>
+                                    <input className="input100" type="password" name="Password" placeholder="Type your password" value={this.state.fields.Password || ''} onChange={this.handleChange} />
+                                    <span className="focus-input100" data-symbol="&#xf190;"></span>
+                                  </div>
+                                  <div className="errorMsg">{this.state.errors.Password}</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-sm-6">
+                              <div className="wrap-input100 validate-input">
+                                <span className="label-input100">Confirm Password</span>
+                                <input className="input100" type="password" name="ConfirmPassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword || ''} onChange={this.handleChange} />
+                                <span className="focus-input100" data-symbol="&#xf190;"></span>
+                              </div>
+                              <div className="errorMsg">{this.state.errors.ConfirmPassword}</div>
+
+                              <div className="wrap-input100 validate-input m-t-20">
+                                <span className="label-input100">Mobile No</span>
+                                <input className="input100" type="mobileno" name="MobileNo" placeholder="Type your mobile no" value={this.state.fields.MobileNo || ''} onChange={this.handleChange} />
+                                <span className="focus-input100"><i class="fas fa-mobile-alt fa_icon"></i></span>
+                              </div>
+                              <div className="errorMsg">{this.state.errors.MobileNo}</div>
+
+                              <div className="wrap-input100 validate-input m-t-20">
+                                <span className="label-input100"> User Type</span>
+                                <select name="UserType" className="input100" value={this.state.fields.UserType || ""} onChange={this.handleChange}>
+                                  <option value="">-- Select --</option>
+                                  <option value="ANONYMOUS">ANONYMOUS</option>
+                                  <option value="CUSTOMER">CUSTOMER</option>
+                                </select>
+                              </div>
+                              <div className="errorMsg">{this.state.errors.UserType}</div>
+
+                              <div className="wrap-input100 validate-input m-t-20">
+                                <span className="label-input100"> Role</span>
+                                <select className="input100" name="Role" value={this.state.fields.Role || ""} onChange={this.handleChange}>
+                                  <option value="">-- Select --</option>
+                                  {roles.length > 0 ? (
+                                    roles.map((data, index) => {
+                                      return (
+                                        <option key={index} value={data._id}> {data.name}</option>
+                                      );
+                                    })
+                                  ) : (
+                                      null
+                                    )}
+                                </select>
+                              </div>
+                              <div className="errorMsg">{this.state.errors.Role}</div>
+
+                              <div className="wrap-input100 validate-input m-t-20">
+                                <span className="label-input100">Company Name</span>
+                                <input className="input100" type="text" name="CompanyName" placeholder="Type your company name" value={this.state.fields.CompanyName || ''} onChange={this.handleChange} />
+                                <span className="focus-input100"><i class="far fa-building fa_icon"></i></span>
+                              </div>
+                              <div className="errorMsg">{this.state.errors.CompanyName}</div>
+
+                              <div className="container-login100-form-btn p-t-31 p-b-25">
+                                <div className="wrap-login100-form-btn">
+                                  <div className="login100-form-bgbtn"></div>
+                                  <button className="login100-form-btn" onClick={this.UserForm}>
+                                    Submit
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Modal>
                     </div>
                   </div>
-                  <div className="col-sm-5">
-                    <div className="wrap-input100 validate-input">
-                      <span className="label-input100">Confirm Password</span>
-                      <input className="input100" type="password" name="ConfirmPassword" placeholder="Type your confirm password" value={this.state.fields.ConfirmPassword || ''} onChange={this.handleChange} />
-                      <span className="focus-input100" data-symbol="&#xf190;"></span>
-                    </div>
-                    <div className="errorMsg">{this.state.errors.ConfirmPassword}</div>
 
-                    <div className="wrap-input100 validate-input m-t-20">
-                      <span className="label-input100">Mobile No</span>
-                      <input className="input100" type="mobileno" name="MobileNo" placeholder="Type your mobile no" value={this.state.fields.MobileNo || ''} onChange={this.handleChange} />
-                      <span className="focus-input100"><i class="fas fa-mobile-alt fa_icon"></i></span>
+                  <div className="container gridcontent">
+                    <div className="row gridgraybg">
+                      <div className="col-sm-1 gridbr">Name</div>
+                      <div className="col-sm-2 gridbr">Email</div>
+                      <div className="col-sm-2 gridbr">Mobile</div>
+                      <div className="col-sm-2 gridbr">Type</div>
+                      <div className="col-sm-2 gridbr">Role</div>
+                      <div className="col-sm-1 gridbr">Company</div>
+                      <div className="col gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
+                      <div className="col gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
-                    <div className="errorMsg">{this.state.errors.MobileNo}</div>
-
-                    <div className="wrap-input100 validate-input m-t-20">
-                      <span className="label-input100"> User Type</span>
-                      <select name="UserType" className="input100" value={this.state.fields.UserType || ""} onChange={this.handleChange}>
-                        <option value="">-- Select --</option>
-                        <option value="ANONYMOUS">ANONYMOUS</option>
-                        <option value="CUSTOMER">CUSTOMER</option>
-                      </select>
-                    </div>
-                    <div className="errorMsg">{this.state.errors.UserType}</div>
-
-                    <div className="wrap-input100 validate-input m-t-20">
-                      <span className="label-input100"> Role</span>
-                      <select className="input100" name="Role" value={this.state.fields.Role || ""} onChange={this.handleChange}>
-                        <option value="">-- Select --</option>
-                        {roles.length > 0 ? (
-                          roles.map((data, index) => {
-                            return (
-                              <option key={index} value={data._id}> {data.name}</option>
-                            );
-                          })
-                        ) : (
-                            null
-                          )}
-                      </select>
-                    </div>
-                    <div className="errorMsg">{this.state.errors.Role}</div>
-
-                    <div className="wrap-input100 validate-input m-t-20">
-                      <span className="label-input100">Company Name</span>
-                      <input className="input100" type="text" name="CompanyName" placeholder="Type your company name" value={this.state.fields.CompanyName || ''} onChange={this.handleChange} />
-                      <span className="focus-input100"><i class="far fa-building fa_icon"></i></span>
-                    </div>
-                    <div className="errorMsg">{this.state.errors.CompanyName}</div>
-
-                    <div className="container-login100-form-btn p-t-31 p-b-25">
-                      <div className="wrap-login100-form-btn">
-                        <div className="login100-form-bgbtn"></div>
-                        <button className="login100-form-btn" onClick={this.UserForm}>
-                          Submit
-                        </button>
-                      </div>
-                    </div>
+                    {usersGridData.length > 0 ? (
+                      usersGridData.map((data, index) => {
+                        return (
+                          <div className="row gridgraybg" key={index}>
+                            <div className="col-sm-1 gridbr">{data.firstname}</div>
+                            <div className="col-sm-2 gridbr">{data.email}</div>
+                            <div className="col-sm-2 gridbr">{data.mobileno}</div>
+                            <div className="col-sm-2 gridbr">{data.usertype}</div>
+                            <div className="col-sm-2 gridbr">{roles.find(d => d._id === data.roleid) === undefined ? '' : roles.find(d => d._id === data.roleid).name || ''}</div>
+                            <div className="col-sm-1 gridbr">{data.companyname}</div>
+                            <div className="col gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>
+                            </div>
+                            <div className="col gridbr textcenter">
+                              <button type="button" className="hidden-print" onClick={() => this.onDeleteClick(data._id)}> <i className="fas fa-trash-alt iconcolor"></i></button>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                        <p><center>No records found..</center></p>
+                      )}
                   </div>
                 </div>
               </div>
+              {/* user's grid end */}
             </div>
           </div>
           <div className="fixed-footer">
