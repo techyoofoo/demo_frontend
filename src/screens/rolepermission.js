@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 const BASE_URL = `http://localhost:6006/`;
 const BASE_URL_ROLE = `http://localhost:6005/`;
+const BASE_URL_PERMISSION = `http://localhost:6012/`;
 
 
 class RolePermissionScreen extends Component {
@@ -22,16 +23,21 @@ class RolePermissionScreen extends Component {
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
+    this.handlePermissionChanges = this.handlePermissionChanges.bind(this);
     this.RolePermissionForm = this.RolePermissionForm.bind(this);
+    this.PermissionForm = this.PermissionForm.bind(this);
 
     this.state = {
       popupVisible: false,
       show: false, background: '#296091',
       open: false,
+      openPermissionModal: false,
       sidebarClose: true,
       values: [],
       fields: {},
       errors: {},
+      permissionErrors: {},
+      permissionFields: {},
       roles: [],
       permissionGridData: [],
       permissions: []
@@ -46,6 +52,16 @@ class RolePermissionScreen extends Component {
 
   onCloseModal = () => {
     this.setState({ open: false });
+  };
+
+  onOpenPermissionModal = () => {
+    let fields = {};
+    let errors = {};
+    this.setState({ openPermissionModal: true, permissionFields: fields, permissionErrors: errors });
+  };
+
+  onClosePermissionModal = () => {
+    this.setState({ openPermissionModal: false });
   };
 
   componentDidMount() {
@@ -127,7 +143,7 @@ class RolePermissionScreen extends Component {
 
   bindPermission() {
     axios
-      .get(BASE_URL + "rouge/permission/get")
+      .get(BASE_URL_PERMISSION + "rouge/permission/get")
       .then((response) => {
         if (response.status === 200) {
           this.setState({
@@ -145,6 +161,14 @@ class RolePermissionScreen extends Component {
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
+    });
+  }
+
+  handlePermissionChanges(e) {
+    let fields = this.state.permissionFields;
+    fields[e.target.name] = e.target.value;
+    this.setState({
+      permissionFields: fields
     });
   }
 
@@ -285,6 +309,62 @@ class RolePermissionScreen extends Component {
     return formIsValid;
   }
 
+
+  PermissionForm(e) {
+    e.preventDefault();
+    if (this.validatePermissionForm()) {
+      const { permissionFields } = this.state
+
+      let formData = {
+        _id: permissionFields.Name.toLowerCase(),
+        name: permissionFields.Name
+      }
+
+      const config = {
+        headers: {
+          "content-type": "application/json"
+        }
+      };
+
+      axios.post(BASE_URL_PERMISSION + `rouge/permission/create`, JSON.stringify(formData), config)
+        .then(response => {
+          alert(response.data.Message);
+          if (response.status === 201) {
+            let fields = {};
+            this.setState({ permissionFields: fields });
+            this.onClosePermissionModal();
+            this.bindPermission()
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        });
+    }
+  }
+
+  validatePermissionForm() {
+    let fields = this.state.permissionFields;
+    let errors = {};
+    let formIsValid = true;
+
+    if (!fields["Name"]) {
+      formIsValid = false;
+      errors["Name"] = "*Please enter your Permission Name.";
+    }
+
+    if (typeof fields["Name"] !== "undefined") {
+      if (!fields["Name"].match(/^[A-Z][a-z]{3,19}$/)) {
+        formIsValid = false;
+        errors["Name"] = "*Please enter alphabet characters only,First letter must be capital.";
+      }
+    }
+
+    this.setState({
+      permissionErrors: errors
+    });
+    return formIsValid;
+  }
+
   render() {
     const useStyles = {
       height: 264,
@@ -292,7 +372,7 @@ class RolePermissionScreen extends Component {
       maxWidth: 400
     }
     const BASE_URL = '#'
-    const { open, roles, permissionGridData, permissions } = this.state;
+    const { open, roles, permissionGridData, permissions, openPermissionModal } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -358,9 +438,12 @@ class RolePermissionScreen extends Component {
               </div>
 
 
+
+
               {/* Role Permission Grid Start*/}
               <div className="col col-md-12">
                 <div className="col col-md-12 innercontent">
+                  <button type="button" style={{ marginTop: "10px" }} className="btn btn-info hidden-print" onClick={this.onOpenPermissionModal}> <i className="fa fa-plus-circle"></i> Add New Permission</button>
                   <div className="condensed-grid">
                     <div>
                       <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
@@ -418,6 +501,30 @@ class RolePermissionScreen extends Component {
                           </div>
                         </div>
                       </Modal>
+
+
+                      <Modal open={openPermissionModal} onClose={this.onClosePermissionModal}>
+                        <h2 className="modelhdr">Add a new permission</h2>
+                        <div className="modelmenu">
+                          <div className="login100-form validate-form">
+                            <div className="wrap-input100 validate-input">
+                              <span className="label-input100">Name:</span>
+                              <input className="input100" type="text" name="Name" placeholder="Type your Permission Name" value={this.state.permissionFields.Name || ''} onChange={this.handlePermissionChanges} />
+                              <span className="focus-input100" data-symbol="&#xf206;"></span>
+                            </div>
+                            <div className="errorMsg">{this.state.permissionErrors.Name}</div>
+                            <div className="container-login100-form-btn p-t-31 p-b-25">
+                              <div className="wrap-login100-form-btn">
+                                <div className="login100-form-bgbtn"></div>
+                                <button className="login100-form-btn" onClick={this.PermissionForm}>
+                                  Add
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Modal>
+
                     </div>
                   </div>
 
