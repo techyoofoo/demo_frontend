@@ -346,7 +346,6 @@ class RoleScreen extends Component {
                             <div className="col gridbr">{data.description}</div>
                             <div className="col-sm-1 gridbr textcenter">
                               <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>
-                              {/* <i className="fas fa-edit iconcolor"></i> */}
                             </div>
                             <div className="col-sm-1 gridbr textcenter">
                               <button type="button" className="hidden-print" onClick={() => this.onDeleteClick(data)}> <i className="fas fa-trash-alt iconcolor"></i></button>
