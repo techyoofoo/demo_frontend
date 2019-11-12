@@ -328,11 +328,12 @@ class UninstallScreen extends Component {
                               <th scope="row">{i + 1}</th>
                               <td>{dt}</td>
                               <td
-                                onClick={() =>
-                                  this.submituserRegistrationForm(dt)
-                                }
+                               onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.submituserRegistrationForm(dt) } }
+                                // onClick={() =>
+                                //   this.submituserRegistrationForm(dt)
+                                // }
                               >
-                                <i className="fas fa-trash-alt iconcolor"></i>
+                                <i className="fas fa-trash-alt iconcolor" style={{cursor:"pointer"}}></i>
                               </td>
                             </tr>
                           );

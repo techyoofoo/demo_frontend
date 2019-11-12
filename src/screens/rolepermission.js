@@ -152,27 +152,26 @@ class RolePermissionScreen extends Component {
     let fields = this.state.fields;
     if (e.target.checked) {
       if (fields.Permission !== undefined) {
-        fields.Permission.push(data._id)
+        fields["Permission"] = fields.Permission.concat([data._id])
       }
       else {
         fields["Permission"] = [data._id];
       }
     }
     else {
-      var index = fields.Permission.indexOf(data._id)
-      fields.Permission.splice(index, 1);
+      fields.Permission = fields.Permission.filter(d => d !== data._id)
     }
     this.setState({ fields: fields });
   }
 
-  onOpenEditModal = (data) => {
-    this.setState({ open: true });
+  onOpenEditModal = (d) => {
     let fields = this.state.fields;
-    fields["_id"] = data._id;
-    fields["Name"] = data.name;
-    fields["Role"] = data.roleid;
-    fields["Permission"] = data.permission;
-    this.setState({ fields: fields });
+    fields["_id"] = d._id;
+    fields["Name"] = d.name;
+    fields["Role"] = d.roleid;
+    fields["Permission"] = d.permission;
+    let errors = {};
+    this.setState({ open: true, fields: fields, errors: errors });
   };
 
   onDeleteClick = (data) => {
@@ -377,7 +376,7 @@ class RolePermissionScreen extends Component {
                             <div className="errorMsg">{this.state.errors.Name}</div>
                             <div className="wrap-input100 validate-input m-t-20">
                               <span className="label-input100"> Role: </span>
-                              <select name="Role" className="input100" value={this.state.fields.Role} onChange={this.handleChange}>
+                              <select disabled={this.state.fields._id !== undefined} name="Role" className="input100" value={this.state.fields.Role} onChange={this.handleChange}>
                                 <option selected={this.state.fields.Role === undefined} value="">-- Select Role--</option>
                                 {roles.length > 0 ? (
                                   roles.map((data, index) => {
@@ -426,6 +425,7 @@ class RolePermissionScreen extends Component {
                     <div className="row gridgraybg">
                       <div className="col-sm-3 gridbr">Name</div>
                       <div className="col gridbr">Role</div>
+                      <div className="col gridbr">Description</div>
                       <div className="col gridbr">Permission</div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
@@ -436,6 +436,7 @@ class RolePermissionScreen extends Component {
                           <div className="row gridgraybg" key={index}>
                             <div className="col-sm-3 gridbr">{data.name}</div>
                             <div className="col gridbr">{roles.find(d => d._id === data.roleid) === undefined ? '' : roles.find(d => d._id === data.roleid).name || ''}</div>
+                            <div className="col gridbr">{roles.find(d => d._id === data.roleid) === undefined ? '' : roles.find(d => d._id === data.roleid).description || ''}</div>
                             <div className="col gridbr"> <span>{data.permission.join(", ")}</span> </div>
                             <div className="col-sm-1 gridbr textcenter">
                               <button type="button" className="hidden-print" onClick={() => this.onOpenEditModal(data)}> <i className="fas fa-edit iconcolor"></i></button>

@@ -128,8 +128,14 @@ class InstallScreen extends Component {
         .post("http://localhost:9002/un-zip", formData, config)
         .then(response => {
           console.log("response", response);
+          debugger;
+      if(response.data.result === "false")
+      {
+        alert("The plugin already exist.");
+      }else{
+        alert("The file is successfully uploaded");
+      }
 
-          alert("The file is successfully uploaded");
         })
         .catch(error => {});
       // alert("Form submitted");
