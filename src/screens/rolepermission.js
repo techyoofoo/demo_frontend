@@ -317,7 +317,7 @@ class RolePermissionScreen extends Component {
 
       let formData = {
         _id: permissionFields.Name.toLowerCase(),
-        name: permissionFields.Name
+        name: permissionFields.Name.slice(0, 1).toUpperCase() + permissionFields.Name.slice(1, permissionFields.Name.length).toLowerCase()
       }
 
       const config = {
@@ -352,10 +352,12 @@ class RolePermissionScreen extends Component {
       errors["Name"] = "*Please enter your Permission Name.";
     }
 
+
+
     if (typeof fields["Name"] !== "undefined") {
-      if (!fields["Name"].match(/^[A-Z][a-z]{3,19}$/)) {
+      if (!fields["Name"].match(/^[a-zA-Z ]*$/)) {
         formIsValid = false;
-        errors["Name"] = "*Please enter alphabet characters only,First letter must be capital.";
+        errors["Name"] = "*Please enter alphabet characters only.";
       }
     }
 
@@ -443,7 +445,7 @@ class RolePermissionScreen extends Component {
               {/* Role Permission Grid Start*/}
               <div className="col col-md-12">
                 <div className="col col-md-12 innercontent">
-                  <button type="button" style={{ marginTop: "10px" }} className="btn btn-info hidden-print" onClick={this.onOpenPermissionModal}> <i className="fa fa-plus-circle"></i> Add New Permission</button>
+                
                   <div className="condensed-grid">
                     <div>
                       <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New Role Permission</button>
@@ -490,6 +492,7 @@ class RolePermissionScreen extends Component {
                               }
                             </div>
                             <div className="clear"></div>
+                            <button type="button" style={{ marginTop: "10px" }} className="btn btn-info hidden-print" onClick={this.onOpenPermissionModal}> <i className="fa fa-plus-circle"></i> Add New Permission</button>
                             <div className="container-login100-form-btn p-t-31 p-b-25">
                               <div className="wrap-login100-form-btn">
                                 <div className="login100-form-bgbtn"></div>
