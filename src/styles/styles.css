@@ -535,6 +535,12 @@ h3{
     text-align: right;
     float: right;
 }
+.languagepdng{
+   position: relative;
+   right: 15px;
+   font-size: 14px !important;
+   top: 0px;
+}
 /* .input {
     position: relative;
     margin: 20px auto;
