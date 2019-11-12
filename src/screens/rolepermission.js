@@ -446,7 +446,7 @@ class RolePermissionScreen extends Component {
                   <button type="button" style={{ marginTop: "10px" }} className="btn btn-info hidden-print" onClick={this.onOpenPermissionModal}> <i className="fa fa-plus-circle"></i> Add New Permission</button>
                   <div className="condensed-grid">
                     <div>
-                      <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
+                      <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New Role Permission</button>
                       <Modal open={open} onClose={this.onCloseModal}>
                         <h2 className="modelhdr">{this.state.fields._id === undefined ? `Add New Permission` : `Edit Permission`}</h2>
                         <div className="modelmenu">
@@ -504,7 +504,7 @@ class RolePermissionScreen extends Component {
 
 
                       <Modal open={openPermissionModal} onClose={this.onClosePermissionModal}>
-                        <h2 className="modelhdr">Add a new permission</h2>
+                        <h2 className="modelhdr">Add new permission</h2>
                         <div className="modelmenu">
                           <div className="login100-form validate-form">
                             <div className="wrap-input100 validate-input">
@@ -530,10 +530,10 @@ class RolePermissionScreen extends Component {
 
                   <div className="container gridcontent">
                     <div className="row gridgraybg">
-                      <div className="col-sm-3 gridbr">Name</div>
-                      <div className="col gridbr">Role</div>
-                      <div className="col gridbr">Description</div>
-                      <div className="col gridbr">Permission</div>
+                      <div className="col-sm-3 gridbr">Role Permission Name</div>
+                      <div className="col gridbr">Role Name</div>
+                      <div className="col gridbr">Role Description</div>
+                      <div className="col gridbr">Permission(s)</div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-edit iconcolor"></i></div>
                       <div className="col-sm-1 gridbr textcenter"><i className="fas fa-trash-alt iconcolor"></i></div>
                     </div>
