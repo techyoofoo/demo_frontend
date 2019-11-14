@@ -1092,7 +1092,13 @@ dd {
     justify-content: left;
 }
 .mrgtop{
-margin-top: 20px;
+    margin-top: 20px;
+}
+.mt50{
+    margin-top: 50px;
+}
+.mb20{
+    margin-bottom: 20px;
 }
 .chartDiv{
     min-height: 400px;
@@ -1104,7 +1110,12 @@ margin-top: 20px;
     font-weight: 700;
     padding: 15px 0 5px 15px;
 }
-
+.table .thead-dark th {
+    font-weight: 600;
+    color: #3d3d3d !important;
+    background-color: #e2f0ff !important;
+    border-color: #cfcfcf !important;
+}
 @media screen and (min-width: 980px) /* Desktop */ {
    
     

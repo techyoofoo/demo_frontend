@@ -43,7 +43,7 @@ class UninstallScreen extends Component {
     ];
     console.log("---dist Ele", distElements);
     this.setState({ plugNames: distElements });
-    
+
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
@@ -124,7 +124,7 @@ class UninstallScreen extends Component {
         console.log("getUnInstallFiles----", filteredItems, items);
         localStorage.setItem("installed_plugins", JSON.stringify(items));
       })
-      .catch(error => {});
+      .catch(error => { });
 
     //   fields["FirstName"] = "";
     //   fields["Description"] = "";
@@ -263,8 +263,7 @@ class UninstallScreen extends Component {
               </div>
 
               <div className="col-md-12">
-                <div className="col-md-2"></div>
-                <div className="col-md-4 innercontent">
+                <div className="row innercontent">
                   {/* <div className="form-group formrgn1">
                     <div className="input-group">
                       <span className="input-group-addon">
@@ -312,7 +311,7 @@ class UninstallScreen extends Component {
                     </div>
                   </div> */}
 
-                  <div>
+                  <div className="col-md-12 mrgtop">
                     <table className="table table-bordered">
                       <thead className="thead-dark">
                         <tr>
@@ -328,12 +327,12 @@ class UninstallScreen extends Component {
                               <th scope="row">{i + 1}</th>
                               <td>{dt}</td>
                               <td
-                               onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.submituserRegistrationForm(dt) } }
-                                // onClick={() =>
-                                //   this.submituserRegistrationForm(dt)
-                                // }
+                                onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.submituserRegistrationForm(dt) }}
+                              // onClick={() =>
+                              //   this.submituserRegistrationForm(dt)
+                              // }
                               >
-                                <i className="fas fa-trash-alt iconcolor" style={{cursor:"pointer"}}></i>
+                                <i className="fas fa-trash-alt iconcolor" style={{ cursor: "pointer" }}></i>
                               </td>
                             </tr>
                           );

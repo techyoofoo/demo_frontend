@@ -129,15 +129,14 @@ class InstallScreen extends Component {
         .then(response => {
           console.log("response", response);
           debugger;
-      if(response.data.result === "false")
-      {
-        alert("The plugin already exist.");
-      }else{
-        alert("The file is successfully uploaded");
-      }
+          if (response.data.result === "false") {
+            alert("The plugin already exist.");
+          } else {
+            alert("The file is successfully uploaded");
+          }
 
         })
-        .catch(error => {});
+        .catch(error => { });
       // alert("Form submitted");
     }
   }
@@ -226,15 +225,14 @@ class InstallScreen extends Component {
     formData.append("name", this.state.fields.FirstName);
     //---------------------Local storage-------------------------------
     let pluginsData;
-    if(localStorage.getItem("installed_plugins") === null)
-    {
+    if (localStorage.getItem("installed_plugins") === null) {
       pluginsData = []
-    } else{
+    } else {
       pluginsData = JSON.parse(localStorage.getItem("installed_plugins"));
     }
     const splitFileName = selFile.target.files[0].name.split(".")
     pluginsData.push(splitFileName[0]);
-    localStorage.setItem("installed_plugins", JSON.stringify(pluginsData));   
+    localStorage.setItem("installed_plugins", JSON.stringify(pluginsData));
     const distElements = [...new Set(JSON.parse(localStorage.getItem("installed_plugins")))]
     console.log('---dist Ele', distElements)
     //---------------------Local storage-------------------------------
@@ -350,11 +348,12 @@ class InstallScreen extends Component {
                 </div>
               </div>
 
-              <div className="col-md-12">
-                <div className="col-md-2"></div>
-                <div className="col-md-4 innercontent">
-                  <div className="form-group formrgn1">
-                    {/* <div className="input-group">
+              <div className="col-md-12 innercontent">
+                <div>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group formrgn1 mrgtop">
+                        {/* <div className="input-group">
                       <span className="input-group-addon">
                         <span
                           className="fa fa-user facolor"
@@ -370,37 +369,40 @@ class InstallScreen extends Component {
                         onChange={this.handleChange}
                       />
                     </div> */}
-                    <div className="errorMsg">
-                      {this.state.errors.FirstName}
-                    </div>
-                  </div>
-                  <div className="form-group formrgn1">
-                    <div className="input-group">
-                      <div class="custom-file overflow-hidden rounded-pill mb-1">
-                        {/* <input
+                        <div className="errorMsg">
+                          {this.state.errors.FirstName}
+                        </div>
+                      </div>
+                      <div className="form-group formrgn1">
+                        <div className="input-group">
+                          <div class="custom-file overflow-hidden rounded-pill mb-1">
+                            {/* <input
                           id="customFile"
                           type="file"
                           class="custom-file-input rounded-pill"
                         /> */}
-                        <input
-                          id="customFile"
-                          type="file"
-                          className="custom-file-input rounded-pill"
-                          name="file"
-                          // onChange={e =>
-                          //   this.setState({ file: e.target.files[0] })
-                          // }
-                          onChange={e => this.onFileChange(e)}
-                        />
-                        <label
-                          for="customFile"
-                          class="custom-file-label rounded-pill"
-                        >
-                          Choose file
+                            <input
+                              id="customFile"
+                              type="file"
+                              className="custom-file-input rounded-pill"
+                              name="file"
+                              // onChange={e =>
+                              //   this.setState({ file: e.target.files[0] })
+                              // }
+                              onChange={e => this.onFileChange(e)}
+                            />
+                            <label
+                              for="customFile"
+                              class="custom-file-label rounded-pill"
+                            >
+                              Choose file
                         </label>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
+
                   {/* <div className="form-group formrgn1">
                     <div className="input-group">
                       <div className="select_left App">
@@ -445,7 +447,7 @@ class InstallScreen extends Component {
                     </div>
                   </div> */}
                   <div>
-                    <table className="table table-bordered">
+                    <table className="table table-bordered mrgtop">
                       <thead className="thead-dark">
                         <tr>
                           <th scope="col">#</th>
@@ -470,15 +472,37 @@ class InstallScreen extends Component {
                       </tbody>
                     </table>
                   </div>
-                  <div className="form-group text-center">
-                    <button
-                      type="submit"
-                      className="btn btn-lg btn-primary btn-block mb-1 btnshadow"
-                      onClick={this.submitinstallForm}
-                    >
-                      SUBMIT
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      {/* <div className="form-group text-center">
+                        <button
+                          type="submit"
+                          className="btn btn-lg btn-primary btn-block mb-1 btnshadow"
+                          onClick={this.submitinstallForm}
+                        >
+                          SUBMIT
                     </button>
+                      </div> */}
+
+                      <div class="container-login100-form-btn m-t-20">
+                        <div class="wrap-login100-form-btn">
+                          <div class="login100-form-bgbtn"></div>
+                          <button
+                            type="submit"
+                            className="login100-form-btn"
+                            onClick={this.submitinstallForm}
+                          >
+                            SUBMIT
+                    </button>
+
+                        </div>
+                      </div>
+
+                    </div>
                   </div>
+
+
                 </div>
               </div>
             </div>
