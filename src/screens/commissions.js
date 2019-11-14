@@ -160,15 +160,32 @@ class CommissionsScreen extends Component {
   }
 
   bindCommissionDropdown() {
+    const config = {
+      headers: {
+        "content-type": "application/json"
+      }
+    };
+
     axios
-      .get(BASE_URL + "periodlist/967")
+      .post("http://localhost:7002/readfocus", JSON.stringify({ queue: "commisson" }), config)
       .then((response) => {
         this.setState({
-          periodList: response.data.DropDownData,
+          periodList: response.data.Data.DropDownData,
           isLoadingPeriodList: false
         });
       })
       .catch(error => this.setState({ error, isLoadingPeriodList: false }));
+
+
+    // axios
+    //   .get(BASE_URL + "periodlist/967")
+    //   .then((response) => {
+    //     this.setState({
+    //       periodList: response.data.DropDownData,
+    //       isLoadingPeriodList: false
+    //     });
+    //   })
+    //   .catch(error => this.setState({ error, isLoadingPeriodList: false }));
   }
 
   handleSelectedChange(e) {
