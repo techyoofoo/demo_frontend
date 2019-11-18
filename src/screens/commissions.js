@@ -55,15 +55,20 @@ class CommissionsScreen extends Component {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
     this.bindCommissionDropdown();
-    const socket = socketIOClient("http://localhost:4001");
-    //socket.on("FromAPI", data => this.setState({ response: data }));
-
-    socket.on('news', function (data) {
-      console.log(data);
-      socket.emit('my', { my: 'data' });
-    });
-
+    // const socket = socketIOClient("http://localhost:4001");
+    // socket.on("commission", data => this.setState({
+    //   periodList: data.messages[0],
+    //   isLoadingPeriodList: false
+    // }));
+    // socket.on('commission', function (data) {
+    //   console.log(data);
+    //   this.setState({
+    //     periodList: [],
+    //     isLoadingPeriodList: false
+    //   })
+    // });
   }
+
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
     document.getElementById("main").style.marginLeft = "0";
@@ -166,7 +171,6 @@ class CommissionsScreen extends Component {
       errors: errors
     });
     return formIsValid;
-
   }
 
   bindCommissionDropdown() {
@@ -177,12 +181,14 @@ class CommissionsScreen extends Component {
     };
 
     axios
-      .post("http://localhost:7002/readfocus", JSON.stringify({ queue: "commisson" }), config)
+      .post("http://localhost:7002/readfocus", config)
       .then((response) => {
-        this.setState({
-          periodList: response.data.Data.DropDownData,
+        console.log(response.data)
+        const socket = socketIOClient("http://localhost:4001");
+        socket.on("commission", data => this.setState({
+          periodList: data.messages[0],
           isLoadingPeriodList: false
-        });
+        }));
       })
       .catch(error => this.setState({ error, isLoadingPeriodList: false }));
 
