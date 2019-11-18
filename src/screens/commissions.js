@@ -8,7 +8,9 @@ import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import socketIOClient from "socket.io-client";
 const BASE_URL = `http://localhost:6002/`;
+
 
 class CommissionsScreen extends Component {
   constructor() {
@@ -53,6 +55,14 @@ class CommissionsScreen extends Component {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
     this.bindCommissionDropdown();
+    const socket = socketIOClient("http://localhost:4001");
+    //socket.on("FromAPI", data => this.setState({ response: data }));
+
+    socket.on('news', function (data) {
+      console.log(data);
+      socket.emit('my', { my: 'data' });
+    });
+
   }
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
