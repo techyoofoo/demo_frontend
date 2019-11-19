@@ -54,6 +54,11 @@ class CommissionsScreen extends Component {
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    const socket = socketIOClient("http://localhost:4001");
+    socket.on("commission", data => this.setState({
+      periodList: data.messages[0],
+      isLoadingPeriodList: false
+    }));
     this.bindCommissionDropdown();
     // const socket = socketIOClient("http://localhost:4001");
     // socket.on("commission", data => this.setState({
@@ -184,11 +189,6 @@ class CommissionsScreen extends Component {
       .post("http://localhost:7002/readfocus", config)
       .then((response) => {
         console.log(response.data)
-        const socket = socketIOClient("http://localhost:4001");
-        socket.on("commission", data => this.setState({
-          periodList: data.messages[0],
-          isLoadingPeriodList: false
-        }));
       })
       .catch(error => this.setState({ error, isLoadingPeriodList: false }));
 
