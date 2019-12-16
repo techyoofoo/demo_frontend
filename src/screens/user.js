@@ -216,7 +216,7 @@ class UserScreen extends Component {
               Version: "1",
               Event: "user.create",
               PublicEvent: "public_bus",
-              ReportEvent: "client_report"
+              ReportFormatter: "client_reportformatter"
             },
             data_body: formData,
             footer: {
