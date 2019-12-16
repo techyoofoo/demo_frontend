@@ -27,7 +27,8 @@ class CommissionsScreen extends Component {
 
     this.state = {
       popupVisible: false,
-      show: false, background: '#296091',
+      show: false, 
+      background: '#296091',
       open: false,
       sidebarClose: true,
       values: [],
@@ -124,8 +125,8 @@ class CommissionsScreen extends Component {
     this.setState({
       fields
     });
-
   }
+
   submituserRegistrationForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
@@ -138,10 +139,9 @@ class CommissionsScreen extends Component {
       this.setState({ fields: fields });
       alert("Form submitted");
     }
-
   }
-  validateForm() {
 
+  validateForm() {
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;

@@ -108,8 +108,16 @@ class UserScreen extends Component {
   }
 
   bindUsersGrid() {
+    const config = {
+      headers: {
+        "content-type": "application/json"
+      }
+    };
+    let request = {
+      url: BASE_URL + "rouge/user/get"
+    }
     axios
-      .get(BASE_URL + "rouge/user/get")
+      .post(`http://localhost:7002/readfocus`, request, config)
       .then((response) => {
         this.setState({
           users: response.data,
@@ -202,10 +210,27 @@ class UserScreen extends Component {
         }
       };
       if (!fields._id) {
-        axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
+        let request = {
+          UB: {
+            header: {
+              Version: "1",
+              Event: "user.create",
+              PublicEvent: "public_bus",
+              ReportEvent: "client_report"
+            },
+            data_body: formData,
+            footer: {
+              Copyright: "Yoofoo",
+              Year: 2020
+            }
+          },
+          permission_type: "write",
+          map_url: BASE_URL + `rouge/user/create`
+        }
+        axios.post(`http://localhost:7002/writefocus`, request, config)
           .then(response => {
-            alert(response.data.Message);
-            if (response.status === 201) {
+            if (response.status === 200) {
+              alert("User created successfully")
               let fields = {};
               this.setState({ fields: fields });
               this.bindUsersGrid();
@@ -374,6 +399,17 @@ class UserScreen extends Component {
     return formIsValid;
   }
 
+  getPersistData() {
+    axios
+      .get("http://localhost:3003/report/client_report")
+      .then((response) => {
+        let data = response
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
+
   render() {
     const BASE_URL = '#'
     const { open, roles, usersGridData } = this.state;
@@ -454,6 +490,7 @@ class UserScreen extends Component {
                           </div>
                         </div>
                         <div style={{ float: "right" }} className="col col-md-4 col-sm-12">
+                          <button type="button" style={{ marginRight: "10px" }} className="btn btn-info hidden-print" onClick={this.getPersistData}> Get Report</button>
                           <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                         </div>
                       </div>
