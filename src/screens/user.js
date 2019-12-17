@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Button, Accordion, Card } from 'react-bootstrap';
+import { Button, Accordion, Card, Spinner } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
 import { PageHeader, PageFooter } from './header';
 import Sidebarmenu from './sidebar';
@@ -9,8 +9,10 @@ import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import socketIOClient from "socket.io-client";
 const BASE_URL = `http://localhost:6003/`;
 const BASE_URL_ROLE = `http://localhost:6005/`;
+
 
 class UserScreen extends Component {
   constructor() {
@@ -32,7 +34,8 @@ class UserScreen extends Component {
       errors: {},
       roles: [],
       users: [],
-      usersGridData: []
+      usersGridData: [],
+      loading: false
     };
   }
 
@@ -188,8 +191,12 @@ class UserScreen extends Component {
   }
 
   UserForm(e) {
+    const socket = socketIOClient("http://localhost:3005");
     e.preventDefault();
     if (this.validateForm()) {
+      this.setState({
+        loading: true
+      });
       const { fields } = this.state
       let formData = {
         firstname: fields.FirstName,
@@ -230,11 +237,24 @@ class UserScreen extends Component {
         axios.post(`http://localhost:7002/writefocus`, request, config)
           .then(response => {
             if (response.status === 200) {
-              alert("User created successfully")
-              let fields = {};
-              this.setState({ fields: fields });
-              this.bindUsersGrid();
-              this.onCloseModal();
+             // alert("User created successfully")
+              socket.on(response.data.EventId, (data) => {
+                let usersGridData = this.state.usersGridData;
+                usersGridData.push(data);
+                let fields = {};
+                this.setState({
+                  usersGridData: usersGridData,
+                  loading: false,
+                  fields: fields 
+                });
+                this.onCloseModal();
+                console.log(data)
+              });
+
+              // let fields = {};
+              // this.setState({ fields: fields });
+              // //this.bindUsersGrid();
+              // this.onCloseModal();
             }
           })
           .catch(error => {
@@ -401,9 +421,10 @@ class UserScreen extends Component {
 
   getPersistData() {
     axios
-      .get("http://localhost:3003/report/client_report")
+      .get("http://localhost:3003/report/client_reportformatter")
       .then((response) => {
         let data = response
+        console.log(data)
       })
       .catch(error => {
         console.log(error)
@@ -412,7 +433,7 @@ class UserScreen extends Component {
 
   render() {
     const BASE_URL = '#'
-    const { open, roles, usersGridData } = this.state;
+    const { open, roles, usersGridData, loading } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -616,6 +637,9 @@ class UserScreen extends Component {
                                 <div className="wrap-login100-form-btn">
                                   <div className="login100-form-bgbtn"></div>
                                   <button className="login100-form-btn" onClick={this.UserForm}>
+                                    {
+                                      loading ? <Spinner animation="border" variant="danger" /> : null
+                                    }
                                     Submit
                                   </button>
                                 </div>
