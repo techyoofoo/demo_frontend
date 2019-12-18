@@ -10,6 +10,7 @@ import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import socketIOClient from "socket.io-client";
+import LoadingScreen from 'react-loading-screen';
 const BASE_URL = `http://localhost:6003/`;
 const BASE_URL_ROLE = `http://localhost:6005/`;
 
@@ -443,6 +444,15 @@ class UserScreen extends Component {
     }
     return (
       <div>
+        <LoadingScreen
+              loading={loading}
+              bgColor='#0e080894'
+              spinnerColor='#07070a'
+              textColor='#07070a'
+              //logoSrc='/logo.png'
+              //text='please wait while loading..'
+            >
+            </LoadingScreen>
         <div className="container-fluid">
           {/* <PageHeader headerColor={this.state.background}/> */}
           <div className="row fixed-header" style={styleBack1}>
@@ -637,9 +647,6 @@ class UserScreen extends Component {
                                 <div className="wrap-login100-form-btn">
                                   <div className="login100-form-bgbtn"></div>
                                   <button className="login100-form-btn" onClick={this.UserForm}>
-                                    {
-                                      loading ? <Spinner animation="border" variant="danger" /> : null
-                                    }
                                     Submit
                                   </button>
                                 </div>
