@@ -222,9 +222,10 @@ class UserScreen extends Component {
           UB: {
             header: {
               Version: "1",
-              Event: "user.create",
-              PublicEvent: "public_bus",
-              ReportFormatter: "user_reportformatter"
+              Event: "user.create.internal",
+              PublicEvent: "public_bus_external",
+              ReportFormatter: "user_reportformatter",
+              Key:"user.create"
             },
             data_body: formData,
             footer: {
