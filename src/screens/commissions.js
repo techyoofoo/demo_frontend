@@ -8,7 +8,9 @@ import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import socketIOClient from "socket.io-client";
 const BASE_URL = `http://localhost:6002/`;
+
 
 class CommissionsScreen extends Component {
   constructor() {
@@ -25,7 +27,8 @@ class CommissionsScreen extends Component {
 
     this.state = {
       popupVisible: false,
-      show: false, background: '#296091',
+      show: false, 
+      background: '#296091',
       open: false,
       sidebarClose: true,
       values: [],
@@ -52,8 +55,26 @@ class CommissionsScreen extends Component {
   componentDidMount() {
     document.getElementById("mySidenav").style.width = "200px";
     document.getElementById("main").style.marginLeft = "200px";
+    const socket = socketIOClient("http://localhost:4001");
+    socket.on("commission", data => this.setState({
+      periodList: data.messages[0],
+      isLoadingPeriodList: false
+    }));
     this.bindCommissionDropdown();
+    // const socket = socketIOClient("http://localhost:4001");
+    // socket.on("commission", data => this.setState({
+    //   periodList: data.messages[0],
+    //   isLoadingPeriodList: false
+    // }));
+    // socket.on('commission', function (data) {
+    //   console.log(data);
+    //   this.setState({
+    //     periodList: [],
+    //     isLoadingPeriodList: false
+    //   })
+    // });
   }
+
   SideNavBarcloseClick = () => {
     document.getElementById("mySidenav").style.width = "0";
     document.getElementById("main").style.marginLeft = "0";
@@ -104,8 +125,8 @@ class CommissionsScreen extends Component {
     this.setState({
       fields
     });
-
   }
+
   submituserRegistrationForm(e) {
     e.preventDefault();
     if (this.validateForm()) {
@@ -118,10 +139,9 @@ class CommissionsScreen extends Component {
       this.setState({ fields: fields });
       alert("Form submitted");
     }
-
   }
-  validateForm() {
 
+  validateForm() {
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;
@@ -156,7 +176,6 @@ class CommissionsScreen extends Component {
       errors: errors
     });
     return formIsValid;
-
   }
 
   bindCommissionDropdown() {
@@ -167,12 +186,9 @@ class CommissionsScreen extends Component {
     };
 
     axios
-      .post("http://localhost:7002/readfocus", JSON.stringify({ queue: "commisson" }), config)
+      .post("http://localhost:7002/readfocus", config)
       .then((response) => {
-        this.setState({
-          periodList: response.data.Data.DropDownData,
-          isLoadingPeriodList: false
-        });
+        console.log(response.data)
       })
       .catch(error => this.setState({ error, isLoadingPeriodList: false }));
 

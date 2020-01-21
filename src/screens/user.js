@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Button, Accordion, Card } from 'react-bootstrap';
+import { Button, Accordion, Card, Spinner } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
 import { PageHeader, PageFooter } from './header';
 import Sidebarmenu from './sidebar';
@@ -9,8 +9,11 @@ import '../App.css';
 import '../styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import socketIOClient from "socket.io-client";
+import LoadingScreen from 'react-loading-screen';
 const BASE_URL = `http://localhost:6003/`;
 const BASE_URL_ROLE = `http://localhost:6005/`;
+
 
 class UserScreen extends Component {
   constructor() {
@@ -32,7 +35,8 @@ class UserScreen extends Component {
       errors: {},
       roles: [],
       users: [],
-      usersGridData: []
+      usersGridData: [],
+      loading: false
     };
   }
 
@@ -108,8 +112,16 @@ class UserScreen extends Component {
   }
 
   bindUsersGrid() {
+    const config = {
+      headers: {
+        "content-type": "application/json"
+      }
+    };
+    let request = {
+      url: BASE_URL + "rouge/user/get"
+    }
     axios
-      .get(BASE_URL + "rouge/user/get")
+      .post(`http://localhost:7002/readfocus`, request, config)
       .then((response) => {
         this.setState({
           users: response.data,
@@ -180,8 +192,12 @@ class UserScreen extends Component {
   }
 
   UserForm(e) {
+    const socket = socketIOClient("http://localhost:3005");
     e.preventDefault();
     if (this.validateForm()) {
+      this.setState({
+        loading: true
+      });
       const { fields } = this.state
       let formData = {
         firstname: fields.FirstName,
@@ -202,14 +218,45 @@ class UserScreen extends Component {
         }
       };
       if (!fields._id) {
-        axios.post(BASE_URL + `rouge/user/create`, JSON.stringify(formData), config)
+        let request = {
+          UB: {
+            header: {
+              Version: "1",
+              Event: "user.create.internal",
+              PublicEvent: "public_bus_external",
+              ReportFormatter: "user_reportformatter",
+              Key:"user.create"
+            },
+            data_body: formData,
+            footer: {
+              Copyright: "Yoofoo",
+              Year: 2020
+            }
+          },
+          permission_type: "write",
+          map_url: BASE_URL + `rouge/user/create`
+        }
+        axios.post(`http://localhost:7002/writefocus`, request, config)
           .then(response => {
-            alert(response.data.Message);
-            if (response.status === 201) {
-              let fields = {};
-              this.setState({ fields: fields });
-              this.bindUsersGrid();
-              this.onCloseModal();
+            if (response.status === 200) {
+             // alert("User created successfully")
+              socket.on(response.data.EventId, (data) => {
+                let usersGridData = this.state.usersGridData;
+                usersGridData.push(data);
+                let fields = {};
+                this.setState({
+                  usersGridData: usersGridData,
+                  loading: false,
+                  fields: fields 
+                });
+                this.onCloseModal();
+                console.log(data)
+              });
+
+              // let fields = {};
+              // this.setState({ fields: fields });
+              // //this.bindUsersGrid();
+              // this.onCloseModal();
             }
           })
           .catch(error => {
@@ -374,9 +421,21 @@ class UserScreen extends Component {
     return formIsValid;
   }
 
+  getPersistData() {
+    axios
+      .get("http://localhost:3003/report/client_reportformatter")
+      .then((response) => {
+        let data = response
+        console.log(data)
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
+
   render() {
     const BASE_URL = '#'
-    const { open, roles, usersGridData } = this.state;
+    const { open, roles, usersGridData, loading } = this.state;
     const styleBack = {
       backgroundColor: this.state.background,
       height: '60px'
@@ -386,6 +445,15 @@ class UserScreen extends Component {
     }
     return (
       <div>
+        <LoadingScreen
+              loading={loading}
+              bgColor='#0e080894'
+              spinnerColor='#07070a'
+              textColor='#07070a'
+              //logoSrc='/logo.png'
+              //text='please wait while loading..'
+            >
+            </LoadingScreen>
         <div className="container-fluid">
           {/* <PageHeader headerColor={this.state.background}/> */}
           <div className="row fixed-header" style={styleBack1}>
@@ -454,6 +522,7 @@ class UserScreen extends Component {
                           </div>
                         </div>
                         <div style={{ float: "right" }} className="col col-md-4 col-sm-12">
+                          <button type="button" style={{ marginRight: "10px" }} className="btn btn-info hidden-print" onClick={this.getPersistData}> Get Report</button>
                           <button type="button" className="btn btn-primary hidden-print" onClick={this.onOpenModal}> <i className="fa fa-plus-circle"></i> Add New</button>
                         </div>
                       </div>
